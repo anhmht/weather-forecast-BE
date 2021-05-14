@@ -14,6 +14,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public Task<IReadOnlyList<T>> ListAllAsync()
         {
+            //TODO
             throw new NotImplementedException();
         }
 

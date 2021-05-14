@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OYncbtjXilgN8AK5fTAZ3qbcHSTWacqK5E9WbrSO+r812twrzQxJkg6rwiTyp/di5nAaO1HDDvgysOgYaBx4pA==",
+  "dgSpecHash": "pJzUtMu0G4DSJtHnHVZArBScrq8a4M0UXNDehPlT3Cy/cfbkS7lxb+XD4JHiaK70m8aejBDOL0o4sf9WawHWuQ==",
   "success": true,
-  "projectFilePath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/GloboWeather.WeatherManagement.Application.csproj",
+  "projectFilePath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Application/GloboWeather.WeatherManagement.Application.csproj",
   "expectedPackageFiles": [
     "/Users/PhuongLe/.nuget/packages/automapper/10.1.1/automapper.10.1.1.nupkg.sha512",
     "/Users/PhuongLe/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/8.1.0/automapper.extensions.microsoft.dependencyinjection.8.1.0.nupkg.sha512",
