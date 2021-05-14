@@ -1,0 +1,12 @@
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.deps.json
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/bin/Debug/net5.0/ref/GloboWeather.WeatherManagement.Application.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.pdb
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.csprojAssemblyReference.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.AssemblyInfoInputs.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.AssemblyInfo.cs
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.csproj.CoreCompileInputs.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/ref/GloboWeather.WeatherManagement.Application.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Application/obj/Debug/net5.0/GloboWeather.WeatherManagement.Application.pdb

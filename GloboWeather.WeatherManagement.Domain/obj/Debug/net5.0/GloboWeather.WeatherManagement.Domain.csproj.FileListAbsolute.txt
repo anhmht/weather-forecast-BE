@@ -1,0 +1,12 @@
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.deps.json
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/bin/Debug/net5.0/ref/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.pdb
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.csprojAssemblyReference.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.AssemblyInfoInputs.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.AssemblyInfo.cs
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.csproj.CoreCompileInputs.cache
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/ref/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/RiderProjects/GloboWeather.WeatherManagement/GloboWeather.WeatherManagement.Domain/obj/Debug/net5.0/GloboWeather.WeatherManagement.Domain.pdb

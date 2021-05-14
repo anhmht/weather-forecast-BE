@@ -1,0 +1,33 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workbench ActiveDocument="GloboWeather.WeatherManagement.Identity/GloboWeatherIdentityDbContext.cs">
+    <Files>
+      <File FileName="GloboWeather.WeatherManagement.Identity/GloboWeatherIdentityDbContext.cs" Line="11" Column="13" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="GloboWeather.WeatherManagement" expanded="True">
+            <Node name="src" expanded="True">
+              <Node name="Core" expanded="True">
+                <Node name="GloboWeather.WeatherManagement.Application" expanded="True" />
+                <Node name="GloboWeather.WeatherManagement.Domain" expanded="True" />
+              </Node>
+              <Node name="Infrastructure" expanded="True">
+                <Node name="GloboWeather.WeatherManagement.Identity" expanded="True">
+                  <Node name="GloboWeatherIdentityDbContext.cs" selected="True" />
+                </Node>
+                <Node name="GloboWeather.WeatherManagement.Persistence" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
