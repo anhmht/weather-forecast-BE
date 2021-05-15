@@ -31,6 +31,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public Task DeleteAsync(T entity)
         {
+            //ToDo
             throw new NotImplementedException();
         }
     }

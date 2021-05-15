@@ -1,0 +1,17 @@
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.deps.json
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/ref/GloboWeather.WeatherManagement.Persistence.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.pdb
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.pdb
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.pdb
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.csprojAssemblyReference.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.AssemblyInfoInputs.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.AssemblyInfo.cs
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.csproj.CoreCompileInputs.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.csproj.CopyComplete
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/ref/GloboWeather.WeatherManagement.Persistence.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Persistence/obj/Debug/net5.0/GloboWeather.WeatherManagement.Persistence.pdb

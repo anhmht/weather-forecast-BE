@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Persistence", "GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj", "{FDBF429C-36B1-4D9B-A6FE-059CE498919E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Api", "GloboWeather.WeatherManagement.Api\GloboWeather.WeatherManagement.Api.csproj", "{572126A5-ECAF-43E0-80A4-5D3FD96C6558}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,7 @@ Global
 		{83842DD0-9B12-42C9-80E6-820806603500} = {639A8DC4-5CC5-4F65-8802-05B349708F39}
 		{D9ED514A-67FC-4A5A-95B2-00B9E902266C} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
 		{FDBF429C-36B1-4D9B-A6FE-059CE498919E} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558} = {422F0042-8595-47A1-A1A9-D186CC14A756}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{494EE425-ADBA-4B52-9BC9-E30306770484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,5 +52,9 @@ Global
 		{FDBF429C-36B1-4D9B-A6FE-059CE498919E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDBF429C-36B1-4D9B-A6FE-059CE498919E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDBF429C-36B1-4D9B-A6FE-059CE498919E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
