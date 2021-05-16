@@ -8,7 +8,7 @@ namespace GloboWeather.WeatherManagement.Identity
     {
         public GloboWeatherIdentityDbContext(DbContextOptions<GloboWeatherIdentityDbContext> options): base(options)
         {
-            //TODO
+           
         }
     }
 }

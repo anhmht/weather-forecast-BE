@@ -1,0 +1,12 @@
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.deps.json
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/ref/GloboWeather.WeatherManagement.Infrastructure.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.pdb
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.csprojAssemblyReference.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.AssemblyInfoInputs.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.AssemblyInfo.cs
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/ref/GloboWeather.WeatherManagement.Infrastructure.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.pdb

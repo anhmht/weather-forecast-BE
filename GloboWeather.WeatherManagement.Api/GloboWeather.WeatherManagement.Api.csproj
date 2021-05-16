@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+       
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +23,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Application\GloboWeather.WeatherManagement.Application.csproj" />
+      <ProjectReference Include="..\GloboWeather.WeatherManagement.Identity\GloboWeather.WeatherManagement.Identity.csproj" />
+      <ProjectReference Include="..\GloboWeather.WeatherManagement.Infrastructure\GloboWeather.WeatherManagement.Infrastructure.csproj" />
+      <ProjectReference Include="..\GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj" />
     </ItemGroup>
 
 </Project>
