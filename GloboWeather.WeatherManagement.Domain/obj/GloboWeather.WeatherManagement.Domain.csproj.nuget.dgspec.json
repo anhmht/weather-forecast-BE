@@ -1,28 +1,35 @@
 {
   "format": 1,
   "restore": {
-    "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj": {}
+    "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Domain\\GloboWeather.WeatherManagement.Domain.csproj": {}
   },
   "projects": {
-    "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj": {
+    "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Domain\\GloboWeather.WeatherManagement.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Domain\\GloboWeather.WeatherManagement.Domain.csproj",
         "projectName": "GloboWeather.WeatherManagement.Domain",
-        "projectPath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj",
-        "packagesPath": "/Users/PhuongLe/.nuget/packages/",
-        "outputPath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/obj/",
+        "projectPath": "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Domain\\GloboWeather.WeatherManagement.Domain.csproj",
+        "packagesPath": "C:\\Users\\phuonglt\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "/Users/PhuongLe/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\phuonglt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 18.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 19.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\DevExpress 18.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files (x86)\\DevExpress 19.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "http://build2.omnicasa.local:9000/nuget": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -64,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -10,3 +10,15 @@
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.dll
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/ref/GloboWeather.WeatherManagement.Infrastructure.dll
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.pdb
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\bin\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.deps.json
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\bin\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.dll
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\bin\Debug\net5.0\ref\GloboWeather.WeatherManagement.Infrastructure.dll
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\bin\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.pdb
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.csprojAssemblyReference.cache
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.AssemblyInfo.cs
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.dll
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\ref\GloboWeather.WeatherManagement.Infrastructure.dll
+C:\Users\phuonglt\Documents\weather-forecast-BE\GloboWeather.WeatherManagement.Infrastructure\obj\Debug\net5.0\GloboWeather.WeatherManagement.Infrastructure.pdb

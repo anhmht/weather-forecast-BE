@@ -1,22 +1,22 @@
 {
   "version": 2,
-  "dgSpecHash": "JID1D8+p2QjACu190BQkrDWny2rzd3xPkpwiduMXivp60tJQMEh487llvtfjBo/K9yher0qTSkxuiQ9myswm0w==",
+  "dgSpecHash": "0voAIUL2klP2Q03xefMdEBt6A5sCcoNGa9yUbxn2C1Idjzbo/ha50n9sYC5RHK1UVYQcK7YIRsI1vHvRo1NWCg==",
   "success": true,
-  "projectFilePath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Application/GloboWeather.WeatherManagement.Application.csproj",
+  "projectFilePath": "C:\\Users\\phuonglt\\Documents\\weather-forecast-BE\\GloboWeather.WeatherManagement.Application\\GloboWeather.WeatherManagement.Application.csproj",
   "expectedPackageFiles": [
-    "/Users/PhuongLe/.nuget/packages/automapper/10.1.1/automapper.10.1.1.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/8.1.0/automapper.extensions.microsoft.dependencyinjection.8.1.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/fluentvalidation/9.2.2/fluentvalidation.9.2.2.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/fluentvalidation.dependencyinjectionextensions/9.2.0/fluentvalidation.dependencyinjectionextensions.9.2.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/mediatr/9.0.0/mediatr.9.0.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/mediatr.extensions.microsoft.dependencyinjection/9.0.0/mediatr.extensions.microsoft.dependencyinjection.9.0.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/3.0.0/microsoft.extensions.dependencyinjection.abstractions.3.0.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/microsoft.extensions.logging.abstractions/3.1.10/microsoft.extensions.logging.abstractions.3.1.10.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/microsoft.extensions.options/3.0.0/microsoft.extensions.options.3.0.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/microsoft.extensions.primitives/3.0.0/microsoft.extensions.primitives.3.0.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/system.reflection.emit/4.7.0/system.reflection.emit.4.7.0.nupkg.sha512",
-    "/Users/PhuongLe/.nuget/packages/system.text.json/4.7.2/system.text.json.4.7.2.nupkg.sha512"
+    "C:\\Users\\phuonglt\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.0\\automapper.extensions.microsoft.dependencyinjection.8.1.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\fluentvalidation\\9.2.2\\fluentvalidation.9.2.2.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\9.2.0\\fluentvalidation.dependencyinjectionextensions.9.2.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\mediatr\\9.0.0\\mediatr.9.0.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\9.0.0\\mediatr.extensions.microsoft.dependencyinjection.9.0.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\3.0.0\\microsoft.extensions.dependencyinjection.abstractions.3.0.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\3.1.10\\microsoft.extensions.logging.abstractions.3.1.10.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\microsoft.extensions.options\\3.0.0\\microsoft.extensions.options.3.0.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\microsoft.extensions.primitives\\3.0.0\\microsoft.extensions.primitives.3.0.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\system.reflection.emit\\4.7.0\\system.reflection.emit.4.7.0.nupkg.sha512",
+    "C:\\Users\\phuonglt\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512"
   ],
   "logs": []
 }

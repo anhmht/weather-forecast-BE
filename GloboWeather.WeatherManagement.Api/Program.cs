@@ -18,7 +18,7 @@ namespace GloboWeather.WeatherManagement.Api
         public async static Task Main(string[] args)
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("appsetting.json")
+                .AddJsonFile("appsettings.json")
                 .Build();
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
