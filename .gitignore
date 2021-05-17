@@ -214,13 +214,6 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
-# Visual Studio LightSwitch build output
-**/*.HTMLClient/GeneratedArtifacts
-**/*.DesktopClient/GeneratedArtifacts
-**/*.DesktopClient/ModelManifest.xml
-**/*.Server/GeneratedArtifacts
-**/*.Server/ModelManifest.xml
-_Pvt_Extensions
 
 # Paket dependency manager
 .paket/paket.exe
@@ -228,67 +221,5 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
-# Immo
-*.cache
-/src/AgendaSyncLib/obj/Debug/AgendaSyncLib.csproj.FileListAbsolute.txt
-/src/AppointmentRule/obj/Debug/AppointmentRule.csproj.FileListAbsolute.txt
-/src/AutoSendAppointmentConfirmations/obj/Debug/AutoSendAppointmentConfirmations.csprojResolveAssemblyReference.cache
-/src/Common/obj/Debug/Common.csproj.FileListAbsolute.txt
-/src/Common/obj/Debug/Common.csprojResolveAssemblyReference.cache
-/src/Configs/obj/Debug/Configs.csproj.FileListAbsolute.txt
-/src/Controls/obj/Debug/Interop.VBA.dll
-/src/DAL/obj/Debug/DAL.csprojResolveAssemblyReference.cache
-/src/Immo/obj/Debug/Immo.csprojResolveAssemblyReference.cache
-/src/ImmoMediaOnline/obj/Debug/ImmoMediaOnline.csproj.FileListAbsolute.txt
-/src/ImmoServices/Bin/BOL.dll
-/src/ImmoServices/Bin/BOL.pdb
-/src/ImmoServices/Bin/Common.dll
-/src/ImmoServices/Bin/Common.pdb
-/src/ImmoServices/Bin/DAL.dll
-/src/ImmoServices/Bin/DAL.pdb
-/src/InfobelServices/obj/Debug/InfobelServices.csproj.FileListAbsolute.txt
-/src/Inventory/obj/Debug/Inventory.csproj.FileListAbsolute.txt
-/src/MatchingMultiCustomers/obj/Debug/MatchingMultiCustomers.csproj.FileListAbsolute.txt
-/src/MediaSiteCode/MediaSiteCode/obj/x86/Debug/MediaSiteCode.csproj.FileListAbsolute.txt
-/src/MultiAgendaSynchronization/obj/Debug/MultiAgendaSynchronization.csproj.FileListAbsolute.txt
-/src/Resources/DLLs/BOL.dll
-/src/Resources/DLLs/BOL.pdb
-/src/Resources/DLLs/Common.dll
-/src/Resources/DLLs/Common.pdb
-/src/Resources/DLLs/Configs.dll
-/src/Resources/DLLs/Configs.pdb
-/src/Resources/DLLs/DAL.dll
-/src/Resources/DLLs/DAL.pdb
-/src/Resources/DLLs/Wrappers.dll
-/src/Resources/DLLs/Wrappers.pdb
-/src/SendBirthdayMessage/obj/Debug/SendBirthdayMessage.csproj.FileListAbsolute.txt
-/src/Resources/DLLs/SocicalApi.dll
-/src/Resources/DLLs/BOL.XmlSerializers.dll
-/src/Resources/DLLs/Wrappers.XmlSerializers.dll
-src/Resources/DLLs/DevExpress.Data.v15.1.xml
-src/Resources/DLLs/DevExpress.Office.v15.1.Core.xml
-src/Resources/DLLs/DevExpress.Printing.v15.1.Core.xml
-src/Resources/DLLs/DevExpress.RichEdit.v15.1.Core.xml
-src/Resources/DLLs/DevExpress.Sparkline.v15.1.Core.xml
-src/Resources/DLLs/DevExpress.SpellChecker.v15.1.Core.xml
-src/Resources/DLLs/DevExpress.Utils.v15.1.UI.xml
-src/Resources/DLLs/DevExpress.Utils.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraBars.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraCharts.v15.1.UI.xml
-src/Resources/DLLs/DevExpress.XtraCharts.v15.1.Wizard.xml
-src/Resources/DLLs/DevExpress.XtraCharts.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraEditors.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraGrid.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraLayout.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraNavBar.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraPrinting.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraRichEdit.v15.1.Extensions.xml
-src/Resources/DLLs/DevExpress.XtraRichEdit.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraSpellChecker.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraTreeList.v15.1.xml
-src/Resources/DLLs/DevExpress.XtraVerticalGrid.v15.1.xml
-src/Resources/DLLs/Janus.Windows.CalendarCombo.v4.xml
-src/Resources/DLLs/Janus.Windows.ExplorerBar.v4.xml
-src/Resources/DLLs/Janus.Windows.Ribbon.v4.xml
-src/Dashboard/Dashboard/Properties/licenses.licx
-src/Dashboard/Properties/licenses.licx
+
+src/GloboWeather.WeatherManagement.Api/obj/Debug/net5.0/GloboWeather.WeatherManagement.Api.csprojAssemblyReference.cache
