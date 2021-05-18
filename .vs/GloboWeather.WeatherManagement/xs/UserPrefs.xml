@@ -1,15 +1,26 @@
 ﻿<Properties StartupConfiguration="{572126A5-ECAF-43E0-80A4-5D3FD96C6558}|Default">
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="GloboWeather.WeatherManagement.Api/Logs/log-20210517.txt">
+    <Files>
+      <File FileName="GloboWeather.WeatherManagement.Api/Program.cs" Line="1" Column="1" />
+      <File FileName="GloboWeather.WeatherManagement.Api/appsettings.json" Line="1" Column="1" />
+      <File FileName="GloboWeather.WeatherManagement.Api/Logs/log-20210517.txt" Line="1" Column="1" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="GloboWeather.WeatherManagement" expanded="True">
             <Node name="src" expanded="True">
-              <Node name="API" expanded="True" />
+              <Node name="API" expanded="True">
+                <Node name="GloboWeather.WeatherManagement.Api" expanded="True" selected="True">
+                  <Node name="Logs" expanded="True" />
+                  <Node name="Properties" expanded="True" />
+                  <Node name="Services" expanded="True" />
+                </Node>
+              </Node>
               <Node name="Core" expanded="True" />
               <Node name="Infrastructure" expanded="True">
                 <Node name="GloboWeather.WeatherManagement.Identity" expanded="True">
-                  <Node name="Models" selected="True" />
+                  <Node name="Migrations" expanded="True" />
                 </Node>
               </Node>
             </Node>
