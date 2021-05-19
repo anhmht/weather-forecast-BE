@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Domain.Common;
+using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,11 +21,22 @@ namespace GloboWeather.WeatherManagement.Persistence
         {
             _loggedInUserService = loggedInUserService;
         }
+        
+        public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<Forum> Forums { get; set; }
+        public DbSet<ForumCategory> ForumCategories { get; set; }
+        public DbSet<ForumPost> ForumPosts { get; set; }
+        public DbSet<ForumTopic> ForumTopics { get; set; }
+        public DbSet<SitePage> Pages { get; set; }
+        public DbSet<Theme> Themes { get; set; }
+        public DbSet<TopicSubscription> TopicSubscriptions { get; set; }
+        public DbSet<UpDownVote> DownVotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(GloboWeatherDbContext).Assembly);
         }
+        
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
