@@ -106,7 +106,7 @@ namespace GloboWeather.WeatherManagement.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "GloboWeather.WeatherManagement.Api v1"));
             
             app.UseCustomExceptionHander();
-            app.UseCors();
+            app.UseCors("Open");
             
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

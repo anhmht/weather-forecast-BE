@@ -406,7 +406,11 @@
         "frameworks": {
           "net5.0": {
             "targetAlias": "net5.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Application/GloboWeather.WeatherManagement.Application.csproj": {
+                "projectPath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Application/GloboWeather.WeatherManagement.Application.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

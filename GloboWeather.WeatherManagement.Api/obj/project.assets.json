@@ -3140,6 +3140,7 @@
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "CsvHelper": "12.2.1",
+          "GloboWeather.WeatherManagement.Application": "1.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.10",
           "SendGrid": "9.21.1"
         },
