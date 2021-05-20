@@ -25,3 +25,5 @@ C:/Users/phuonglt/Documents/weather-forecast-BE/GloboWeather.WeatherManagement.I
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.dll
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Application.pdb
 /Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/obj/Debug/net5.0/GloboWeather.WeatherManagement.Infrastructure.csproj.CopyComplete
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.dll
+/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Infrastructure/bin/Debug/net5.0/GloboWeather.WeatherManagement.Domain.pdb

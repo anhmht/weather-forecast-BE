@@ -149,7 +149,11 @@
         "frameworks": {
           "net5.0": {
             "targetAlias": "net5.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj": {
+                "projectPath": "/Users/PhuongLe/weather-forecast-BE/GloboWeather.WeatherManagement.Domain/GloboWeather.WeatherManagement.Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -202,6 +206,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
@@ -447,6 +454,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

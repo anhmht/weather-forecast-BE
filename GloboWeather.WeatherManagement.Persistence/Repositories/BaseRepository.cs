@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         {
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<T>> GetPagedResponseAsync(int page, int size)
+        {
+            return await _dbContext.Set<T>().Skip((page - 1) * size).AsNoTracking().ToListAsync();
         }
     }
 }

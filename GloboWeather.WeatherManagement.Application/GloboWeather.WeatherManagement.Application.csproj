@@ -17,4 +17,8 @@
         
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

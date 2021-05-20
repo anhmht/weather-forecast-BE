@@ -28,5 +28,6 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             return Ok(await _authenticationService.RegisterAsync(request: request));
         }
+        
     }
 }

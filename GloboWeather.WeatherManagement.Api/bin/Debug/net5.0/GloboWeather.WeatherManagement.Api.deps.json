@@ -2569,6 +2569,7 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.0",
           "FluentValidation": "9.2.2",
           "FluentValidation.DependencyInjectionExtensions": "9.2.0",
+          "GloboWeather.WeatherManagement.Domain": "1.0.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "9.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "3.1.10",
           "System.Text.Json": "4.7.2"
