@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Infrastructure", "GloboWeather.WeatherManagement.Infrastructure\GloboWeather.WeatherManagement.Infrastructure.csproj", "{72012E61-F17C-48FD-885B-44AB7D4F7AB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Weather", "GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj", "{B2C00D79-9E67-47BF-8E88-84105F0FDECC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,7 @@ Global
 		{FDBF429C-36B1-4D9B-A6FE-059CE498919E} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
 		{572126A5-ECAF-43E0-80A4-5D3FD96C6558} = {422F0042-8595-47A1-A1A9-D186CC14A756}
 		{72012E61-F17C-48FD-885B-44AB7D4F7AB6} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{494EE425-ADBA-4B52-9BC9-E30306770484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -63,5 +66,9 @@ Global
 		{72012E61-F17C-48FD-885B-44AB7D4F7AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72012E61-F17C-48FD-885B-44AB7D4F7AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72012E61-F17C-48FD-885B-44AB7D4F7AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

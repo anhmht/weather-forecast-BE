@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
 using GloboWeather.WeatherManagement.Persistence;
+using GloboWeather.WeatherManagement.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddInfrastructureServices(Configuration);
             services.AddPersistenceServices(Configuration);
             services.AddIdentityServices(Configuration);
+            services.AddWeatherService(Configuration);
 
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddControllers();
