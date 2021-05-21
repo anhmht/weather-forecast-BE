@@ -15,6 +15,7 @@ namespace GloboWeather.WeatherManagement.Persistence
                 options.UseSqlServer(
                     configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")));
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IEventRepository, EventRepository>();
             
             return services;
         }
