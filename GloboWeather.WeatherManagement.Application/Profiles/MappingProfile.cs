@@ -16,7 +16,9 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
         public MappingProfile()
         {
             CreateMap<Event, CreateEventCommand>().ReverseMap();
-            CreateMap<Event, EventListVm>().ReverseMap();
+            CreateMap<Event, EventListVm>()
+                .ForMember(dest => dest.CategoryName,
+                    opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<Event, UpdateEventCommand>().ReverseMap();
             CreateMap<Event, EventDetailVm>();
             
