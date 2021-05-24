@@ -5,6 +5,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Categories.Queries
     public class CategoriesListVm
     {
         public Guid CategoryId { get; set; }
-        public string CategoryName { get; set; }
+        public string Name { get; set; }
     }
 }
