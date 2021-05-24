@@ -14,16 +14,12 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddDbContext<GloboWeatherDbContext>(options =>
                 options.UseSqlServer(
                     configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")));
-            
-            // services.AddDbContext<ThoiTietDbContext>(options =>
-            //     options.UseMySQL(
-            //         configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")));
-            
+           
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
-            //services.AddScoped(typeof(IAsyncRepositoryVN<>), typeof(BaseRepositoryVN<>));
-            services.AddScoped<IEventRepository, EventRepository>();
-           // services.AddScoped<IDiemDuBaoRepository, DiemDuBaoRepository>();
             
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+           
             return services;
         }
     }

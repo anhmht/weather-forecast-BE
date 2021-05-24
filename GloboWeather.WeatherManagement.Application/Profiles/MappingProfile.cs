@@ -1,5 +1,7 @@
 using AutoMapper;
-using GloboWeather.WeatherManagement.Application.Features.DiemDuBao.Queries.GetDiemDuBaosList;
+using GloboWeather.WeatherManagement.Application.Features.Categories.Commands.CreateCategory;
+using GloboWeather.WeatherManagement.Application.Features.Categories.Queries.GetCategoryDetail;
+using GloboWeather.WeatherManagement.Application.Features.Categories.Queries.GetCategoryList;
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
@@ -17,7 +19,12 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Event, EventListVm>().ReverseMap();
             CreateMap<Event, UpdateEventCommand>().ReverseMap();
             CreateMap<Event, EventDetailVm>();
+            
             CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Category, CreateCategoryCommand>().ReverseMap();
+            CreateMap<Category, CategoriesListVm>().ReverseMap();
+            CreateMap<Category, CreateCategoryDto>();
+            CreateMap<Category, CategoryDetailVm>().ReverseMap();
         }
     }
 }

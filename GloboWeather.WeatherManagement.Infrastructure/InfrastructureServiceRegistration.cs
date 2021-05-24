@@ -1,6 +1,9 @@
 using GloboWeather.WeatherManagement.Application.Models.Mail;
+using GloboWeather.WeatherManagement.Application.Models.Storage;
 using GloboWeather.WeatherManagement.Infrastructure.Mail;
+using GloboWeather.WeatherManagement.Infrastructure.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
+using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,8 +15,10 @@ namespace GloboWeather.WeatherManagement.Infrastructure
             IConfiguration configuration)
         {
             services.Configure<EmailSettings>(configuration.GetSection("EmailSetting"));
+            services.Configure<AzureStorageConfig>(configuration.GetSection(key: "AzureStorageConfig"));
 
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IImageService, ImageService>();
             
             return services;
         }
