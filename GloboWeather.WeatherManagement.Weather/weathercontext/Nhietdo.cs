@@ -6,6 +6,7 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
     public partial class Nhietdo
     {
         public string DiemId { get; set; }
+        public DateTime RefDate { get; set; }
         public int? _1 { get; set; }
         public int? _2 { get; set; }
         public int? _3 { get; set; }

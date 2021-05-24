@@ -36,11 +36,11 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-//             if (!optionsBuilder.IsConfigured)
-//             {
-// #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-//                 optionsBuilder.UseMySQL("server=14.241.237.164; port=3306; database=thoitiet; user=moitruong; password=ttmt@123456; Persist Security Info=False; Connect Timeout=300");
-//             }
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySQL("server=14.241.237.164; port=3306; database=thoitiet; user=moitruong; password=ttmt@123456; Persist Security Info=False; Connect Timeout=300");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -196,7 +196,10 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
                     .HasName("DiemId");
 
                 entity.Property(e => e.DiemId).HasMaxLength(255);
-
+                entity.Property(e => e.RefDate)
+                    .HasColumnName("RefDate")
+                    .HasColumnType("date");
+                
                 entity.Property(e => e._1)
                     .HasColumnName("1")
                     .HasColumnType("int(2)");
