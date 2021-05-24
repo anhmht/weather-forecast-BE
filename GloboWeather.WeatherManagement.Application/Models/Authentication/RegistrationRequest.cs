@@ -15,7 +15,7 @@ namespace GloboWeather.WeatherManegement.Application.Models.Authentication
         public string Email { get; set; }
         
         [Required]
-        [MaxLength(6)]
+        [MinLength(6)]
         public  string UserName { get; set; }
 
         [Required]
