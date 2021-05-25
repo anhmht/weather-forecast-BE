@@ -9,20 +9,18 @@ using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList
 {
-    public class GetEventsListQueryHandler:IRequestHandler<GetEventsListQuery, List<EventListVm>>
+    public class GetEventsListQueryHandler:IRequestHandler<GetEventsListQuery, GetEventsListResponse>
     {
-        private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Event> _eventRepository;
-
-        public GetEventsListQueryHandler(IMapper mapper, IAsyncRepository<Event> eventRepository)
+        private readonly IEventRepository _eventRepository;
+        public GetEventsListQueryHandler(IMapper mapper, IEventRepository eventRepository)
         {
-            _mapper = mapper;
             _eventRepository = eventRepository;
         }
-        public async Task<List<EventListVm>> Handle(GetEventsListQuery request, CancellationToken cancellationToken)
+        public async Task<GetEventsListResponse> Handle(GetEventsListQuery request, CancellationToken cancellationToken)
         {
-            var allEvents = (await _eventRepository.ListAllAsync()).OrderBy(e => e.DatePosted);
-            return _mapper.Map<List<EventListVm>>(allEvents);
+            var  eventsListToReturn = await  _eventRepository.GetByPageAsync(request.Limit, request.Page, cancellationToken);
+            
+            return eventsListToReturn;
         }
     }
 }

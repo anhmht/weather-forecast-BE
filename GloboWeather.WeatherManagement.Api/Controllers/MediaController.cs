@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
 
         [HttpPost("uploadImage")]
-        public async Task<ActionResult<string>> UploadImage(IFormFile file)
+        public async Task<ActionResult<ImageResponse>> UploadImage(IFormFile file)
         {
             return Ok(await _imageService.UploadImageAsync(file));
         }

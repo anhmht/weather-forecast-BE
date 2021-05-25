@@ -13,7 +13,7 @@ namespace GloboWeather.WeatherManagement.Persistence
         {
             services.AddDbContext<GloboWeatherDbContext>(options =>
                 options.UseSqlServer(
-                    configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")));
+                    configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")), ServiceLifetime.Transient);
            
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             

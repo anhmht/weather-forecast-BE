@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using GloboWeather.WeatherManagement.Infrastructure.Helpers;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
@@ -24,7 +25,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             _logger = logger;
         }
 
-        public async Task<string> UploadImageAsync(IFormFile file)
+        public async Task<ImageResponse> UploadImageAsync(IFormFile file)
         {
             string imageUrl = string.Empty;
             if (StorageHelper.IsImage(file))
@@ -34,7 +35,8 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     using (Stream stream = file.OpenReadStream())
                     {
                         _logger.LogInformation("Image Upload");
-                        imageUrl = await StorageHelper.UploadFileToStorage(stream, file.FileName, _storageConfig);
+                        var fileName = new Guid().ToString() + file.FileName;
+                        imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
                     }
                 }
             }
@@ -44,7 +46,10 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 _logger.LogError("Image uploading failed");
             }
 
-            return imageUrl;
+            return new ImageResponse
+            {
+                Url = imageUrl
+            };
         }
 
         public async Task<List<string>> GetAllImagesAsync()

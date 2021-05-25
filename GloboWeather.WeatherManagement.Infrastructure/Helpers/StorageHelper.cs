@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using Microsoft.AspNetCore.Http;
 
@@ -55,6 +56,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
         public static async Task<List<string>> GetImageUrls(AzureStorageConfig _storageConfig)
         {
             List<string> thumbnailUrls = new List<string>();
+         //   List<ImageResponse> imageResponses = new List<ImageResponse>();
 
             // Create a URI to the storage account
             Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
@@ -72,7 +74,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                     thumbnailUrls.Add(container.Uri + "/" + blobItem.Name);
                 }
             }
-
+           // thumbnailUrls.ForEach(x => imageResponses.Add(i => i.));
             return await Task.FromResult(thumbnailUrls);
         }
     }

@@ -2,9 +2,9 @@ using System;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail
 {
-    public class CategoryDto
+    public class StatusDto
     {
-        public Guid CategotyId { get; set; }
+        public Guid StatusId { get; set; }
         public string Name { get; set; }
     }
 }

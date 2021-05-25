@@ -10,7 +10,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         public  string Content { get; set; }
         public  string ImageUrl { get; set; }
         public  DateTime DatePosted { get; set; }
-        public  int Status { get; set; }
         public  Guid CategoryId { get; set; }
+        public  Guid StatusId { get; set; }
     }
 }
