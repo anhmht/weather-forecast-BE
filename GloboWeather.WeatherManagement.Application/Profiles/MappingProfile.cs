@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Commands.Create
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Update;
 
@@ -23,6 +24,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
                     opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<Event, UpdateEventCommand>().ReverseMap();
             CreateMap<Event, EventDetailVm>();
+            CreateMap<Event, EventListCateStatusVm>();
             
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Category, CreateCategoryCommand>().ReverseMap();

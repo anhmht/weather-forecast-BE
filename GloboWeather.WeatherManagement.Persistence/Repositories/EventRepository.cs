@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -30,7 +32,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                 .Include(e => e.Category)
                 .Include(e => e.Status)
                 .AsNoTracking()
-                .OrderBy(p => p.DatePosted)
+                .OrderByDescending(p => p.DatePosted)
                 .PaginateAsync(page, limit, token);
             return new GetEventsListResponse
             {
@@ -47,6 +49,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     ImageUrl = e.ImageUrl
                 }).ToList()
             };
+            
+        }
+
+        public async Task<List<Event>> GetEventListByAsync(Guid categoryId, Guid statusId, CancellationToken token)
+        {
+            return await _dbContext.Events.Where(e => e.CategoryId == categoryId
+                                                         && e.StatusId == statusId).ToListAsync(token);
             
         }
     }

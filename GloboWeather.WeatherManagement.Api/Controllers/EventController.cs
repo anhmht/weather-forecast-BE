@@ -7,6 +7,7 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Commands.Delete
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using MediatR;
@@ -71,6 +72,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             await _mediator.Send(new DeleteEventCommand() {EventId = id});
             return NoContent();
+        }
+
+        [HttpGet("GetEventsBy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<List<EventListCateStatusVm>>> GetEventsListBy([FromQuery] GetEventsListByQuery request)
+        {
+            var dtos = await _mediator.Send(request);
+            return Ok(dtos);
         }
 
 

@@ -13,7 +13,4 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Application\GloboWeather.WeatherManagement.Application.csproj" />
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Seed\" />
-    </ItemGroup>
 </Project>
