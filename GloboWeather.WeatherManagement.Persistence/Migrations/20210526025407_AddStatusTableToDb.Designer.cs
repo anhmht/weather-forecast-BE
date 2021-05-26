@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210526025407_AddStatusTableToDb")]
+    partial class AddStatusTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,38 +116,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.HasKey("StatusId");
 
                     b.ToTable("Statuses");
-
-                    b.HasData(
-                        new
-                        {
-                            StatusId = new Guid("b0788d2f-8003-43c1-92a4-edc76a7c5dde"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Publish"
-                        },
-                        new
-                        {
-                            StatusId = new Guid("6313179f-7837-473a-a4d5-a5571b43e6a6"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Draft"
-                        },
-                        new
-                        {
-                            StatusId = new Guid("bf3f3002-7e53-441e-8b76-f6280be284aa"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Pending"
-                        },
-                        new
-                        {
-                            StatusId = new Guid("fe98f549-e790-4e9f-aa16-18c2292a2ee9"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Private"
-                        });
                 });
 
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Event", b =>
                 {
                     b.HasOne("GloboWeather.WeatherManagement.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
