@@ -35,7 +35,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     using (Stream stream = file.OpenReadStream())
                     {
                         _logger.LogInformation("Image Upload");
-                        var fileName = new Guid().ToString() + file.FileName;
+                        var fileName = Guid.NewGuid().ToString() + file.FileName;
                         imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
                     }
                 }

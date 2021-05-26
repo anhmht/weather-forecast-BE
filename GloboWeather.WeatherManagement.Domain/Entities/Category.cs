@@ -8,6 +8,5 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
     {
         public  Guid CategoryId { get; set; }
         public  string Name { get; set; }
-        public  ICollection<Event> Events { get; set; }
     }
 }

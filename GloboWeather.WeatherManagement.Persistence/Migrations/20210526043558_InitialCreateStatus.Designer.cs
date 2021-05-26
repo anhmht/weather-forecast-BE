@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210526043558_InitialCreateStatus")]
+    partial class InitialCreateStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,7 +147,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Event", b =>
                 {
                     b.HasOne("GloboWeather.WeatherManagement.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
