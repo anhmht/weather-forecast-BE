@@ -1,7 +1,10 @@
+using GloboWeather.WeatherManagement.Application.Models.Astronomy;
 using GloboWeather.WeatherManagement.Application.Models.Mail;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
+using GloboWeather.WeatherManagement.Infrastructure.Astronomy;
 using GloboWeather.WeatherManagement.Infrastructure.Mail;
 using GloboWeather.WeatherManagement.Infrastructure.Media;
+using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.Extensions.Configuration;
@@ -16,9 +19,11 @@ namespace GloboWeather.WeatherManagement.Infrastructure
         {
             services.Configure<EmailSettings>(configuration.GetSection("EmailSetting"));
             services.Configure<AzureStorageConfig>(configuration.GetSection(key: "AzureStorageConfig"));
-
+            services.Configure<AstronomySettings>(configuration.GetSection("AstronomySettings"));
+            services.AddHttpClient<AstronomyService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddScoped<IAstronomyService, AstronomyService>();
             
             return services;
         }

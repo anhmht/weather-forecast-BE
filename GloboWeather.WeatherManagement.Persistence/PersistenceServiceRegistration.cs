@@ -1,3 +1,4 @@
+
 using GloboWeather.WeatherManagement.Persistence.Repositories;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            
            
             return services;
         }

@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Queries;
+using GloboWeather.WeatherManagement.Application.Models.Astronomy;
+using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +18,12 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     public class CommonController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IAstronomyService _astronomyService;
 
-        public CommonController(IMediator mediator)
+        public CommonController(IMediator mediator, IAstronomyService astronomyService)
         {
             _mediator = mediator;
+            _astronomyService = astronomyService;
         }
         
         [HttpGet("Status/GetAllStatuses")]
@@ -37,6 +42,14 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             var response = await _mediator.Send(createStatusCommand);
             return response;
+        }
+
+        [HttpGet("Location/GetAstronomy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetAstronomyResponse>> GetAstronomyData(
+            [FromQuery] GetAstronomyCommand getAstronomyCommand)
+        {
+            return Ok(await _astronomyService.GetAstronomyData(getAstronomyCommand, CancellationToken.None));
         }
     }
 }
