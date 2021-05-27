@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Queries;
+using GloboWeather.WeatherManagement.Application.Features.Commons.Queries.GetPositionStackLocation;
 using GloboWeather.WeatherManagement.Application.Models.Astronomy;
 using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using MediatR;
@@ -18,12 +19,12 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     public class CommonController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAstronomyService _astronomyService;
+        private readonly ILocationService _locationService;
 
-        public CommonController(IMediator mediator, IAstronomyService astronomyService)
+        public CommonController(IMediator mediator, ILocationService locationService)
         {
             _mediator = mediator;
-            _astronomyService = astronomyService;
+            _locationService = locationService;
         }
         
         [HttpGet("Status/GetAllStatuses")]
@@ -47,9 +48,18 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("Location/GetAstronomy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<GetAstronomyResponse>> GetAstronomyData(
-            [FromQuery] GetAstronomyCommand getAstronomyCommand)
+            [FromQuery] GetLocationCommand getLocationCommand)
         {
-            return Ok(await _astronomyService.GetAstronomyData(getAstronomyCommand, CancellationToken.None));
+            return Ok(await _locationService.GetAstronomyData(getLocationCommand, CancellationToken.None));
+        }
+        
+        
+        [HttpGet("Location/GetCurrentLocation")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetAstronomyResponse>> GetCurrentLocation(
+            [FromQuery] GetPositionStackLocationCommand getLocationCommand)
+        {
+            return Ok(await _locationService.GetCurrentLocation(getLocationCommand, CancellationToken.None));
         }
     }
 }
