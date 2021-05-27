@@ -56,7 +56,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         
         [HttpGet("Location/GetCurrentLocation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<GetAstronomyResponse>> GetCurrentLocation(
+        public async Task<ActionResult<GetLocationResponse>> GetCurrentLocation(
             [FromQuery] GetPositionStackLocationCommand getLocationCommand)
         {
             return Ok(await _locationService.GetCurrentLocation(getLocationCommand, CancellationToken.None));
