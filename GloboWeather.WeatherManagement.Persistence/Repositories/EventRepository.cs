@@ -26,20 +26,29 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             return Task.FromResult(matches);
         }
 
-        public async Task<GetEventsListResponse> GetByPageAsync(int limit, int page, CancellationToken token)
+        public async Task<GetEventsListResponse> GetByPageAsync(GetEventsListQuery query,   CancellationToken token)
         {
-            var events = await _dbContext.Events
-                .Include(e => e.Category)
-                .Include(e => e.Status)
-                .AsNoTracking()
-                .OrderByDescending(p => p.DatePosted)
-                .PaginateAsync(page, limit, token);
+            var events =  _dbContext.Events as IQueryable<Event>;
+            if (query.CategoryId.HasValue)
+            {
+                events = events.Where(e => e.CategoryId == query.CategoryId);
+            }
+            if (query.StatusId.HasValue)
+            {
+                events = events.Where(e => e.StatusId == query.StatusId);
+            }
+            var collections = await  events
+                            .Include(e => e.Category)
+                            .Include(e => e.Status)
+                            .AsNoTracking()
+                            .OrderByDescending(p => p.DatePosted)
+                            .PaginateAsync(query.Page, query.Limit, token);
             return new GetEventsListResponse
             {
-                CurrentPage = events.CurrentPage,
-                TotalPages = events.TotalPages,
-                TotalItems = events.TotalItems,
-                Events = events.Items.Select(e => new EventListVm
+                CurrentPage = collections.CurrentPage,
+                TotalPages = collections.TotalPages,
+                TotalItems = collections.TotalItems,
+                Events = collections.Items.Select(e => new EventListVm
                 {
                     EventId = e.EventId,
                     StatusName = e.Status.Name,

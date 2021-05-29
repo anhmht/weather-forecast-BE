@@ -26,7 +26,8 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static async Task<string> UploadFileToStorage(Stream fileStream, string fileName,
+        public static async Task<string> 
+            UploadFileToStorage(Stream fileStream, string fileName,
             AzureStorageConfig _storageConfig)
         {
           //  fileName = Guid.NewGuid().ToString() + fileName;

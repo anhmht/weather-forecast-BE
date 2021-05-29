@@ -18,7 +18,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
         }
         public async Task<GetEventsListResponse> Handle(GetEventsListQuery request, CancellationToken cancellationToken)
         {
-            var  eventsListToReturn = await  _eventRepository.GetByPageAsync(request.Limit, request.Page, cancellationToken);
+            var  eventsListToReturn = await  _eventRepository.GetByPageAsync(request, cancellationToken);
             
             return eventsListToReturn;
         }

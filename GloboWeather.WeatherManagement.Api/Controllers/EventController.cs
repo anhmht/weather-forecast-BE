@@ -27,10 +27,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet(Name = nameof(GetAllEvents))]
+        [HttpPost("GetAllEvents", Name = nameof(GetAllEvents))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<GetEventsListResponse>> GetAllEvents([FromQuery] GetEventsListQuery query)
+        public async Task<ActionResult<GetEventsListResponse>> GetAllEvents([FromBody] GetEventsListQuery query)
         {
             var dtos = await _mediator.Send(query);
             return Ok(GeneratePageList(query, dtos));
