@@ -31,6 +31,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             }
 
             var @event = _mapper.Map<Event>(request);
+            @event.EventId = Guid.NewGuid();
 
             @event = await _eventRepository.AddAsync(@event);
             

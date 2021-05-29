@@ -10,5 +10,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         
         Task<ImageResponse> UploadImageAsync(IFormFile file);
         Task<List<string>> GetAllImagesAsync();
+        Task<bool> DeleteAllImagesAsync();
     }
 }

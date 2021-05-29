@@ -34,5 +34,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(await _imageService.GetAllImagesAsync());
         }
         
+        [HttpDelete(Name = "DeleteAllImage")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<List<string>>> DeleteImagesList()
+        {
+            return Ok(await _imageService.DeleteAllImagesAsync());
+        }
+        
     }
 }

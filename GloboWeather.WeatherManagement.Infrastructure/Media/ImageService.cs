@@ -56,5 +56,10 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         {
             return await StorageHelper.GetImageUrls(_storageConfig);
         }
+
+        public async Task<bool> DeleteAllImagesAsync()
+        {
+            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig);
+        }
     }
 }
