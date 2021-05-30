@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -52,6 +53,22 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             };
         }
 
+        public async Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName)
+        {
+            List<string> imageUrlsAfterPost = new List<string>();
+            if (imageUrls.Any() == false)
+            {
+                return null;
+            }
+
+            foreach (var imageUrl in imageUrls)
+            {
+                imageUrlsAfterPost.Add(await StorageHelper.CopyFileToContainerPost(imageUrl, eventId, folderName,_storageConfig)); 
+            }
+
+            return imageUrlsAfterPost ;
+        }
+        
         public async Task<List<string>> GetAllImagesAsync()
         {
             return await StorageHelper.GetImageUrls(_storageConfig);
@@ -59,7 +76,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
         public async Task<bool> DeleteAllImagesAsync()
         {
-            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig);
+            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig,"", new List<string>());
         }
     }
 }

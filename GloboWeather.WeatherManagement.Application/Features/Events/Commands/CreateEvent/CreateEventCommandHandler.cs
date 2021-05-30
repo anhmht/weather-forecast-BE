@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
+using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
@@ -11,13 +14,16 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
 {
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Guid>
     {
+     
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepository;
+        private readonly IImageService _imageService;
 
-        public CreateEventCommandHandler(IMapper mapper, IEventRepository eventRepository)
+        public CreateEventCommandHandler(IMapper mapper, IEventRepository eventRepository, IImageService imageService)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;
+            _imageService = imageService;
         }
         
         public async Task<Guid> Handle(CreateEventCommand request, CancellationToken cancellationToken)
@@ -29,10 +35,17 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             {
                 throw new Exceptions.ValidationException(validationResult);
             }
-
+            
             var @event = _mapper.Map<Event>(request);
             @event.EventId = Guid.NewGuid();
-
+          
+            //UpLoad to Normal Image
+           await _imageService.CopyImageToEventPost(request.NormalImageUrls, @event.EventId.ToString(), Forder.NormalImage);
+            
+            //Upload to Feature Image
+            @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
+                @event.EventId.ToString(), Forder.NormalImage)).FirstOrDefault();
+           
             @event = await _eventRepository.AddAsync(@event);
             
             return  @event.EventId;
