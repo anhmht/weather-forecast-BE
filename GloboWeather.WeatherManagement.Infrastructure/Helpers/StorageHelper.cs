@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using Microsoft.AspNetCore.Http;
 
