@@ -44,7 +44,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             
             //Upload to Feature Image
             @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
-                @event.EventId.ToString(), Forder.NormalImage)).FirstOrDefault();
+                @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
            
             @event = await _eventRepository.AddAsync(@event);
             

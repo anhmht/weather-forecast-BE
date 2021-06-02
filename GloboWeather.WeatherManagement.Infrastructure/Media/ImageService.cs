@@ -36,7 +36,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     using (Stream stream = file.OpenReadStream())
                     {
                         _logger.LogInformation("Image Upload");
-                        var fileName = Guid.NewGuid().ToString() + file.FileName;
+                        var fileName = Guid.NewGuid().ToString() + file.FileName.Replace(" ", String.Empty);
                         imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
                     }
                 }
@@ -74,9 +74,9 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             return await StorageHelper.GetImageUrls(_storageConfig);
         }
 
-        public async Task<bool> DeleteAllImagesAsync()
+        public async Task<bool> DeleteAllImagesAsync(string containerName, string eventId, string eventUrl)
         {
-            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig,"", new List<string>());
+            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig, containerName, eventId, eventUrl);
         }
     }
 }

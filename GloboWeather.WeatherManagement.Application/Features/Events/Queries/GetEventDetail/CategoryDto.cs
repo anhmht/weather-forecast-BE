@@ -4,7 +4,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
 {
     public class CategoryDto
     {
-        public Guid CategotyId { get; set; }
+        public Guid CategoryId { get; set; }
         public string Name { get; set; }
     }
 }

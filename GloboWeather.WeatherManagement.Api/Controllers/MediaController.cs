@@ -39,7 +39,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<List<string>>> DeleteImagesList()
         {
-            return Ok(await _imageService.DeleteAllImagesAsync());
+            return Ok(await _imageService.DeleteAllImagesAsync(null, string.Empty, null));
         }
         
     }
