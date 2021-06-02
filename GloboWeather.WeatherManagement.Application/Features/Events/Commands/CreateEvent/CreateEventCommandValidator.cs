@@ -15,8 +15,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
 
             RuleFor(p => p.Title)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull()
-                .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 character");
+                .NotNull();
 
             RuleFor(p => p.ImageUrl)
                 .NotEmpty().WithMessage("{PropertyName} is not null")

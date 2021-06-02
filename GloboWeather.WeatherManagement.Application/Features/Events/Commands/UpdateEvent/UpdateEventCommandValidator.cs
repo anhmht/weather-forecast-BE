@@ -8,8 +8,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         {
             RuleFor(p => p.Title)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotEmpty()
-                .MaximumLength(50).WithMessage("{PropertyName} must to exceed 50 characters.");
+                .NotEmpty();
+
         }        
     }
 }
