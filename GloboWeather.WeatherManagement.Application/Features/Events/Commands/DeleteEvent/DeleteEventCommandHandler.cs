@@ -29,7 +29,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.De
                 throw new NotFoundException(nameof(Event), request.EventId);
             }
 
-            await _imageService.DeleteAllImagesAsync(Forder.FeatureImage, eventToDelete.EventId.ToString(), null);
+            await _imageService.DeleteImagesInPostsContainerAsync(request.EventId.ToString());
 
             await _eventRepository.DeleteAsync(eventToDelete);
         

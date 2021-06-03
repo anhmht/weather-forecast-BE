@@ -7,10 +7,11 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
 {
     public interface IImageService
     {
-        
         Task<ImageResponse> UploadImageAsync(IFormFile file);
         Task<List<string>> GetAllImagesAsync();
-        Task<bool> DeleteAllImagesAsync(string containerName, string eventId, string eventUrl);
+        Task<bool> DeleteAllImagesTempContainerAsync();
+        Task<bool> DeleteImagesInPostsContainerAsync(string eventId);
+        Task<bool> DeleteImagesInPostsContainerByNameAsync(string eventId, List<string> imageUrls);
         Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName);
     }
 }

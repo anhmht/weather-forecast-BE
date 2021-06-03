@@ -80,11 +80,9 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             return await Task.FromResult(thumbnailUrls);
         }
 
-        public static async Task<bool> DeleteBlobInTempsAsync(AzureStorageConfig _storageConfig, string containerName,
-           string eventId, string eventUrl)
+        public static async Task<bool> DeleteBlobInPostContainerAsync(AzureStorageConfig _storageConfig,
+            string eventId)
         {
-            var stringUls = eventUrl.Split('/');
-            var eventName = stringUls[stringUls.Length - 1];
             // Create a URI to the storage account
             Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
 
@@ -93,8 +91,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             StorageSharedKeyCredential storageCredentials =
                 new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
             BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
-
-
+            
             // Get reference to the container
             BlobContainerClient container = blobServiceClient.GetBlobContainerClient(_storageConfig.PostContainer);
 
@@ -104,14 +101,77 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                 var blob = container.GetBlobs(prefix: eventId);
                 foreach (var blobItem in blob)
                 {
-                    if (blobItem.Name == eventName)
+                    await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                }
+            }
+
+            return await Task.FromResult(true);
+        }
+        
+        
+        public static async Task<bool> DeleteBlobInPostContainerByNameAsync(AzureStorageConfig _storageConfig,
+            List<string> eventUrls, string eventId)
+        {
+            // Create a URI to the storage account
+            Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
+
+            List<string> eventNames = new List<string>();
+
+            foreach (var url in eventUrls)
+            {
+                var urls = url.Split('/');
+                var eventName = urls[urls.Length-3] +"/" + urls[urls.Length-2] + "/" +  urls[urls.Length-1];
+                eventNames.Add(eventName);
+            }
+            // Create BlobServiceClient from the account URI
+
+            StorageSharedKeyCredential storageCredentials =
+                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+            BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
+            
+            // Get reference to the container
+            BlobContainerClient container = blobServiceClient.GetBlobContainerClient(_storageConfig.PostContainer);
+
+            //  blobClient.Delete()
+            if (container.Exists())
+            {
+                var blob = container.GetBlobs(prefix: eventId);
+                foreach (var blobItem in blob)
+                {
+                    if (eventNames.Contains(blobItem.Name))
                     {
-                        await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                       await container.DeleteBlobIfExistsAsync(blobItem.Name);
                     }
                 }
-               
-                
             }
+
+            return await Task.FromResult(true);
+        }
+        
+        public static async Task<bool> DeleteBlobsInTempContainerAsync(AzureStorageConfig _storageConfig)
+        {
+            // Create a URI to the storage account
+            Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
+
+            // Create BlobServiceClient from the account URI
+
+            StorageSharedKeyCredential storageCredentials =
+                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+            BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
+            
+            // Get reference to the container
+            BlobContainerClient container = blobServiceClient.GetBlobContainerClient(_storageConfig.TempContainer);
+
+            //  blobClient.Delete()
+            if (container.Exists())
+            {
+                var blobs = container.GetBlobs();
+                foreach (var blobItem in blobs)
+                {
+                    await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                }
+            }
+
             return await Task.FromResult(true);
         }
 
@@ -143,10 +203,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
             await blobClient.StartCopyFromUriAsync(blobUriTemp);
 
-            //Delete file
-            // await DeleteBlobInTempsAsync(_storageConfig, _storageConfig.TempContainer,
-            //     new List<string>() {fileName});
-            // await blobClient.DeleteAsync(blobUriTemp);
             return await Task.FromResult(urlImage);
         }
     }

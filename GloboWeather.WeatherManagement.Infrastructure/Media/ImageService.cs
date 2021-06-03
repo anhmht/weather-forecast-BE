@@ -74,9 +74,21 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             return await StorageHelper.GetImageUrls(_storageConfig);
         }
 
-        public async Task<bool> DeleteAllImagesAsync(string containerName, string eventId, string eventUrl)
+        public async Task<bool> DeleteAllImagesTempContainerAsync()
         {
-            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig, containerName, eventId, eventUrl);
+            return await StorageHelper.DeleteBlobsInTempContainerAsync(_storageConfig);
         }
+
+        public async Task<bool> DeleteImagesInPostsContainerAsync(string eventId)
+        {
+            return await StorageHelper.DeleteBlobInPostContainerAsync(_storageConfig, eventId);
+        }
+        
+        public async Task<bool> DeleteImagesInPostsContainerByNameAsync(string eventId, List<string> imageUrls)
+        {
+            return await StorageHelper.DeleteBlobInPostContainerByNameAsync(_storageConfig,imageUrls, eventId);
+        }
+        
+        
     }
 }

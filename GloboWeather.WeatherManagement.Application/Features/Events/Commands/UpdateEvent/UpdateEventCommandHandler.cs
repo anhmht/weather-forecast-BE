@@ -29,7 +29,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         public async Task<Unit> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
             var eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
-            
+            var imageListUrlsNeedToDelete = new List<string>();
+            imageListUrlsNeedToDelete.AddRange(request.ImageNormalDelete);
             if (eventToUpdate == null)
             {
                 throw new NotFoundException(nameof(Event), request.EventId);
@@ -47,11 +48,16 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
 
             if (string.Compare(request.ImageUrl, eventToUpdate.ImageUrl) != 0)
             {
-                await _imageService.DeleteAllImagesAsync(null,eventId:request.EventId.ToString() ,eventToUpdate.ImageUrl);
+               imageListUrlsNeedToDelete.Add(eventToUpdate.ImageUrl);
                 request.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
                     request.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
-             
             }
+
+            await _imageService.CopyImageToEventPost(request.ImageNormalAdd, request.EventId.ToString(),
+                Forder.NormalImage);
+            await _imageService.DeleteImagesInPostsContainerByNameAsync(request.EventId.ToString(),
+                imageListUrlsNeedToDelete);
+            
             //Upload to Feature Image
          
             _mapper.Map(request, eventToUpdate, typeof(UpdateEventCommand), typeof(Event));
