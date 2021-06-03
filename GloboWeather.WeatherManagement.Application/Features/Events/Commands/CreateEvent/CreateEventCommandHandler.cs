@@ -40,7 +40,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             @event.EventId = Guid.NewGuid();
           
             //UpLoad to Normal Image
-           await _imageService.CopyImageToEventPost(request.NormalImageUrls, @event.EventId.ToString(), Forder.NormalImage);
+           await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
             
             //Upload to Feature Image
             @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
