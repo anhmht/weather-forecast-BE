@@ -30,7 +30,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         {
             var eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
             var imageListUrlsNeedToDelete = new List<string>();
-            imageListUrlsNeedToDelete.AddRange(request.ImageNormalDelete);
+            imageListUrlsNeedToDelete.AddRange(request.ImageNormalDeletes);
             if (eventToUpdate == null)
             {
                 throw new NotFoundException(nameof(Event), request.EventId);
@@ -53,7 +53,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
                     request.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
             }
 
-            await _imageService.CopyImageToEventPost(request.ImageNormalAdd, request.EventId.ToString(),
+            await _imageService.CopyImageToEventPost(request.ImageNormalAdds, request.EventId.ToString(),
                 Forder.NormalImage);
             await _imageService.DeleteImagesInPostsContainerByNameAsync(request.EventId.ToString(),
                 imageListUrlsNeedToDelete);
