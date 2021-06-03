@@ -10,7 +10,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         public  string Content { get; set; }
         public  string ImageUrl { get; set; }
         public  DateTime DatePosted { get; set;}
-        
         public  Guid StatusId { get; set; }
         public Status Status { get; set; }
         public  Guid CategoryId { get; set; }

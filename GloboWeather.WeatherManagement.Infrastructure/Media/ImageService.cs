@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -35,7 +36,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     using (Stream stream = file.OpenReadStream())
                     {
                         _logger.LogInformation("Image Upload");
-                        var fileName = Guid.NewGuid().ToString() + file.FileName;
+                        var fileName = Guid.NewGuid().ToString() + file.FileName.Replace(" ", String.Empty);
                         imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
                     }
                 }
@@ -52,14 +53,42 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             };
         }
 
+        public async Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName)
+        {
+            List<string> imageUrlsAfterPost = new List<string>();
+            if (imageUrls.Any() == false)
+            {
+                return null;
+            }
+
+            foreach (var imageUrl in imageUrls)
+            {
+                imageUrlsAfterPost.Add(await StorageHelper.CopyFileToContainerPost(imageUrl, eventId, folderName,_storageConfig)); 
+            }
+
+            return imageUrlsAfterPost ;
+        }
+        
         public async Task<List<string>> GetAllImagesAsync()
         {
             return await StorageHelper.GetImageUrls(_storageConfig);
         }
 
-        public async Task<bool> DeleteAllImagesAsync()
+        public async Task<bool> DeleteAllImagesTempContainerAsync()
         {
-            return await StorageHelper.DeleteBlobInTempsAsync(_storageConfig);
+            return await StorageHelper.DeleteBlobsInTempContainerAsync(_storageConfig);
         }
+
+        public async Task<bool> DeleteImagesInPostsContainerAsync(string eventId)
+        {
+            return await StorageHelper.DeleteBlobInPostContainerAsync(_storageConfig, eventId);
+        }
+        
+        public async Task<bool> DeleteImagesInPostsContainerByNameAsync(string eventId, List<string> imageUrls)
+        {
+            return await StorageHelper.DeleteBlobInPostContainerByNameAsync(_storageConfig,imageUrls, eventId);
+        }
+        
+        
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent
@@ -12,5 +13,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         public  DateTime DatePosted { get; set; }
         public  Guid CategoryId { get; set; }
         public  Guid StatusId { get; set; }
+        public  List<string> ImageNormalDelete { get; set; }
+        public  List<string> ImageNormalAdd { get; set; }
     }
 }

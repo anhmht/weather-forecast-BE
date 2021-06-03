@@ -8,5 +8,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Storage
         public string ThumbnailContainer { get; set; }
         public string EventContainer { get; set; }
         public string TempContainer { get; set; }
+        public string PostContainer { get; set; }
     }
 }
