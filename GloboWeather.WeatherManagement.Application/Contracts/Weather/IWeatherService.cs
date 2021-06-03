@@ -8,5 +8,8 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
     {
         Task<List<DiemDuBaoResponse>> GetDiemDuBaosList();
         Task<NhietDoResponse> GetNhietDoBy(string diemDuBaoId);
+
+
+        Task<DuBaohietDoResponse> GetNhietDoByDiemId(string diemDuBaoId);
     }
 }
