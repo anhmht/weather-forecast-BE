@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public class NhietDoTheoNgayResponse
+    public class TemperatureDayResponse
     {
         /// <summary>
         /// 
         /// </summary>
         public DateTime Date { get; set; }
 
-        public List<NhietDoTheoGio> NhietDoTheoGios { get; set; }
+        public List<TemperatureHour> TemperatureHours { get; set; }
     }
 }

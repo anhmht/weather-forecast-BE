@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public class NhietDoTheoThoiGian
+    public class TemperatureTime
     {
         public DateTime ThoiGian { get; set; }
 
