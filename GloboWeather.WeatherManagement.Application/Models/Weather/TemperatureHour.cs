@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public class NhietDoTheoGio
+    public class TemperatureHour
     {
-        public int Gio { get; set; }
+        public int Hour { get; set; }
 
-        public int NhietDo { get; set; }
+        public int Temperature { get; set; }
     }
 }
