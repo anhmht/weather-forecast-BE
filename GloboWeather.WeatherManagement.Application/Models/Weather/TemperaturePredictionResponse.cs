@@ -15,10 +15,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
 
         public List<TemperatureDayResponse> TemperatureDays { get; set; }
 
-        public List<TemperatureTime> TemperatureTimeMins { get; set; }
-
-        public List<TemperatureTime> TemperatureTimeMaxs { get; set; }
-
         public int TemperatureMin { get; set; }
 
         public int TemperatureMax { get; set; }
