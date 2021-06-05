@@ -9,19 +9,18 @@ namespace GloboWeather.WeatherManagement.Monitoring.MonitoringEntities
     public class TramKttv
     {
         public string StationId { get; set; }
-        public string Ten { get; set; }
-        public float Y { get; set; }
-        public float X { get; set; }
-        public string LoaiTram { get; set; }
-        public string CQQuanly { get; set; }
+        public string Name { get; set; }
+        public float Lat { get; set; }
+        public float Lon { get; set; }
+        public string StationType { get; set; }
+        public string CQManagement { get; set; }
 
-        public int MaTinh { get; set; }
+        public int ZipCode { get; set; }
 
-        public string Diachi { get; set; }
+        public string Address { get; set; }
 
         public string Hong { get; set; }
-
-        public string CheDo { get; set; }
+ 
 
     }
 }

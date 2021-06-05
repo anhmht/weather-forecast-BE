@@ -20,14 +20,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             RuleFor(p => p.ImageUrl)
                 .NotEmpty().WithMessage("{PropertyName} is not null")
                 .NotNull();
-            RuleFor(p => p)
-                .MustAsync(EventTitleAndDateUnique)
-                .WithMessage("An Event with the same name and date already exit");
-        }
+          
+            }
 
-        private async Task<bool> EventTitleAndDateUnique(CreateEventCommand e, CancellationToken token)
-        {
-            return !(await _eventRepository.IsEventNameAndDateUnique(e.Title, e.DatePosted));
-        }
+        
     }
 }

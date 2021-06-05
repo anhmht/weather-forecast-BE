@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper.Execution;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Services
 {
@@ -26,13 +27,14 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             try
             {
                 var tmp = await _tramKttvRepository.ListAllAsync();
+              //  return tmp;
             }
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
-            
+
             throw new NotImplementedException();
         }
     }

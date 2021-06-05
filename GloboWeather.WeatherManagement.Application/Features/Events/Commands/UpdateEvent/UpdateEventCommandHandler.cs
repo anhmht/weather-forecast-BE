@@ -52,9 +52,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
                 request.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
                     request.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
             }
-
-            await _imageService.CopyImageToEventPost(request.ImageNormalAdds, request.EventId.ToString(),
+            
+            List<string> imageUrlsAfterUpload =  await _imageService.CopyImageToEventPost(request.ImageNormalAdds, request.EventId.ToString(),
                 Forder.NormalImage);
+            request.Content =
+                ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalAdds, imageUrlsAfterUpload);
+            
             await _imageService.DeleteImagesInPostsContainerByNameAsync(request.EventId.ToString(),
                 imageListUrlsNeedToDelete);
             

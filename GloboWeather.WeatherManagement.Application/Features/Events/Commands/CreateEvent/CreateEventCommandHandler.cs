@@ -40,15 +40,17 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             @event.EventId = Guid.NewGuid();
           
             //UpLoad to Normal Image
-           await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
-            
+           var imageUrlsListAfterUpdate = await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
+           
             //Upload to Feature Image
             @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
                 @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
-           
+            @event.Content = ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalUrls, imageUrlsListAfterUpdate);
+            
             @event = await _eventRepository.AddAsync(@event);
             
             return  @event.EventId;
         }
+
     }
 }

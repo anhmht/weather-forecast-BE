@@ -14,7 +14,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
         public override void Map(EntityTypeBuilder<TramKttv> builder)
         {
             // Primary Key
-            builder.HasKey(t => t.MaTinh);
+            builder.HasKey(t => t.StationId);
             builder.ToTable("TramKttv");
         }
     }

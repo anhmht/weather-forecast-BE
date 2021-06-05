@@ -17,7 +17,6 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     {
         private readonly IWeatherService _weatherService;
 
-
         public DiemDuBaoController(IWeatherService weatherService)
         {
             _weatherService = weatherService;
