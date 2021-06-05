@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{494BC627-FA20-40EA-8048-01A22E049361}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4DD24AB2-8959-4615-88C6-9A85326AA8D0}"
@@ -10,36 +13,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{639A8DC4-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{CFC146FD-C631-4C5A-A97D-2B6139622EB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Application", "GloboWeather.WeatherManagement.Application\GloboWeather.WeatherManagement.Application.csproj", "{494EE425-ADBA-4B52-9BC9-E30306770484}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Application", "GloboWeather.WeatherManagement.Application\GloboWeather.WeatherManagement.Application.csproj", "{494EE425-ADBA-4B52-9BC9-E30306770484}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Domain", "GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj", "{83842DD0-9B12-42C9-80E6-820806603500}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Domain", "GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj", "{83842DD0-9B12-42C9-80E6-820806603500}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Identity", "GloboWeather.WeatherManagement.Identity\GloboWeather.WeatherManagement.Identity.csproj", "{D9ED514A-67FC-4A5A-95B2-00B9E902266C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Identity", "GloboWeather.WeatherManagement.Identity\GloboWeather.WeatherManagement.Identity.csproj", "{D9ED514A-67FC-4A5A-95B2-00B9E902266C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Persistence", "GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj", "{FDBF429C-36B1-4D9B-A6FE-059CE498919E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Persistence", "GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj", "{FDBF429C-36B1-4D9B-A6FE-059CE498919E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Api", "GloboWeather.WeatherManagement.Api\GloboWeather.WeatherManagement.Api.csproj", "{572126A5-ECAF-43E0-80A4-5D3FD96C6558}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Api", "GloboWeather.WeatherManagement.Api\GloboWeather.WeatherManagement.Api.csproj", "{572126A5-ECAF-43E0-80A4-5D3FD96C6558}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Infrastructure", "GloboWeather.WeatherManagement.Infrastructure\GloboWeather.WeatherManagement.Infrastructure.csproj", "{72012E61-F17C-48FD-885B-44AB7D4F7AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Infrastructure", "GloboWeather.WeatherManagement.Infrastructure\GloboWeather.WeatherManagement.Infrastructure.csproj", "{72012E61-F17C-48FD-885B-44AB7D4F7AB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Weather", "GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj", "{B2C00D79-9E67-47BF-8E88-84105F0FDECC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Weather", "GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj", "{B2C00D79-9E67-47BF-8E88-84105F0FDECC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Monitoring", "GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj", "{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{422F0042-8595-47A1-A1A9-D186CC14A756} = {494BC627-FA20-40EA-8048-01A22E049361}
-		{639A8DC4-5CC5-4F65-8802-05B349708F39} = {494BC627-FA20-40EA-8048-01A22E049361}
-		{CFC146FD-C631-4C5A-A97D-2B6139622EB1} = {494BC627-FA20-40EA-8048-01A22E049361}
-		{494EE425-ADBA-4B52-9BC9-E30306770484} = {639A8DC4-5CC5-4F65-8802-05B349708F39}
-		{83842DD0-9B12-42C9-80E6-820806603500} = {639A8DC4-5CC5-4F65-8802-05B349708F39}
-		{D9ED514A-67FC-4A5A-95B2-00B9E902266C} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
-		{FDBF429C-36B1-4D9B-A6FE-059CE498919E} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
-		{572126A5-ECAF-43E0-80A4-5D3FD96C6558} = {422F0042-8595-47A1-A1A9-D186CC14A756}
-		{72012E61-F17C-48FD-885B-44AB7D4F7AB6} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
-		{B2C00D79-9E67-47BF-8E88-84105F0FDECC} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{494EE425-ADBA-4B52-9BC9-E30306770484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -70,5 +63,28 @@ Global
 		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2C00D79-9E67-47BF-8E88-84105F0FDECC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{422F0042-8595-47A1-A1A9-D186CC14A756} = {494BC627-FA20-40EA-8048-01A22E049361}
+		{639A8DC4-5CC5-4F65-8802-05B349708F39} = {494BC627-FA20-40EA-8048-01A22E049361}
+		{CFC146FD-C631-4C5A-A97D-2B6139622EB1} = {494BC627-FA20-40EA-8048-01A22E049361}
+		{494EE425-ADBA-4B52-9BC9-E30306770484} = {639A8DC4-5CC5-4F65-8802-05B349708F39}
+		{83842DD0-9B12-42C9-80E6-820806603500} = {639A8DC4-5CC5-4F65-8802-05B349708F39}
+		{D9ED514A-67FC-4A5A-95B2-00B9E902266C} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{FDBF429C-36B1-4D9B-A6FE-059CE498919E} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{572126A5-ECAF-43E0-80A4-5D3FD96C6558} = {422F0042-8595-47A1-A1A9-D186CC14A756}
+		{72012E61-F17C-48FD-885B-44AB7D4F7AB6} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{B2C00D79-9E67-47BF-8E88-84105F0FDECC} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F90B87E3-CB7A-4CD8-9F3C-593905BBBAA2}
 	EndGlobalSection
 EndGlobal

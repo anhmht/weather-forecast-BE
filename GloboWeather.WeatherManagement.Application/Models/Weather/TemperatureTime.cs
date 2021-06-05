@@ -8,8 +8,8 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
     public class TemperatureTime
     {
-        public DateTime ThoiGian { get; set; }
+        public DateTime DateTime { get; set; }
 
-        public int NhietDo { get; set; }
+        public int Temperature { get; set; }
     }
 }

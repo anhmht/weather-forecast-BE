@@ -86,14 +86,14 @@ namespace GloboWeather.WeatherManagement.Weather.Services
 
                     nhietDoTheoThoiGianMin.Add(new TemperatureTime()
                     {
-                        NhietDo = nhietDoMinTmp,
-                        ThoiGian = currentDate.AddDays(currentDay).Date
+                        Temperature = nhietDoMinTmp,
+                        DateTime = currentDate.AddDays(currentDay).Date
                     });
 
                     nhietDoTheoThoiGianMax.Add(new TemperatureTime()
                     {
-                        NhietDo = nhietDoMaxTmp,
-                        ThoiGian = currentDate.AddDays(currentDay).Date
+                        Temperature = nhietDoMaxTmp,
+                        DateTime = currentDate.AddDays(currentDay).Date
                     });
 
                     // reinnit data
@@ -107,10 +107,10 @@ namespace GloboWeather.WeatherManagement.Weather.Services
                 }
 
             }
-            var nhietDoMin = nhietDoTheoThoiGianMin.Min(x => x.NhietDo);
-            var nhietDoMax = nhietDoTheoThoiGianMax.Max(x => x.NhietDo);
-            duBaohietDoResponse.TemperatureTimeMins = nhietDoTheoThoiGianMin.Where(x => x.NhietDo == nhietDoMin).Distinct().ToList();
-            duBaohietDoResponse.TemperatureTimeMaxs = nhietDoTheoThoiGianMax.Where(x => x.NhietDo == nhietDoMax).Distinct().ToList();
+            var nhietDoMin = nhietDoTheoThoiGianMin.Min(x => x.Temperature);
+            var nhietDoMax = nhietDoTheoThoiGianMax.Max(x => x.Temperature);
+            duBaohietDoResponse.TemperatureTimeMins = nhietDoTheoThoiGianMin.Where(x => x.Temperature == nhietDoMin).Distinct().ToList();
+            duBaohietDoResponse.TemperatureTimeMaxs = nhietDoTheoThoiGianMax.Where(x => x.Temperature == nhietDoMax).Distinct().ToList();
             duBaohietDoResponse.TemperatureDays = listNhietDoTheoNgay;
             duBaohietDoResponse.TemperatureMin = nhietDoMin;
             duBaohietDoResponse.TemperatureMax = nhietDoMax;
