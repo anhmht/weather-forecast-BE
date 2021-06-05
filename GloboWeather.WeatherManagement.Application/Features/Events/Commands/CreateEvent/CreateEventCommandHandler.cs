@@ -38,15 +38,21 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             
             var @event = _mapper.Map<Event>(request);
             @event.EventId = Guid.NewGuid();
-          
-            //UpLoad to Normal Image
-           var imageUrlsListAfterUpdate = await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
+
+            if (request.ImageNormalUrls.Any())
+            {
+                //UpLoad to Normal Image
+                var imageUrlsListAfterUpdate = await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
+                @event.Content = ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalUrls, imageUrlsListAfterUpdate);
+            }
+
+            if (!string.IsNullOrEmpty(request.ImageUrl))
+            {
+                //Upload to Feature Image
+                @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
+                    @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
+            }
            
-            //Upload to Feature Image
-            @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
-                @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
-            @event.Content = ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalUrls, imageUrlsListAfterUpdate);
-            
             @event = await _eventRepository.AddAsync(@event);
             
             return  @event.EventId;

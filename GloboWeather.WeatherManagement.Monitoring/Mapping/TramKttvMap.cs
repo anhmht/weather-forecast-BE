@@ -16,6 +16,28 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
             // Primary Key
             builder.HasKey(t => t.StationId);
             builder.ToTable("TramKttv");
+
+            builder.Property(e => e.Name)
+                .HasColumnName("Ten");
+            builder.Property(e => e.Lat)
+                .HasColumnName("Y");
+            builder.Property(e => e.Lon)
+                .HasColumnName("X");
+            builder.Property(e => e.StationType)
+                .HasColumnName("LoaiTram");
+            builder.Property(e => e.CQManagement)
+                .HasColumnName("CQQuanLy");
+            builder.Property(e => e.ZipCode)
+                .HasColumnName("MaTinh");
+            builder.Property(e => e.Address)
+                .HasColumnName("DiaChi");
+       
+            
+
+
+
+
+
         }
     }
 }

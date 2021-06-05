@@ -24,7 +24,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         
         [HttpGet("get-kttv", Name = "GetTramKttv")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<TramKttvResponse>>> GetNhietDoBy(string diaDuBaoId)
+        public async Task<ActionResult<List<TramKttvResponse>>> GetKTTVList()
         {
             var dtos = await _monitoringService.GetTramKttvList();
             return Ok(dtos);

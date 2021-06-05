@@ -30,7 +30,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         {
             var eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
             var imageListUrlsNeedToDelete = new List<string>();
-            imageListUrlsNeedToDelete.AddRange(request.ImageNormalDeletes);
+           // imageListUrlsNeedToDelete.AddRange(request.ImageNormalDeletes);
             if (eventToUpdate == null)
             {
                 throw new NotFoundException(nameof(Event), request.EventId);
@@ -43,26 +43,33 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
             {
                 throw new ValidationException(validationResult);
             }
-            
-            //await _imageService.CopyImageToEventPost(request.ImageNormalAdd,request.EventId.ToString(), Forder.NormalImage);
-
-            if (string.Compare(request.ImageUrl, eventToUpdate.ImageUrl) != 0)
+            if (string.Compare(request.ImageUrl, eventToUpdate.ImageUrl) != 0 
+                    && !string.IsNullOrEmpty(request.ImageUrl))
             {
                imageListUrlsNeedToDelete.Add(eventToUpdate.ImageUrl);
                 request.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
                     request.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
             }
+
+            if (request.ImageNormalAdds.Any())
+            {
+                List<string> imageUrlsAfterUpload =  await _imageService.CopyImageToEventPost(request.ImageNormalAdds, request.EventId.ToString(),
+                    Forder.NormalImage);
+                request.Content =
+                    ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalAdds, imageUrlsAfterUpload);
+            }
+
+            if (request.ImageNormalDeletes.Any())
+            {
+                imageListUrlsNeedToDelete.AddRange(request.ImageNormalDeletes);
+            }
             
-            List<string> imageUrlsAfterUpload =  await _imageService.CopyImageToEventPost(request.ImageNormalAdds, request.EventId.ToString(),
-                Forder.NormalImage);
-            request.Content =
-                ReplaceContent.ReplaceImageUrls(request.Content, request.ImageNormalAdds, imageUrlsAfterUpload);
-            
-            await _imageService.DeleteImagesInPostsContainerByNameAsync(request.EventId.ToString(),
-                imageListUrlsNeedToDelete);
-            
-            //Upload to Feature Image
-         
+            if (imageListUrlsNeedToDelete.Any() )
+            {
+             
+                await _imageService.DeleteImagesInPostsContainerByNameAsync(request.EventId.ToString(),
+                    imageListUrlsNeedToDelete);
+            }
             _mapper.Map(request, eventToUpdate, typeof(UpdateEventCommand), typeof(Event));
 
             await _eventRepository.UpdateAsync(eventToUpdate);

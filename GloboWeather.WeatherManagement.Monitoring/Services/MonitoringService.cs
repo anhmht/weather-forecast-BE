@@ -16,7 +16,8 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
         private readonly IMapper _mapper;
         private readonly ITramKttvRepository _tramKttvRepository;
 
-        public MonitoringService(IMapper mapper, ITramKttvRepository tramKttvRepository)
+        public MonitoringService(IMapper mapper,
+            ITramKttvRepository tramKttvRepository)
         {
             _mapper = mapper;
             _tramKttvRepository = tramKttvRepository;
@@ -27,15 +28,12 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             try
             {
                 var tmp = await _tramKttvRepository.ListAllAsync();
-              //  return tmp;
+                return _mapper.Map<List<TramKttvResponse>>(tmp);
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
-            throw new NotImplementedException();
         }
     }
 }
