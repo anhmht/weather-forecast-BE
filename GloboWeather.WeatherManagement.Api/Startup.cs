@@ -7,6 +7,7 @@ using GloboWeather.WeatherManagement.Api.Services;
 using GloboWeather.WeatherManagement.Application;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
+using GloboWeather.WeatherManagement.Monitoring;
 using GloboWeather.WeatherManagement.Persistence;
 using GloboWeather.WeatherManagement.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+
 
 namespace GloboWeather.WeatherManagement.Api
 {
@@ -40,6 +42,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddPersistenceServices(Configuration);
             services.AddIdentityServices(Configuration);
             services.AddWeatherService(Configuration);
+            services.AddMonitoringService(Configuration);
 
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddControllers();

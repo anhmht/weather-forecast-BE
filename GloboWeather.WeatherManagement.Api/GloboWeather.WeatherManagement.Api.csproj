@@ -31,6 +31,7 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Infrastructure\GloboWeather.WeatherManagement.Infrastructure.csproj" />
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj" />
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj" />
+	    <ProjectReference Include="..\GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj" />
     </ItemGroup>
 
 </Project>
