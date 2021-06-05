@@ -78,42 +78,32 @@ namespace GloboWeather.WeatherManagement.Weather.Services
                 if ((nextHour.Hour == 23 && i > 1) || i == 120)
                 {
                     nhietDoTheoNgay.TemperatureHours.AddRange(listNhietDoTheoGioTmp);
-                    listNhietDoTheoNgay.Add(nhietDoTheoNgay);
-
                     // calculate temperature min or max
                     var nhietDoMinTmp = listNhietDoTheoGioTmp.Min(x => x.Temperature);
                     var nhietDoMaxTmp = listNhietDoTheoGioTmp.Max(x => x.Temperature);
+                    nhietDoTheoNgay.TemperatureMins.AddRange(listNhietDoTheoGioTmp.Where(x => x.Temperature == nhietDoMinTmp));
+                    nhietDoTheoNgay.TemperatureMaxs.AddRange(listNhietDoTheoGioTmp.Where(x => x.Temperature == nhietDoMaxTmp));
+                    nhietDoTheoNgay.TemperatureMin = nhietDoMinTmp;
+                    nhietDoTheoNgay.TemperatureMax = nhietDoMaxTmp;
 
-                    nhietDoTheoThoiGianMin.Add(new TemperatureTime()
-                    {
-                        Temperature = nhietDoMinTmp,
-                        DateTime = currentDate.AddDays(currentDay).Date
-                    });
-
-                    nhietDoTheoThoiGianMax.Add(new TemperatureTime()
-                    {
-                        Temperature = nhietDoMaxTmp,
-                        DateTime = currentDate.AddDays(currentDay).Date
-                    });
-
+                    listNhietDoTheoNgay.Add(nhietDoTheoNgay);
+                                       
                     // reinnit data
                     currentDay++;
                     nhietDoTheoNgay = new TemperatureDayResponse()
                     {
                         Date = currentDate.AddDays(currentDay),
-                        TemperatureHours = new List<TemperatureHour>()
+                        TemperatureHours = new List<TemperatureHour>(),
+                        TemperatureMaxs = new List<TemperatureHour>(),
+                        TemperatureMins = new List<TemperatureHour>()
                     };
                     listNhietDoTheoGioTmp = new List<TemperatureHour>();
                 }
 
             }
-            var nhietDoMin = nhietDoTheoThoiGianMin.Min(x => x.Temperature);
-            var nhietDoMax = nhietDoTheoThoiGianMax.Max(x => x.Temperature);
-            duBaohietDoResponse.TemperatureTimeMins = nhietDoTheoThoiGianMin.Where(x => x.Temperature == nhietDoMin).Distinct().ToList();
-            duBaohietDoResponse.TemperatureTimeMaxs = nhietDoTheoThoiGianMax.Where(x => x.Temperature == nhietDoMax).Distinct().ToList();
             duBaohietDoResponse.TemperatureDays = listNhietDoTheoNgay;
-            duBaohietDoResponse.TemperatureMin = nhietDoMin;
-            duBaohietDoResponse.TemperatureMax = nhietDoMax;
+            duBaohietDoResponse.TemperatureMin = listNhietDoTheoNgay.Min(x=>x.TemperatureMins.Min(x=>x.Temperature));
+            duBaohietDoResponse.TemperatureMax = listNhietDoTheoNgay.Max(x => x.TemperatureMaxs.Max(x => x.Temperature));
             return duBaohietDoResponse;
         }
     }

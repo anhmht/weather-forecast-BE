@@ -23,16 +23,8 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
 
         public async Task<List<TramKttvResponse>> GetTramKttvList()
         {
-            try
-            {
-                var tmp = await _tramKttvRepository.ListAllAsync();
-            }
-            catch (Exception ex)
-            {
+            var tmp = await _tramKttvRepository.ListAllAsync();
 
-                throw;
-            }
-            
             throw new NotImplementedException();
         }
     }
