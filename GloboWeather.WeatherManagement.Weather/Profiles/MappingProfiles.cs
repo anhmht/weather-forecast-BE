@@ -10,7 +10,12 @@ namespace GloboWeather.WeatherManagement.Weather.Profiles
         public MappingProfiles()
         {
             CreateMap<DiemDuBaoResponse, Diemdubao>().ReverseMap();
-            CreateMap<NhietDoResponse, Nhietdo>().ReverseMap();
+            CreateMap<TemperatureResponse, Nhietdo>().ReverseMap();
+            CreateMap<HumidityResponse, DoAmTB>().ReverseMap();
+            CreateMap<WindLevelResponse, GioGiat>().ReverseMap();
+            CreateMap<WindSpeedResponse, TocDoGio>().ReverseMap();
+            CreateMap<WeatherResponse, ThoiTiet>().ReverseMap();
+            CreateMap<AmountOfRainResponse, AmountOfRain>().ReverseMap();
         }
     }
 }

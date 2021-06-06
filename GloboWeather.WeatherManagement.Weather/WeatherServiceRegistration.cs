@@ -31,12 +31,12 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddScoped<IDiemDuBaoRepository, DiemDuBaoRepository>();
 
 
-            services.AddScoped<INhietDoRepository, NhietDoRepository>();
-            services.AddScoped<IDoAmTBRepository, DoAmTBRepository>();
-            services.AddScoped<IGioGiatRepository, GioGiatRepository>();
+            services.AddScoped<ITemperatureRepository, TemperatureRepository>();
+            services.AddScoped<IHumidityRepository, HumidityRepository>();
+            services.AddScoped<IWindLevelRepository, WindLevelRepository>();
             services.AddScoped<IRainAmountRepository, RainAmountRepository>();
-            services.AddScoped<IThoiTietRepository, ThoiTietRepository>();
-            services.AddScoped<ITocDoGioRepository, TocDoGioRepository>();
+            services.AddScoped<IWeatherRepository, WeatherRepository>();
+            services.AddScoped<IWindSpeedRepository, WindSpeedRepository>();
 
         }
     }

@@ -6,6 +6,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
 {
     public interface ITemperatureService
     {   
-        Task<TemperaturePredictionResponse> GetTemperatureByDiemId(string diemDuBaoId);
+        Task<TemperaturePredictionResponse> GetTemperatureMinMaxByDiemId(string diemDuBaoId);
+        Task<TemperatureResponse> GetTemperatureBy(string diemDuBaoId);
     }
 }

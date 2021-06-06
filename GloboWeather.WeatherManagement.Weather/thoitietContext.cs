@@ -1661,7 +1661,7 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
                     .HasColumnType("int(2)");
             });
 
-            modelBuilder.Entity<RainAmount>(entity =>
+            modelBuilder.Entity<AmountOfRain>(entity =>
             {
                 entity.HasKey(e => e.DiemId)
                     .HasName("PRIMARY");

@@ -13,16 +13,17 @@ namespace GloboWeather.WeatherManagement.Weather.Services
     {
         private readonly IMapper _mapper;
         private readonly IDiemDuBaoRepository _diemDuBaoRepository;
-        private readonly INhietDoRepository _nhietDoRepository;
-        private readonly IThoiTietRepository _thoiTietRepository;
+        private readonly ITemperatureRepository _temperatureRepository;
+        private readonly IWeatherRepository _weatherRepository;
         public WeatherService(IMapper mapper,
             IDiemDuBaoRepository diemDuBaoRepository
-            , INhietDoRepository nhietDoRepository, IThoiTietRepository thoiTietRepository)
+            , ITemperatureRepository temperatureRepository, 
+            IWeatherRepository weatherRepository)
         {
             _mapper = mapper;
             _diemDuBaoRepository = diemDuBaoRepository;
-            _nhietDoRepository = nhietDoRepository;
-            _thoiTietRepository = thoiTietRepository;
+            _temperatureRepository = temperatureRepository;
+            _weatherRepository = weatherRepository;
         }
         public async Task<List<DiemDuBaoResponse>> GetDiemDuBaosList()
         {
@@ -32,21 +33,22 @@ namespace GloboWeather.WeatherManagement.Weather.Services
 
         }
 
-        public async Task<NhietDoResponse> GetNhietDoBy(string diemDuBaoId)
-        {
-            var nhietDoEntity = await _nhietDoRepository.GetByIdAsync(diemDuBaoId);
-            return _mapper.Map<NhietDoResponse>(nhietDoEntity);
-        }
+       
 
+        public async Task<WeatherResponse> GetWeatherBy(string diemDuBaoId)
+        {
+            var weatherEntity = await _weatherRepository.GetByIdAsync(diemDuBaoId);
+            return _mapper.Map<WeatherResponse>(weatherEntity);
+        }
 
         /// <summary>
         /// get list of Weather by DiemId
         /// </summary>
         /// <param name="diemDuBaoId"></param>
         /// <returns></returns>
-        public async Task<WeatherPredictionResponse> GetWeatherByDiemId(string diemDuBaoId)
+        public async Task<WeatherPredictionResponse> GetWeatherMinMaxByDiemId(string diemDuBaoId)
         {
-            var WeatherEntity = await _thoiTietRepository.GetByIdAsync(diemDuBaoId);
+            var WeatherEntity = await _weatherRepository.GetByIdAsync(diemDuBaoId);
 
             var duBaohietDoResponse = new WeatherPredictionResponse();
             if (WeatherEntity == null)

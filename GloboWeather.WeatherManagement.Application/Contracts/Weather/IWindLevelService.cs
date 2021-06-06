@@ -6,6 +6,8 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
 {
     public interface IWindLevelService
     {   
-        Task<WindLevelPredictionResponse> GetWindLevelByDiemId(string diemDuBaoId);
+        Task<WindLevelPredictionResponse> GetWindLevelMinMaxByDiemId(string diemDuBaoId);
+
+        Task<WindLevelResponse> GetWindLevelBy(string diemdubaoId);
     }
 }

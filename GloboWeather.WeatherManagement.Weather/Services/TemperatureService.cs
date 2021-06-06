@@ -12,23 +12,23 @@ namespace GloboWeather.WeatherManagement.Weather.Services
     public class TemperatureService : ITemperatureService
     {
         private readonly IMapper _mapper;
-        private readonly INhietDoRepository _nhietDoRepository;       
+        private readonly ITemperatureRepository _temperatureRepository;       
 
         public TemperatureService(IMapper mapper,
-            INhietDoRepository nhietDoRepository
+            ITemperatureRepository temperatureRepository
             )
         {
             _mapper = mapper;
-            _nhietDoRepository = nhietDoRepository;          
+            _temperatureRepository = temperatureRepository;          
         }     
         /// <summary>
         /// get list of Temperature by DiemId
         /// </summary>
         /// <param name="TemperatureId"></param>
         /// <returns></returns>
-        public async Task<TemperaturePredictionResponse> GetTemperatureByDiemId(string diemId)
+        public async Task<TemperaturePredictionResponse> GetTemperatureMinMaxByDiemId(string diemId)
         {
-            var TemperatureEntity = await _nhietDoRepository.GetByIdAsync(diemId);
+            var TemperatureEntity = await _temperatureRepository.GetByIdAsync(diemId);
 
             var duBaohietDoResponse = new TemperaturePredictionResponse();
             if (TemperatureEntity == null)
@@ -89,6 +89,12 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.TemperatureMin = listTemperatureTheoNgay.Min(x => x.TemperatureMins.Min(x => x.Temperature));
             duBaohietDoResponse.TemperatureMax = listTemperatureTheoNgay.Max(x => x.TemperatureMaxs.Max(x => x.Temperature));
             return duBaohietDoResponse;
+        }
+        
+        public async Task<TemperatureResponse> GetTemperatureBy(string diemDuBaoId)
+        {
+            var nhietDoEntity = await _temperatureRepository.GetByIdAsync(diemDuBaoId);
+            return _mapper.Map<TemperatureResponse>(nhietDoEntity);
         }
       
     }

@@ -4,7 +4,7 @@ using GloboWeather.WeatherManagement.Weather.weathercontext;
 
 namespace GloboWeather.WeatherManagement.Weather.IRepository
 {
-    public interface IGioGiatRepository : IAsyncRepository<GioGiat>
+    public interface IWindSpeedRepository : IAsyncRepository<TocDoGio>
     {
         
     }

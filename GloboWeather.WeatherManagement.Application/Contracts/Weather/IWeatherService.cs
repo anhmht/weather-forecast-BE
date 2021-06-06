@@ -7,8 +7,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
     public interface IWeatherService
     {
         Task<List<DiemDuBaoResponse>> GetDiemDuBaosList();
-        Task<NhietDoResponse> GetNhietDoBy(string diemDuBaoId);      
-
-        Task<WeatherPredictionResponse> GetWeatherByDiemId(string diemDuBaoId);
+        Task<WeatherPredictionResponse> GetWeatherMinMaxByDiemId(string diemDuBaoId);
+        Task<WeatherResponse> GetWeatherBy(string diemDuBaoId);
     }
 }

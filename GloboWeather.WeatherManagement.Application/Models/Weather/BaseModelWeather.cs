@@ -2,7 +2,7 @@ using System;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public class NhietDoResponse
+    public class BaseModelWeather
     {
         public string DiemId { get; set; }
         public DateTime RefDate { get; set; }

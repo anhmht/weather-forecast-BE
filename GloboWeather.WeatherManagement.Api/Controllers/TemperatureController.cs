@@ -11,31 +11,31 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NhietDoController : ControllerBase
+    public class TemperatureController : ControllerBase
     {
         private readonly IWeatherService _weatherService;
 
         private readonly ITemperatureService _temperatureService;
 
-        public NhietDoController(IWeatherService weatherService, ITemperatureService temperatureService)
+        public TemperatureController(IWeatherService weatherService, ITemperatureService temperatureService)
         {
             _weatherService = weatherService;
             _temperatureService = temperatureService;
         }
 
-        [HttpGet("get-nhiet-do", Name = "GetNhietDo")]
+        [HttpGet("get-temperature", Name = "GetTemperature")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<NhietDoResponse>> GetNhietDoBy(string diaDuBaoId)
+        public async Task<ActionResult<TemperatureResponse>> GetTemperatureBy(string diemDuBaoId)
         {
-            var dtos = await _weatherService.GetNhietDoBy(diemDuBaoId: diaDuBaoId);
+            var dtos = await _temperatureService.GetTemperatureBy(diemDuBaoId: diemDuBaoId);
             return Ok(dtos);
         }
 
-        [HttpGet("get-du-bao-nhiet-do", Name = "GetDuBaoNhietDo")]
+        [HttpGet("get-min-max-temperature", Name = "GetMinMaxTemperature")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<TemperaturePredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
+        public async Task<ActionResult<TemperaturePredictionResponse>> GetMinMaxTemperature(string diemDuBaoId)
         {
-            var dtos = await _temperatureService.GetTemperatureByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _temperatureService.GetTemperatureMinMaxByDiemId(diemDuBaoId: diemDuBaoId);
             return Ok(dtos);
         }
     }
