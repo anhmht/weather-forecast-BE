@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace GloboWeather.WeatherManagement.Weather.weathercontext
 {
-    public partial class Nhietdo: WeatherBase
+    public partial class TocDoGio: WeatherBase
     {
+       
     }
 }

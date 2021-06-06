@@ -5,6 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Services\WeatherService.cs~RF2deb19a.TMP" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

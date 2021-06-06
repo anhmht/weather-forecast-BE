@@ -11,5 +11,13 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
 
 
         Task<TemperaturePredictionResponse> GetNhietDoByDiemId(string diemDuBaoId);
+
+        Task<WindSpeedPredictionResponse> GetWindSpeedByDiemId(string diemDuBaoId);
+
+        Task<HumidityPredictionResponse> GetHumidityByDiemId(string diemDuBaoId);
+
+        Task<RainAmountPredictionResponse> GetRainAmountByDiemId(string diemDuBaoId);
+
+        Task<WindLevelPredictionResponse> GetWindLevelByDiemId(string diemDuBaoId);
     }
 }
