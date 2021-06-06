@@ -14,7 +14,7 @@ namespace GloboWeather.WeatherManagement.Weather.Repositories
 
         public async Task<Nhietdo> GetByIdAndDateAsync(string id, DateTime refDate)
         {
-            return await _dbContext.Nhietdo.FirstOrDefaultAsync(n => n.DiemId == id && n.RefDate == refDate);
+            return await _dbContext.Set<Nhietdo>().FirstOrDefaultAsync(n => n.DiemId == id && n.RefDate == refDate);
         }
     }
 }

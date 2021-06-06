@@ -21,4 +21,8 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Contracts\WindSpeed\" />
+    </ItemGroup>
+
 </Project>
