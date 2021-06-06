@@ -19,16 +19,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             _weatherService = weatherService;
         }
-     
-        [HttpGet("get-min-max-weather", Name = "GetMinMaxWeather")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WeatherPredictionResponse>> GetMinMaxWeatherByDiemId(string diemDuBaoId)
-        {
-            var dtos = await _weatherService.GetWeatherMinMaxByDiemId(diemDuBaoId: diemDuBaoId);
-            return Ok(dtos);
-        }
-        
-        
+      
         [HttpGet("get-weather", Name = "GetWeather")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<WeatherResponse>> GetWeatherBy(string diemDuBaoId)
