@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Weather.Repositories
 {
-    public class TocDoGioRepositoty : BaseRepository<TocDoGio>, ITocDoGioRepository
+    public class GioGiatRepository : BaseRepository<GioGiat>, IGioGiatRepository
     {
-        public TocDoGioRepositoty(thoitietContext dbContext) : base(dbContext)
+        public GioGiatRepository(thoitietContext dbContext) : base(dbContext)
         {
         }
      

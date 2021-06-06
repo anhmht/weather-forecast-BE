@@ -13,11 +13,11 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
         /// </summary>
         public DateTime Date { get; set; }
 
-        public List<TemperatureHour> TemperatureHours { get; set; }
+        public List<TemperatureByHour> TemperatureByHours { get; set; }
 
-        public List<TemperatureHour> TemperatureMins { get; set; }
+        public List<TemperatureByHour> TemperatureMins { get; set; }
 
-        public List<TemperatureHour> TemperatureMaxs { get; set; }
+        public List<TemperatureByHour> TemperatureMaxs { get; set; }
 
         public int TemperatureMin { get; set; }
 
@@ -25,9 +25,9 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
 
         public TemperatureDayResponse()
         {
-            TemperatureHours = new List<TemperatureHour>();
-            TemperatureMins = new List<TemperatureHour>();
-            TemperatureMaxs = new List<TemperatureHour>();
+            TemperatureByHours = new List<TemperatureByHour>();
+            TemperatureMins = new List<TemperatureByHour>();
+            TemperatureMaxs = new List<TemperatureByHour>();
         }
     }
 }
