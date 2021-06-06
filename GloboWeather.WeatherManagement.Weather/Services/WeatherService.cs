@@ -388,5 +388,75 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.WindLevelMax = listWindLevelTheoNgay.Max(x => x.WindLevelMaxs.Max(x => x.WindLevel));
             return duBaohietDoResponse;
         }
+
+        /// <summary>
+        /// get list of Weather by DiemId
+        /// </summary>
+        /// <param name="diemDuBaoId"></param>
+        /// <returns></returns>
+        public async Task<WeatherPredictionResponse> GetWeatherByDiemId(string diemDuBaoId)
+        {
+            var WeatherEntity = await _nhietDoRepository.GetByIdAsync(diemDuBaoId);
+
+            var duBaohietDoResponse = new WeatherPredictionResponse();
+            if (WeatherEntity == null)
+                return new WeatherPredictionResponse();
+
+            duBaohietDoResponse.DiemId = diemDuBaoId;
+
+            var currentDate = WeatherEntity.RefDate;
+            var listWeatherTheoNgay = new List<WeatherDayResponse>();
+            var WeatherTheoNgay = new WeatherDayResponse()
+            {
+                Date = currentDate,
+                WeatherByHours = new List<WeatherHour>()
+            };
+
+            var listWeatherTheoGioTmp = new List<WeatherHour>();
+            int currentDay = 0;
+            var WeatherTheoThoiGianMin = new List<WeatherTime>();
+            var WeatherTheoThoiGianMax = new List<WeatherTime>();
+            for (int i = 1; i < 121; i++)
+            {
+                var nextHour = currentDate.AddHours(i);
+                var Weather = WeatherEntity.GetType().GetProperty($"_{i}").GetValue(WeatherEntity, null);
+                var WeatherTheoGio = new WeatherHour()
+                {
+                    Hour = nextHour.Hour,
+                    Weather = (int)Weather
+                };
+                listWeatherTheoGioTmp.Add(WeatherTheoGio);
+
+                if ((nextHour.Hour == 23 && i > 1) || i == 120)
+                {
+                    WeatherTheoNgay.WeatherByHours.AddRange(listWeatherTheoGioTmp);
+                    // calculate Weather min or max
+                    var WeatherMinTmp = listWeatherTheoGioTmp.Min(x => x.Weather);
+                    var WeatherMaxTmp = listWeatherTheoGioTmp.Max(x => x.Weather);
+                    WeatherTheoNgay.WeatherMins.AddRange(listWeatherTheoGioTmp.Where(x => x.Weather == WeatherMinTmp));
+                    WeatherTheoNgay.WeatherMaxs.AddRange(listWeatherTheoGioTmp.Where(x => x.Weather == WeatherMaxTmp));
+                    WeatherTheoNgay.WeatherMin = WeatherMinTmp;
+                    WeatherTheoNgay.WeatherMax = WeatherMaxTmp;
+
+                    listWeatherTheoNgay.Add(WeatherTheoNgay);
+
+                    // reinnit data
+                    currentDay++;
+                    WeatherTheoNgay = new WeatherDayResponse()
+                    {
+                        Date = currentDate.AddDays(currentDay),
+                        WeatherByHours = new List<WeatherHour>(),
+                        WeatherMaxs = new List<WeatherHour>(),
+                        WeatherMins = new List<WeatherHour>()
+                    };
+                    listWeatherTheoGioTmp = new List<WeatherHour>();
+                }
+
+            }
+            duBaohietDoResponse.WeatherByDays = listWeatherTheoNgay;
+            duBaohietDoResponse.WeatherMin = listWeatherTheoNgay.Min(x => x.WeatherMins.Min(x => x.Weather));
+            duBaohietDoResponse.WeatherMax = listWeatherTheoNgay.Max(x => x.WeatherMaxs.Max(x => x.Weather));
+            return duBaohietDoResponse;
+        }
     }
 }

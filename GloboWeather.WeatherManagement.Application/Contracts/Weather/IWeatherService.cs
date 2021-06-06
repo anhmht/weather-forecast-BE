@@ -19,5 +19,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
         Task<RainAmountPredictionResponse> GetRainAmountByDiemId(string diemDuBaoId);
 
         Task<WindLevelPredictionResponse> GetWindLevelByDiemId(string diemDuBaoId);
+
+        Task<WeatherPredictionResponse> GetWeatherByDiemId(string diemDuBaoId);
     }
 }
