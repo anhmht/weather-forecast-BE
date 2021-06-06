@@ -13,18 +13,18 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     [ApiController]
     public class LuongMuaController : ControllerBase
     {
-        private readonly IWeatherService _weatherService;
+        private readonly IRainAmountService _rainAmountService;
 
-        public LuongMuaController(IWeatherService weatherService)
+        public LuongMuaController(IRainAmountService rainAmountService)
         {
-            _weatherService = weatherService;
+            _rainAmountService = rainAmountService;
         }
-     
+
         [HttpGet("get-du-bao-luong-mua", Name = "GetDuBaoLuongMua")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<RainAmountPredictionResponse>> GetLuongMuaByDay(string diaDuBaoId)
         {
-            var dtos = await _weatherService.GetRainAmountByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _rainAmountService.GetRainAmountByDiemId(diemDuBaoId: diaDuBaoId);
             return Ok(dtos);
         }
     }

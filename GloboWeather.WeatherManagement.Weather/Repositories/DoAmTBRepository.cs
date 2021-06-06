@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Weather.Repositories
 {
-    public class DoAmTBRepositoty : BaseRepository<DoAmTB>, IDoAmTBRepository
+    public class DoAmTBRepository : BaseRepository<DoAmTB>, IDoAmTBRepository
     {
-        public DoAmTBRepositoty(thoitietContext dbContext) : base(dbContext)
+        public DoAmTBRepository(thoitietContext dbContext) : base(dbContext)
         {
         }
      

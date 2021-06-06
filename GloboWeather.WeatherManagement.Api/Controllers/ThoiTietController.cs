@@ -22,7 +22,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
      
         [HttpGet("get-du-bao-thoi-tiet", Name = "GetDuBaoThoiTiet")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WindSpeedPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
+        public async Task<ActionResult<WeatherPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
         {
             var dtos = await _weatherService.GetWeatherByDiemId(diemDuBaoId: diaDuBaoId);
             return Ok(dtos);

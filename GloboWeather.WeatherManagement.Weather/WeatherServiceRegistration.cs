@@ -18,11 +18,25 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddDbContext<thoitietContext>(options => options.UseMySQL(configuration.GetConnectionString("GloboWeatherManagementConnectionString"),
                 b => b.MigrationsAssembly(typeof(thoitietContext).Assembly.FullName)));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            // weather
             services.AddTransient<IWeatherService, WeatherService>();
+            services.AddTransient<IHumidityService, HumidityService>();
+            services.AddTransient<IRainAmountService, RainAmountService>();
+            services.AddTransient<ITemperatureService, TemperatureService>();
+            services.AddTransient<IWindLevelService, WindLevelService>();
+            services.AddTransient<IWindSpeedService, WindSpeedService>();
+
             services.AddTransient(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IDiemDuBaoRepository, DiemDuBaoRepository>();
-            services.AddScoped<INhietDoRepository, NhietDoRepositoty>();
 
+
+            services.AddScoped<INhietDoRepository, NhietDoRepository>();
+            services.AddScoped<IDoAmTBRepository, DoAmTBRepository>();
+            services.AddScoped<IGioGiatRepository, GioGiatRepository>();
+            services.AddScoped<IRainAmountRepository, RainAmountRepository>();
+            services.AddScoped<IThoiTietRepository, ThoiTietRepository>();
+            services.AddScoped<ITocDoGioRepository, TocDoGioRepository>();
 
         }
     }

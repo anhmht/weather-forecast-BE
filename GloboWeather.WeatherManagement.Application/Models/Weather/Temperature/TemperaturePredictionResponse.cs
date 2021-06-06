@@ -13,7 +13,7 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
     {
         public string DiemId { get; set; }
 
-        public List<TemperatureDayResponse> TemperatureDays { get; set; }
+        public List<TemperatureDayResponse> TemperatureByDays { get; set; }
 
         public int TemperatureMin { get; set; }
 

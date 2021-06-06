@@ -13,10 +13,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
     {
         public string DiemId { get; set; }
 
-        public List<WeatherDayResponse> WeatherByDays { get; set; }
-
-        public int WeatherMin { get; set; }
-
-        public int WeatherMax { get; set; }
+        public List<WeatherDayResponse> WeatherByDays { get; set; }    
     }
 }

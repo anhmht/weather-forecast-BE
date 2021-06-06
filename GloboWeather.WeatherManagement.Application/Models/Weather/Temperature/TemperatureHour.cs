@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public class TemperatureHour
+    public class TemperatureByHour
     {
         public int Hour { get; set; }
 

@@ -13,18 +13,18 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     [ApiController]
     public class GioGiatController : ControllerBase
     {
-        private readonly IWeatherService _weatherService;
+        private readonly IWindLevelService _windLevelService;
 
-        public GioGiatController(IWeatherService weatherService)
+        public GioGiatController(IWindLevelService windLevelService)
         {
-            _weatherService = weatherService;
+            _windLevelService = windLevelService;
         }
      
         [HttpGet("get-du-bao-gio-giat", Name = "GetDuBaoGioGiat")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WindSpeedPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
+        public async Task<ActionResult<WindLevelPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
         {
-            var dtos = await _weatherService.GetWindLevelByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _windLevelService.GetWindLevelByDiemId(diemDuBaoId: diaDuBaoId);
             return Ok(dtos);
         }
     }

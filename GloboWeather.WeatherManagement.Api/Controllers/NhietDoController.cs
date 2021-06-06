@@ -15,11 +15,14 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     {
         private readonly IWeatherService _weatherService;
 
-        public NhietDoController(IWeatherService weatherService)
+        private readonly ITemperatureService _temperatureService;
+
+        public NhietDoController(IWeatherService weatherService, ITemperatureService temperatureService)
         {
             _weatherService = weatherService;
+            _temperatureService = temperatureService;
         }
-        
+
         [HttpGet("get-nhiet-do", Name = "GetNhietDo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<NhietDoResponse>> GetNhietDoBy(string diaDuBaoId)
@@ -32,7 +35,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TemperaturePredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
         {
-            var dtos = await _weatherService.GetNhietDoByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _temperatureService.GetTemperatureByDiemId(diemDuBaoId: diaDuBaoId);
             return Ok(dtos);
         }
     }

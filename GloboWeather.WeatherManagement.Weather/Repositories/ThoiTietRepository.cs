@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Weather.Repositories
 {
-    public class RainAmountRepositoty : BaseRepository<RainAmount>, IRainAmountRepository
+    public class ThoiTietRepository : BaseRepository<ThoiTiet>, IThoiTietRepository
     {
-        public RainAmountRepositoty(thoitietContext dbContext) : base(dbContext)
+        public ThoiTietRepository(thoitietContext dbContext) : base(dbContext)
         {
         }
 

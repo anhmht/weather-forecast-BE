@@ -13,18 +13,18 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     [ApiController]
     public class TocDoGioController : ControllerBase
     {
-        private readonly IWeatherService _weatherService;
+        private readonly IWindSpeedService _windSpeedService;
 
-        public TocDoGioController(IWeatherService weatherService)
+        public TocDoGioController(IWindSpeedService windSpeedService)
         {
-            _weatherService = weatherService;
+            _windSpeedService = windSpeedService;
         }
-     
+
         [HttpGet("get-du-bao-toc-do-gio", Name = "GetDuBaoTocDoGio")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<WindSpeedPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
         {
-            var dtos = await _weatherService.GetWindSpeedByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _windSpeedService.GetWindSpeedByDiemId(diemDuBaoId: diaDuBaoId);
             return Ok(dtos);
         }
     }
