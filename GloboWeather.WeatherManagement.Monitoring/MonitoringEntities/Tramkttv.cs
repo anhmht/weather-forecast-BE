@@ -14,9 +14,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.MonitoringEntities
         public float Lon { get; set; }
         public string StationType { get; set; }
         public string CQManagement { get; set; }
-
         public int ZipCode { get; set; }
-
         public string Address { get; set; }
 
         public string Hong { get; set; }

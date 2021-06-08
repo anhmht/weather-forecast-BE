@@ -25,7 +25,8 @@ namespace GloboWeather.WeatherManagement.Monitoring
             services.AddTransient<IMonitoringService, MonitoringService>();
             services.AddTransient(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<ITramKttvRepository, TramKttvRepository>();
-          
+            services.AddScoped<IRainRepository, RainRepository>();
+
         }
     }
 }
