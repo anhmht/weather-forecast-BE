@@ -11,12 +11,10 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
 {
     public class RainRepository : BaseRepository<Rain>, IRainRepository
     {
-        private readonly IMapper _mapper;
-
-        public RainRepository(IMapper mapper,
+        public RainRepository(
             MonitoringContext dbContext) : base(dbContext)
         {
-            _mapper = mapper;
+           
         }
 
         public async Task<List<GetRainResponse>> GetRainQuanlityAsync()
