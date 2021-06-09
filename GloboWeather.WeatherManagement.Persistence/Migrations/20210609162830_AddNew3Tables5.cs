@@ -8,11 +8,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "PositionId",
-                table: "WeatherInfomations");
+                table: "WeatherInformations");
 
             migrationBuilder.AddColumn<string>(
                 name: "StationId",
-                table: "WeatherInfomations",
+                table: "WeatherInformations",
                 nullable: false,
                 defaultValue: "");
         }
@@ -21,11 +21,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "StationId",
-                table: "WeatherInfomations");
+                table: "WeatherInformations");
 
             migrationBuilder.AddColumn<string>(
                 name: "PositionId",
-                table: "WeatherInfomations",
+                table: "WeatherInformations",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");

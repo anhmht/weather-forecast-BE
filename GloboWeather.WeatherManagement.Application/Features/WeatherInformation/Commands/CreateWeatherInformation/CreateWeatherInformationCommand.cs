@@ -1,9 +1,9 @@
 using System;
 using MediatR;
 
-namespace GloboWeather.WeatherManagement.Application.Features.WeatherInfomations.Commands.CreateWeatherInfomation
+namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.CreateWeatherInformation
 {
-    public class CreateWeatherInfomationCommand : IRequest<Guid>
+    public class CreateWeatherInformationCommand : IRequest<Guid>
     {
         public string StationId { get; set; }
         public DateTime RefDate { get; set; }

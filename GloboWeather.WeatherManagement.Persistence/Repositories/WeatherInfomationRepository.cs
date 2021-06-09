@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
-    public class WeatherInfomationRepository: BaseRepository<WeatherInfomation>, IWeatherInfomationRepository
+    public class WeatherInformationRepository: BaseRepository<WeatherInformation>, IWeatherInformationRepository
     {
-        public WeatherInfomationRepository(GloboWeatherDbContext dbContext) : base(dbContext)
+        public WeatherInformationRepository(GloboWeatherDbContext dbContext) : base(dbContext)
         {
         }
 
-        public async Task<bool> SaveAsync(List<WeatherInfomation> weatherInfomations)
+        public async Task<bool> SaveAsync(List<WeatherInformation> WeatherInformations)
         {
             return true;
         }

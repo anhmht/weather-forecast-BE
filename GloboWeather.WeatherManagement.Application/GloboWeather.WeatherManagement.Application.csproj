@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommand.cs" />
-      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommandHandler.cs" />
-      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommandValidator.cs" />
+      <Compile Remove="Features\WeatherInformation\Commands\CreateWeatherInformation\CreateWeatherInformationCommand.cs" />
+      <Compile Remove="Features\WeatherInformation\Commands\CreateWeatherInformation\CreateWeatherInformationCommandHandler.cs" />
+      <Compile Remove="Features\WeatherInformation\Commands\CreateWeatherInformation\CreateWeatherInformationCommandValidator.cs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\WeatherInfomation\Commands\CreateWeatherInfomation\" />
+      <Folder Include="Features\WeatherInformation\Commands\CreateWeatherInformation\" />
     </ItemGroup>
 
 </Project>
