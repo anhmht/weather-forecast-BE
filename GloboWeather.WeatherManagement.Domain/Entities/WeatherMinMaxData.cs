@@ -12,6 +12,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
     {
         public Guid Id { get; set; }
 
+        public string DiemId { get; set; }
         public int Type { get; set; }
 
         public DateTime RefDate { get; set; }
