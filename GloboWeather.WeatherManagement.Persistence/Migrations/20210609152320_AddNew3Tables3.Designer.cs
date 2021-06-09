@@ -4,37 +4,22 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210609152320_AddNew3Tables3")]
+    partial class AddNew3Tables3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.BackgroundServiceTracking", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("LastDownload")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("BackgroundServiceTrackings");
-                });
 
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Category", b =>
                 {
@@ -107,41 +92,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Station", b =>
-                {
-                    b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float>("GoogleX")
-                        .HasColumnType("real");
-
-                    b.Property<float>("GoogleY")
-                        .HasColumnType("real");
-
-                    b.Property<bool>("IsSystem")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Locations");
-                });
-
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Status", b =>
                 {
                     b.Property<Guid>("StatusId")
@@ -192,57 +142,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Private"
                         });
-                });
-
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.WeatherInfomation", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Humidity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RainAmount")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StationId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Temperature")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Weather")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WindDirection")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WindLevel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WindSpeed")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("WeatherInfomations");
                 });
 
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.WeatherMinMaxData", b =>

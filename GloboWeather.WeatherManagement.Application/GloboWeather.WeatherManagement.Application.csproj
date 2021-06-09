@@ -6,6 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommand.cs" />
+      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommandHandler.cs" />
+      <Compile Remove="Features\WeatherInfomation\Commands\CreateWeatherInfomation\CreateWeatherInfomationCommandValidator.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
         <PackageReference Include="FluentValidation" Version="9.2.2" />
@@ -19,6 +25,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\WeatherInfomation\Commands\CreateWeatherInfomation\" />
     </ItemGroup>
 
 </Project>

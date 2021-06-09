@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210609152005_AddNew3Tables2")]
+    partial class AddNew3Tables2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,7 +109,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Station", b =>
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Location", b =>
                 {
                     b.Property<string>("ID")
                         .HasColumnType("nvarchar(450)");
@@ -215,15 +217,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PositionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RainAmount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RefDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("StationId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Temperature")
                         .HasColumnType("nvarchar(max)");

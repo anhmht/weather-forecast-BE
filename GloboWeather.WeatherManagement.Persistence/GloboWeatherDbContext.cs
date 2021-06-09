@@ -36,7 +36,10 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<Category> Categories { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<WeatherMinMaxData> WeatherMinMaxDatas { get; set; }
-        
+        public DbSet<Station> Locations { get; set; }
+        public DbSet<BackgroundServiceTracking> BackgroundServiceTrackings { get; set; }
+        public DbSet<WeatherInfomation> WeatherInfomations { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
