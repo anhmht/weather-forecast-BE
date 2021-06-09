@@ -12,10 +12,10 @@ namespace GloboWeather.WeatherManagement.Weather.Services
     public class WindSpeedService : IWindSpeedService
     {
         private readonly IMapper _mapper;
-        private readonly ITocDoGioRepository _windSpeedRepository;       
+        private readonly IWindSpeedRepository _windSpeedRepository;       
 
         public WindSpeedService(IMapper mapper,
-            ITocDoGioRepository windSpeedRepository
+            IWindSpeedRepository windSpeedRepository
             )
         {
             _mapper = mapper;
@@ -26,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Weather.Services
         /// </summary>
         /// <param name="WindSpeedId"></param>
         /// <returns></returns>
-        public async Task<WindSpeedPredictionResponse> GetWindSpeedByDiemId(string diemId)
+        public async Task<WindSpeedPredictionResponse> GetWindSpeedMinMaxByDiemId(string diemId)
         {
             var WindSpeedEntity = await _windSpeedRepository.GetByIdAsync(diemId);
 
@@ -89,6 +89,13 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.WindSpeedMin = listWindSpeedTheoNgay.Min(x => x.WindSpeedMins.Min(x => x.WindSpeed));
             duBaohietDoResponse.WindSpeedMax = listWindSpeedTheoNgay.Max(x => x.WindSpeedMaxs.Max(x => x.WindSpeed));
             return duBaohietDoResponse;
+        }
+
+        public async Task<WindSpeedResponse> GetWindSpeedBy(string diemdubaoId)
+        {
+            var windSpeedEntity = await _windSpeedRepository.GetByIdAsync(diemdubaoId);
+
+            return _mapper.Map<WindSpeedResponse>(windSpeedEntity);
         }
       
     }

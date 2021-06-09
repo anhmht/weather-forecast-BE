@@ -1661,7 +1661,7 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
                     .HasColumnType("int(2)");
             });
 
-            modelBuilder.Entity<RainAmount>(entity =>
+            modelBuilder.Entity<AmountOfRain>(entity =>
             {
                 entity.HasKey(e => e.DiemId)
                     .HasName("PRIMARY");
@@ -2668,364 +2668,486 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
                     .HasColumnName("RefDate");
 
                 entity.Property(e => e._1)
-                    .HasColumnName("1");
+                    .HasColumnName("1")
+                    .HasColumnType("varchar(10)");
+                
 
                 entity.Property(e => e._10)
-                    .HasColumnName("10");
+                    .HasColumnName("10")
+                    .HasColumnType("varchar(10)");
+
 
                 entity.Property(e => e._100)
-                    .HasColumnName("100");
+                    .HasColumnName("100")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._101)
-                    .HasColumnName("101");
+                    .HasColumnName("101")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._102)
-                    .HasColumnName("102");
+                    .HasColumnName("102")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._103)
-                    .HasColumnName("103");
+                    .HasColumnName("103")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._104)
-                    .HasColumnName("104");
+                    .HasColumnName("104")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._105)
-                    .HasColumnName("105");
+                    .HasColumnName("105")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._106)
-                    .HasColumnName("106");
+                    .HasColumnName("106")
+                    .HasColumnType("varchar");
 
                 entity.Property(e => e._107)
-                    .HasColumnName("107");
+                    .HasColumnName("107")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._108)
-                    .HasColumnName("108");
+                    .HasColumnName("108")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._109)
-                    .HasColumnName("109");
+                    .HasColumnName("109")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._11)
-                    .HasColumnName("11");
+                    .HasColumnName("11")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._110)
-                    .HasColumnName("110");
+                    .HasColumnName("110")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._111)
-                    .HasColumnName("111");
+                    .HasColumnName("111")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._112)
-                    .HasColumnName("112");
+                    .HasColumnName("112")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._113)
-                    .HasColumnName("113");
+                    .HasColumnName("113")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._114)
-                    .HasColumnName("114");
+                    .HasColumnName("114")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._115)
-                    .HasColumnName("115");
+                    .HasColumnName("115")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._116)
-                    .HasColumnName("116");
+                    .HasColumnName("116")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._117)
-                    .HasColumnName("117");
+                    .HasColumnName("117")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._118)
-                    .HasColumnName("118");
+                    .HasColumnName("118")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._119)
-                    .HasColumnName("119");
+                    .HasColumnName("119")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._12)
-                    .HasColumnName("12");
+                    .HasColumnName("12")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._120)
-                    .HasColumnName("120");
+                    .HasColumnName("120")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._13)
-                    .HasColumnName("13");
+                    .HasColumnName("13")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._14)
-                    .HasColumnName("14");
+                    .HasColumnName("14")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._15)
-                    .HasColumnName("15");
+                    .HasColumnName("15")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._16)
-                    .HasColumnName("16");
+                    .HasColumnName("16")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._17)
-                    .HasColumnName("17");
+                    .HasColumnName("17")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._18)
-                    .HasColumnName("18");
+                    .HasColumnName("18")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._19)
-                    .HasColumnName("19");
+                    .HasColumnName("19")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._2)
-                    .HasColumnName("2");
+                    .HasColumnName("2")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._20)
-                    .HasColumnName("20");
+                    .HasColumnName("20")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._21)
-                    .HasColumnName("21");
+                    .HasColumnName("21")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._22)
-                    .HasColumnName("22");
+                    .HasColumnName("22")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._23)
-                    .HasColumnName("23");
+                    .HasColumnName("23")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._24)
-                    .HasColumnName("24");
+                    .HasColumnName("24")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._25)
-                    .HasColumnName("25");
+                    .HasColumnName("25")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._26)
-                    .HasColumnName("26");
+                    .HasColumnName("26")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._27)
-                    .HasColumnName("27");
+                    .HasColumnName("27")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._28)
-                    .HasColumnName("28");
+                    .HasColumnName("28")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._29)
-                    .HasColumnName("29");
+                    .HasColumnName("29")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._3)
-                    .HasColumnName("3");
+                    .HasColumnName("3")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._30)
-                    .HasColumnName("30");
+                    .HasColumnName("30")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._31)
-                    .HasColumnName("31");
+                    .HasColumnName("31")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._32)
-                    .HasColumnName("32");
+                    .HasColumnName("32")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._33)
-                    .HasColumnName("33");
+                    .HasColumnName("33")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._34)
-                    .HasColumnName("34");
+                    .HasColumnName("34")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._35)
-                    .HasColumnName("35");
+                    .HasColumnName("35")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._36)
-                    .HasColumnName("36");
+                    .HasColumnName("36")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._37)
-                    .HasColumnName("37");
+                    .HasColumnName("37")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._38)
-                    .HasColumnName("38");
+                    .HasColumnName("38")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._39)
-                    .HasColumnName("39");
+                    .HasColumnName("39")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._4)
-                    .HasColumnName("4");
+                    .HasColumnName("4")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._40)
-                    .HasColumnName("40");
+                    .HasColumnName("40")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._41)
-                    .HasColumnName("41");
+                    .HasColumnName("41")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._42)
-                    .HasColumnName("42");
+                    .HasColumnName("42")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._43)
-                    .HasColumnName("43");
+                    .HasColumnName("43")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._44)
-                    .HasColumnName("44");
+                    .HasColumnName("44")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._45)
-                    .HasColumnName("45");
+                    .HasColumnName("45")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._46)
-                    .HasColumnName("46");
+                    .HasColumnName("46")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._47)
-                    .HasColumnName("47");
+                    .HasColumnName("47")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._48)
-                    .HasColumnName("48");
+                    .HasColumnName("48")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._49)
-                    .HasColumnName("49");
+                    .HasColumnName("49")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._5)
-                    .HasColumnName("5");
+                    .HasColumnName("5")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._50)
-                    .HasColumnName("50");
+                    .HasColumnName("50")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._51)
-                    .HasColumnName("51");
+                    .HasColumnName("51")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._52)
-                    .HasColumnName("52");
+                    .HasColumnName("52")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._53)
-                    .HasColumnName("53");
+                    .HasColumnName("53")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._54)
-                    .HasColumnName("54");
+                    .HasColumnName("54")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._55)
-                    .HasColumnName("55");
+                    .HasColumnName("55")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._56)
-                    .HasColumnName("56");
+                    .HasColumnName("56")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._57)
-                    .HasColumnName("57");
+                    .HasColumnName("57")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._58)
-                    .HasColumnName("58");
+                    .HasColumnName("58")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._59)
-                    .HasColumnName("59");
+                    .HasColumnName("59")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._6)
-                    .HasColumnName("6");
+                    .HasColumnName("6")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._60)
-                    .HasColumnName("60");
+                    .HasColumnName("60")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._61)
-                    .HasColumnName("61");
+                    .HasColumnName("61")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._62)
-                    .HasColumnName("62");
+                    .HasColumnName("62")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._63)
-                    .HasColumnName("63");
+                    .HasColumnName("63")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._64)
-                    .HasColumnName("64");
+                    .HasColumnName("64")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._65)
-                    .HasColumnName("65");
+                    .HasColumnName("65")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._66)
-                    .HasColumnName("66");
+                    .HasColumnName("66")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._67)
-                    .HasColumnName("67");
+                    .HasColumnName("67")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._68)
-                    .HasColumnName("68");
+                    .HasColumnName("68")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._69)
-                    .HasColumnName("69");
+                    .HasColumnName("69")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._7)
-                    .HasColumnName("7");
+                    .HasColumnName("7")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._70)
-                    .HasColumnName("70");
+                    .HasColumnName("70")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._71)
-                    .HasColumnName("71");
+                    .HasColumnName("71")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._72)
-                    .HasColumnName("72");
+                    .HasColumnName("72")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._73)
-                    .HasColumnName("73");
+                    .HasColumnName("73")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._74)
-                    .HasColumnName("74");
+                    .HasColumnName("74")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._75)
-                    .HasColumnName("75");
+                    .HasColumnName("75")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._76)
-                    .HasColumnName("76");
+                    .HasColumnName("76")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._77)
-                    .HasColumnName("77");
+                    .HasColumnName("77")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._78)
-                    .HasColumnName("78");
+                    .HasColumnName("78")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._79)
-                    .HasColumnName("79");
+                    .HasColumnName("79")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._8)
-                    .HasColumnName("8");
+                    .HasColumnName("8")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._80)
-                    .HasColumnName("80");
+                    .HasColumnName("80")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._81)
-                    .HasColumnName("81");
+                    .HasColumnName("81")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._82)
-                    .HasColumnName("82");
+                    .HasColumnName("82")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._83)
-                    .HasColumnName("83");
+                    .HasColumnName("83")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._84)
-                    .HasColumnName("84");
+                    .HasColumnName("84")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._85)
-                    .HasColumnName("85");
+                    .HasColumnName("85")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._86)
-                    .HasColumnName("86");
+                    .HasColumnName("86")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._87)
-                    .HasColumnName("87");
+                    .HasColumnName("87")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._88)
-                    .HasColumnName("88");
+                    .HasColumnName("88")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._89)
-                    .HasColumnName("89");
+                    .HasColumnName("89")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._9)
-                    .HasColumnName("9");
+                    .HasColumnName("9")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._90)
-                    .HasColumnName("90");
+                    .HasColumnName("90")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._91)
-                    .HasColumnName("91");
+                    .HasColumnName("91")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._92)
-                    .HasColumnName("92");
+                    .HasColumnName("92")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._93)
-                    .HasColumnName("93");
+                    .HasColumnName("93")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._94)
-                    .HasColumnName("94");
+                    .HasColumnName("94")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._95)
-                    .HasColumnName("95");
+                    .HasColumnName("95")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._96)
-                    .HasColumnName("96");
+                    .HasColumnName("96")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._97)
-                    .HasColumnName("97");
+                    .HasColumnName("97")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._98)
-                    .HasColumnName("98");
+                    .HasColumnName("98")
+                    .HasColumnType("varchar(10)");
 
                 entity.Property(e => e._99)
-                    .HasColumnName("99");
+                    .HasColumnName("99")
+                    .HasColumnType("varchar(10)");
             });
 
             modelBuilder.Entity<Thoigian>(entity =>

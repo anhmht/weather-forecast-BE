@@ -4,8 +4,8 @@ using GloboWeather.WeatherManagement.Weather.weathercontext;
 
 namespace GloboWeather.WeatherManagement.Weather.IRepository
 {
-    public interface INhietDoRepository : IAsyncRepository<Nhietdo>
+    public interface IWeatherRepository : IAsyncRepository<ThoiTiet>
     {
-        Task<Nhietdo> GetByIdAndDateAsync(string id, DateTime refDate);
+        
     }
 }

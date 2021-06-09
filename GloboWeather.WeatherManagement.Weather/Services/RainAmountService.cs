@@ -26,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Weather.Services
         /// </summary>
         /// <param name="RainAmountId"></param>
         /// <returns></returns>
-        public async Task<RainAmountPredictionResponse> GetRainAmountByDiemId(string diemId)
+        public async Task<RainAmountPredictionResponse> GetRainAmountMinMaxByDiemId(string diemId)
         {
             var RainAmountEntity = await _rainAmountRepository.GetByIdAsync(diemId);
 
@@ -89,6 +89,13 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.RainAmountMin = listRainAmountTheoNgay.Min(x => x.RainAmountMins.Min(x => x.RainAmount));
             duBaohietDoResponse.RainAmountMax = listRainAmountTheoNgay.Max(x => x.RainAmountMaxs.Max(x => x.RainAmount));
             return duBaohietDoResponse;
+        }
+
+        public async Task<AmountOfRainResponse> GetAmountOfRainBy(string diemDuBaoId)
+        {
+            var rainEntity = await _rainAmountRepository.GetByIdAsync(diemDuBaoId);
+
+            return _mapper.Map<AmountOfRainResponse>(rainEntity);
         }
       
     }

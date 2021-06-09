@@ -17,6 +17,8 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
             builder.HasKey(t => t.StationId);
             builder.ToTable("TramKttv");
 
+            builder.Property(e => e.StationId)
+                .HasColumnName("stationid");
             builder.Property(e => e.Name)
                 .HasColumnName("Ten");
             builder.Property(e => e.Lat)
@@ -33,11 +35,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
                 .HasColumnName("DiaChi");
        
             
-
-
-
-
-
         }
     }
 }

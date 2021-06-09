@@ -29,5 +29,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             var dtos = await _monitoringService.GetTramKttvList();
             return Ok(dtos);
         }
+        
+        [HttpGet("get-rain-quantity", Name = "GetRainQuantity")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList()
+        {
+            var dtos = await _monitoringService.GetRainQuantityAsync();
+            return Ok(dtos);
+        }
     }
 }

@@ -3,14 +3,16 @@ using System;
 using GloboWeather.WeatherManagement.Weather.weathercontext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Weather.Migrations
 {
     [DbContext(typeof(thoitietContext))]
-    partial class thoitietContextModelSnapshot : ModelSnapshot
+    [Migration("20210606173624_ModifiedTableThoitiet")]
+    partial class ModifiedTableThoitiet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
-namespace GloboWeather.WeatherManagement.Weather.weathercontext
+namespace GloboWeather.WeatherManagement.Application.Models.Weather
 {
-    public partial class ThoiTiet
+    public class WeatherResponse 
     {
-          public string DiemId { get; set; }
+         public string DiemId { get; set; }
         public DateTime RefDate { get; set; }
         public string _1 { get; set; }
         public string _2 { get; set; }
@@ -130,6 +126,5 @@ namespace GloboWeather.WeatherManagement.Weather.weathercontext
         public string _118 { get; set; }
         public string _119 { get; set; }
         public string _120 { get; set; }
-       
     }
 }

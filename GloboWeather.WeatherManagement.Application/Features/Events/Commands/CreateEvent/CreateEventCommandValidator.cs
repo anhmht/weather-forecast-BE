@@ -1,5 +1,4 @@
-using System.Threading;
-using System.Threading.Tasks;
+
 using FluentValidation;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
@@ -20,8 +19,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             RuleFor(p => p.ImageUrl)
                 .NotEmpty().WithMessage("{PropertyName} is not null")
                 .NotNull();
-          
-            }
+        }
 
         
     }

@@ -10,6 +10,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Weather
     {
         public int Hour { get; set; }
 
-        public string Weather { get; set; }
+        public int Weather { get; set; }
     }
 }

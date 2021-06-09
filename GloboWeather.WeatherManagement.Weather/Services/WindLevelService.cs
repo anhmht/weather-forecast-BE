@@ -12,22 +12,22 @@ namespace GloboWeather.WeatherManagement.Weather.Services
     public class WindLevelService : IWindLevelService
     {
         private readonly IMapper _mapper;
-        private readonly IGioGiatRepository _gioGiatRepository;
+        private readonly IWindLevelRepository _windLevelRepository;
         
         public WindLevelService(IMapper mapper,
-            IGioGiatRepository gioGiatRepository)
+            IWindLevelRepository windLevelRepository)
         {
             _mapper = mapper;
-            _gioGiatRepository = gioGiatRepository;            
+            _windLevelRepository = windLevelRepository;            
         }     
         /// <summary>
         /// get list of WindLevel by DiemId
         /// </summary>
         /// <param name="WindLevelId"></param>
         /// <returns></returns>
-        public async Task<WindLevelPredictionResponse> GetWindLevelByDiemId(string diemId)
+        public async Task<WindLevelPredictionResponse> GetWindLevelMinMaxByDiemId(string diemId)
         {
-            var WindLevelEntity = await _gioGiatRepository.GetByIdAsync(diemId);
+            var WindLevelEntity = await _windLevelRepository.GetByIdAsync(diemId);
 
             var duBaohietDoResponse = new WindLevelPredictionResponse();
             if (WindLevelEntity == null)
@@ -89,6 +89,12 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.WindLevelMax = listWindLevelTheoNgay.Max(x => x.WindLevelMaxs.Max(x => x.WindLevel));
             return duBaohietDoResponse;
         }
-      
+
+        public async Task<WindLevelResponse> GetWindLevelBy(string diemdubaoId)
+        {
+            var windLevelEntity = await _windLevelRepository.GetByIdAsync(diemdubaoId);
+            
+            return _mapper.Map<WindLevelResponse>(windLevelEntity);
+        }
     }
 }

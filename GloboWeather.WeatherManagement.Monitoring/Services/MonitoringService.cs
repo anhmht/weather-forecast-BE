@@ -4,10 +4,8 @@ using GloboWeather.WeatherManagement.Application.Models.Monitoring;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using System.Threading.Tasks;
-using AutoMapper.Execution;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Services
 {
@@ -15,12 +13,15 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
     {
         private readonly IMapper _mapper;
         private readonly ITramKttvRepository _tramKttvRepository;
+        private readonly IRainRepository _rainRepository;
 
         public MonitoringService(IMapper mapper,
-            ITramKttvRepository tramKttvRepository)
+            ITramKttvRepository tramKttvRepository,
+            IRainRepository rainRepository)
         {
             _mapper = mapper;
             _tramKttvRepository = tramKttvRepository;
+            _rainRepository = rainRepository;
         }
 
         public async Task<List<TramKttvResponse>> GetTramKttvList()
@@ -31,9 +32,24 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
                 return _mapper.Map<List<TramKttvResponse>>(tmp);
             }
             catch (Exception ex)
-            {
-                throw ex;
+            { 
+                Console.WriteLine(ex);
+                throw;
             }
+        }
+
+        public async Task<List<GetRainResponse>> GetRainQuantityAsync()
+        {
+            try
+            {
+                return await _rainRepository.GetRainQuanlityAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
     }
 }

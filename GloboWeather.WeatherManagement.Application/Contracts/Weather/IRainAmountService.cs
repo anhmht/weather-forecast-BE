@@ -6,6 +6,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
 {
     public interface IRainAmountService
     {   
-        Task<RainAmountPredictionResponse> GetRainAmountByDiemId(string diemDuBaoId);
+        Task<RainAmountPredictionResponse> GetRainAmountMinMaxByDiemId(string diemDuBaoId);
+        Task<AmountOfRainResponse> GetAmountOfRainBy(string diemDuBaoId);
     }
 }

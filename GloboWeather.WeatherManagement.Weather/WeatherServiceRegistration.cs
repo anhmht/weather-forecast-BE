@@ -27,17 +27,19 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddTransient<IWindLevelService, WindLevelService>();
             services.AddTransient<IWindSpeedService, WindSpeedService>();
             services.AddTransient<IWindDirectionService, WindDirectionService>();
+
             services.AddTransient(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IDiemDuBaoRepository, DiemDuBaoRepository>();
 
 
-            services.AddScoped<INhietDoRepository, NhietDoRepository>();
-            services.AddScoped<IDoAmTBRepository, DoAmTBRepository>();
-            services.AddScoped<IGioGiatRepository, GioGiatRepository>();
+            services.AddScoped<ITemperatureRepository, TemperatureRepository>();
+            services.AddScoped<IHumidityRepository, HumidityRepository>();
+            services.AddScoped<IWindLevelRepository, WindLevelRepository>();
             services.AddScoped<IRainAmountRepository, RainAmountRepository>();
-            services.AddScoped<IThoiTietRepository, ThoiTietRepository>();
-            services.AddScoped<ITocDoGioRepository, TocDoGioRepository>();
-            services.AddScoped<IHuongGioRepository, HuongGioRepository>();
+            services.AddScoped<IWeatherRepository, WeatherRepository>();
+            services.AddScoped<IWindSpeedRepository, WindSpeedRepository>();
+            services.AddScoped<IWindSpeedRepository, WindSpeedRepository>();
+            services.AddScoped<IHuongGioRepository, HuongGioRepository>();            
         }
     }
 }

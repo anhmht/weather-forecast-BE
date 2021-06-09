@@ -12,23 +12,23 @@ namespace GloboWeather.WeatherManagement.Weather.Services
     public class HumidityService : IHumidityService
     {
         private readonly IMapper _mapper;
-        private readonly IDoAmTBRepository _doAmTBRepository;       
+        private readonly IHumidityRepository _humidityRepository;       
 
         public HumidityService(IMapper mapper,
-            IDoAmTBRepository doAmTBRepository
+            IHumidityRepository humidityRepository
             )
         {
             _mapper = mapper;
-            _doAmTBRepository = doAmTBRepository;          
+            _humidityRepository = humidityRepository;          
         }     
         /// <summary>
         /// get list of Humidity by DiemId
         /// </summary>
         /// <param name="HumidityId"></param>
         /// <returns></returns>
-        public async Task<HumidityPredictionResponse> GetHumidityByDiemId(string diemId)
+        public async Task<HumidityPredictionResponse> GetHumidityMinMaxByDiemId(string diemId)
         {
-            var HumidityEntity = await _doAmTBRepository.GetByIdAsync(diemId);
+            var HumidityEntity = await _humidityRepository.GetByIdAsync(diemId);
 
             var duBaohietDoResponse = new HumidityPredictionResponse();
             if (HumidityEntity == null)
@@ -89,6 +89,12 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             duBaohietDoResponse.HumidityMin = listHumidityTheoNgay.Min(x => x.HumidityMins.Min(x => x.Humidity));
             duBaohietDoResponse.HumidityMax = listHumidityTheoNgay.Max(x => x.HumidityMaxs.Max(x => x.Humidity));
             return duBaohietDoResponse;
+        }
+
+        public async Task<HumidityResponse> GetHumidityBy(string diemDuBaoId)
+        {
+            var humidityEntity = await _humidityRepository.GetByIdAsync(diemDuBaoId);
+            return _mapper.Map<HumidityResponse>(humidityEntity);
         }
       
     }

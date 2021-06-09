@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Weather.weathercontext
 {
-    public class RainAmount : WeatherBase
+    public class AmountOfRain : WeatherBase
     {
     }
 }

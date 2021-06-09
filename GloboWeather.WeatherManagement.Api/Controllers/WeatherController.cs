@@ -11,20 +11,20 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GioGiatController : ControllerBase
+    public class WeatherController : ControllerBase
     {
-        private readonly IWindLevelService _windLevelService;
+        private readonly IWeatherService _weatherService;
 
-        public GioGiatController(IWindLevelService windLevelService)
+        public WeatherController(IWeatherService weatherService)
         {
-            _windLevelService = windLevelService;
+            _weatherService = weatherService;
         }
-     
-        [HttpGet("get-du-bao-gio-giat", Name = "GetDuBaoGioGiat")]
+      
+        [HttpGet("get-weather", Name = "GetWeather")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WindLevelPredictionResponse>> GetNhietDoByDay(string diaDuBaoId)
+        public async Task<ActionResult<WeatherResponse>> GetWeatherBy(string diemDuBaoId)
         {
-            var dtos = await _windLevelService.GetWindLevelByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _weatherService.GetWeatherBy(diemDuBaoId: diemDuBaoId);
             return Ok(dtos);
         }
     }

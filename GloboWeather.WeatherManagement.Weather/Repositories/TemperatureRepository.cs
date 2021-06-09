@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Weather.Repositories
 {
-    public class NhietDoRepository : BaseRepository<Nhietdo>, INhietDoRepository
+    public class TemperatureRepository : BaseRepository<Nhietdo>, ITemperatureRepository
     {
-        public NhietDoRepository(thoitietContext dbContext) : base(dbContext)
+        public TemperatureRepository(thoitietContext dbContext) : base(dbContext)
         {
         }
 
