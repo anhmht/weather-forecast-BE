@@ -1,11 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using GloboWeather.WeatherManagement.Domain.Common;
 
 namespace GloboWeather.WeatherManagement.Domain.Entities
 {
-    public class WeatherInfomation : AuditableEntity
+    public class WeatherInformation : AuditableEntity
     {
         [Key]
         public Guid ID { get; set; }

@@ -14,7 +14,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                 name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "WeatherInfomations");
+                name: "WeatherInformations");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -52,7 +52,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WeatherInfomations",
+                name: "WeatherInformations",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -72,7 +72,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeatherInfomations", x => x.ID);
+                    table.PrimaryKey("PK_WeatherInformations", x => x.ID);
                 });
         }
     }

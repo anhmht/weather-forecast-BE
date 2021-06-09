@@ -196,7 +196,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.WeatherInfomation", b =>
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.WeatherInformation", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -244,7 +244,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("WeatherInfomations");
+                    b.ToTable("WeatherInformations");
                 });
 
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.WeatherMinMaxData", b =>

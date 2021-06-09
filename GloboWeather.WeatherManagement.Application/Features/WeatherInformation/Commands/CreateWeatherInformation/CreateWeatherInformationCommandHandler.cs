@@ -11,14 +11,14 @@ using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInfomations.Commands.CreateWeatherInfomation
 {
-    public class CreateWeatherInfomationCommandHandler : IRequestHandler<CreateWeatherInfomationCommand, Guid>
+    public class CreateWeatherInformationCommandHandler : IRequestHandler<CreateWeatherInfomationCommand, Guid>
     {
      
         private readonly IMapper _mapper;
         private readonly IWeatherInfomationRepository _WeatherInfomationRepository;
         private readonly IImageService _imageService;
 
-        public CreateWeatherInfomationCommandHandler(IMapper mapper, IWeatherInfomationRepository WeatherInfomationRepository, IImageService imageService)
+        public CreateWeatherInformationCommandHandler(IMapper mapper, IWeatherInfomationRepository WeatherInfomationRepository, IImageService imageService)
         {
             _mapper = mapper;
             _WeatherInfomationRepository = WeatherInfomationRepository;
@@ -27,7 +27,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInfomations
         
         public async Task<Guid> Handle(CreateWeatherInfomationCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateWeatherInfomationCommandValidator(_WeatherInfomationRepository);
+            var validator = new CreateWeatherInformationCommandValidator(_WeatherInfomationRepository);
             var validationResult = await validator.ValidateAsync(request);
 
             if (validationResult.Errors.Any())
