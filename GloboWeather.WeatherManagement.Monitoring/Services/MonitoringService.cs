@@ -13,15 +13,12 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
     {
         private readonly IMapper _mapper;
         private readonly ITramKttvRepository _tramKttvRepository;
-        private readonly IRainRepository _rainRepository;
-
         public MonitoringService(IMapper mapper,
-            ITramKttvRepository tramKttvRepository,
-            IRainRepository rainRepository)
+            ITramKttvRepository tramKttvRepository
+            )
         {
             _mapper = mapper;
             _tramKttvRepository = tramKttvRepository;
-            _rainRepository = rainRepository;
         }
 
         public async Task<List<TramKttvResponse>> GetTramKttvList()
@@ -38,18 +35,5 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             }
         }
 
-        public async Task<List<GetRainResponse>> GetRainQuantityAsync()
-        {
-            try
-            {
-                return await _rainRepository.GetRainQuanlityAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
-        }
     }
 }

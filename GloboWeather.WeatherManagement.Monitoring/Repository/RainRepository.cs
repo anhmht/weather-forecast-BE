@@ -17,7 +17,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
            
         }
 
-        public async Task<List<GetRainResponse>> GetRainQuanlityAsync()
+        public async Task<List<GetRainResponse>> GetRainQuantityAsync()
         {
             var maxDate = _dbContext.Set<Rain>().Max(r => r.Date);
 
@@ -35,7 +35,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                     Date = rain.Date,
                     RainQuantity = rain.Quality
                 }).ToListAsync();
-
             return entryPoint;
         }
     }

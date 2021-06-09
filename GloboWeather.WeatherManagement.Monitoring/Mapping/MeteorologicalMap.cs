@@ -11,6 +11,9 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
             builder.HasKey(t => t.StationId);
             builder.ToTable("khituong");
 
+            builder.Property(e => e.StationId)
+                .HasColumnName("stationid");
+            
             builder.Property(e => e.Date)
                 .HasColumnName("dt");
             builder.Property(e => e.Evaporation)
@@ -35,7 +38,11 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
                 .HasColumnName("tocdogio");
             builder.Property(e => e.ZluyKe)
                 .HasColumnName("zluyke");
-            
+            builder.Property(e => e.Rain)
+                .HasColumnName("mua");
+            builder.Property(e => e.Temperature)
+                .HasColumnName("nhietdo");
+
         }
     }
 }

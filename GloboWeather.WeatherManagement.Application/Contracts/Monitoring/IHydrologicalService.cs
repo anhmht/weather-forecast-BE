@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
-using GloboWeather.WeatherManagement.Monitoring.MonitoringEntities;
 
-namespace GloboWeather.WeatherManagement.Monitoring.IRepository
+namespace GloboWeather.WeatherManagement.Application.Contracts.Monitoring
 {
-    public interface IHydrologicalRepository : IAsyncRepository<Hydrological>
+    public interface IHydrologicalService
     {
         Task<List<GetHydrologicalResponse>> GetHydrologicalAsync();
     }

@@ -5,6 +5,7 @@ namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
     public class GetHydrologicalResponse
     {
         public string ProvinceName { get; set; }
+        public int ZipCode { get; set; }
         public string StationName { get; set; }
         public string StationId { get;set; }
         public DateTime Date { get; set; }

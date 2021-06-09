@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Monitoring.MonitoringEntities;
 
 namespace GloboWeather.WeatherManagement.Monitoring
 {
@@ -22,11 +23,19 @@ namespace GloboWeather.WeatherManagement.Monitoring
             services.AddDbContext<MonitoringContext>(options => options.UseMySQL(configuration.GetConnectionString("GloboQuanTracManagementConnectionString"),
                 b => b.MigrationsAssembly(typeof(MonitoringContext).Assembly.FullName)));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            
             services.AddTransient<IMonitoringService, MonitoringService>();
-            services.AddTransient(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IRainingService, RainingService>();
+            services.AddTransient<IMeteorologicalService, MeteorologicalService>();
+            services.AddTransient<IHydrologicalService, HydrologicalService>();
+            
+            
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<ITramKttvRepository, TramKttvRepository>();
             services.AddScoped<IRainRepository, RainRepository>();
-
+            services.AddScoped<IHydrologicalRepository, HydrologicalRepository>();
+            services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
+            
         }
     }
 }
