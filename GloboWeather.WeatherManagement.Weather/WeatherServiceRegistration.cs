@@ -26,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddTransient<ITemperatureService, TemperatureService>();
             services.AddTransient<IWindLevelService, WindLevelService>();
             services.AddTransient<IWindSpeedService, WindSpeedService>();
-
+            services.AddTransient<IWindDirectionService, WindDirectionService>();
             services.AddTransient(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IDiemDuBaoRepository, DiemDuBaoRepository>();
 
@@ -37,7 +37,7 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddScoped<IRainAmountRepository, RainAmountRepository>();
             services.AddScoped<IThoiTietRepository, ThoiTietRepository>();
             services.AddScoped<ITocDoGioRepository, TocDoGioRepository>();
-
+            services.AddScoped<IHuongGioRepository, HuongGioRepository>();
         }
     }
 }
