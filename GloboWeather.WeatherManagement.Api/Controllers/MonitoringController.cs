@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Api.Helpers;
 using GloboWeather.WeatherManagement.Application.Contracts.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
@@ -33,7 +34,8 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         
         [HttpGet("get-rain-quantity", Name = "GetRainQuantity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList([FromServices]IRainingService rainingService)
+        public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList([FromServices]IRainingService rainingService,
+            [ModelBinder(binderType: typeof(ArrayModelBinder))] IEnumerable<int> ids)
         {
             var dtos = await rainingService.GetRainingQuantityAsync();
             return Ok(dtos);
