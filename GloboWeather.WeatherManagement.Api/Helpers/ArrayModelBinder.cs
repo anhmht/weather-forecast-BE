@@ -11,40 +11,42 @@ namespace GloboWeather.WeatherManagement.Api.Helpers
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            // Our binder works only on enumerable types
             if (!bindingContext.ModelMetadata.IsEnumerableType)
             {
                 bindingContext.Result = ModelBindingResult.Failed();
-                return  Task.CompletedTask;
+                return Task.CompletedTask;
             }
 
             // Get the inputted value through the value provider
-            var vaule = bindingContext.ValueProvider.GetValue(bindingContext.ModelName).ToString();
-            
+            var value = bindingContext.ValueProvider
+                .GetValue(bindingContext.ModelName).ToString();
+
             // If that value is null or whitespace, we return null
-            if (string.IsNullOrWhiteSpace(vaule))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 bindingContext.Result = ModelBindingResult.Success(null);
                 return Task.CompletedTask;
             }
-            
+
             // The value isn't null or whitespace, 
             // and the type of the model is enumerable. 
             // Get the enumerable's type, and a converter 
             var elementType = bindingContext.ModelType.GetTypeInfo().GenericTypeArguments[0];
-            var convert = TypeDescriptor.GetConverter(elementType);
+            var converter = TypeDescriptor.GetConverter(elementType);
 
-            var values = vaule.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => convert.ConvertToString(x.Trim()))
+            // Convert each item in the value list to the enumerable type
+            var values = value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => converter.ConvertFromString(x.Trim()))
                 .ToArray();
 
-            var typeValues = Array.CreateInstance(elementType, values.Length);
-            values.CopyTo(typeValues, 0);
-            bindingContext.Model = typeValues;
-            
+            // Create an array of that type, and set it as the Model value 
+            var typedValues = Array.CreateInstance(elementType, values.Length);
+            values.CopyTo(typedValues, 0);
+            bindingContext.Model = typedValues;
+
+            // return a successful result, passing in the Model 
             bindingContext.Result = ModelBindingResult.Success(bindingContext.Model);
             return Task.CompletedTask;
-            ;
         }
     }
 }

@@ -1,13 +1,9 @@
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Api.Helpers;
 using GloboWeather.WeatherManagement.Application.Contracts.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
-using GloboWeather.WeatherManagement.Application.Models.Weather;
-using GloboWeather.WeatherManagement.Monitoring.Services;
-using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +31,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("get-rain-quantity", Name = "GetRainQuantity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList([FromServices]IRainingService rainingService,
-            [ModelBinder(binderType: typeof(ArrayModelBinder))] IEnumerable<int> ids)
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
             var dtos = await rainingService.GetRainingQuantityAsync();
             return Ok(dtos);
@@ -44,7 +40,8 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("get-meteorological", Name = "GetMeteorological")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<GetMeteorologicalResponse>>> GetMeteorologicalList(
-            [FromServices] IMeteorologicalService meteorologicalService)
+            [FromServices] IMeteorologicalService meteorologicalService,
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
             var dtos = await meteorologicalService.GetMeteorologicalAsync();
             return Ok(dtos);
@@ -53,7 +50,8 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("get-hydrological", Name = "GetHydrological")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<GetHydrologicalResponse>>> GetHydrologicalList(
-            [FromServices] IHydrologicalService hydrologicalService)
+            [FromServices] IHydrologicalService hydrologicalService,
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
             var dtos = await hydrologicalService.GetHydrologicalAsync();
             return Ok(dtos);
