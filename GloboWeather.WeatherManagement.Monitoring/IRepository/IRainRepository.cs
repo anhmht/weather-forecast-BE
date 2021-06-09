@@ -7,6 +7,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.IRepository
 {
     public interface IRainRepository : IAsyncRepository<Rain>
     {
-         Task<List<GetRainMinMaxResponse>> GetMinMaxRain();
+         Task<List<GetRainResponse>> GetRainQuanlityAsync();
     }
 }

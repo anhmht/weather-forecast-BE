@@ -32,16 +32,17 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
                 return _mapper.Map<List<TramKttvResponse>>(tmp);
             }
             catch (Exception ex)
-            {
-                throw ex;
+            { 
+                Console.WriteLine(ex);
+                throw;
             }
         }
 
-        public async Task<List<GetRainMinMaxResponse>> GetRainMinMax()
+        public async Task<List<GetRainResponse>> GetRainQuantityAsync()
         {
             try
             {
-                return await _rainRepository.GetMinMaxRain();
+                return await _rainRepository.GetRainQuanlityAsync();
             }
             catch (Exception e)
             {

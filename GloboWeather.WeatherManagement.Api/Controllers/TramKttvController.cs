@@ -30,11 +30,11 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(dtos);
         }
         
-        [HttpGet("get-rain-min-max", Name = "GetRainMinMax")]
+        [HttpGet("get-rain-quantity", Name = "GetRainQuantity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<GetRainMinMaxResponse>>> GetRainMinMaxList()
+        public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList()
         {
-            var dtos = await _monitoringService.GetRainMinMax();
+            var dtos = await _monitoringService.GetRainQuantityAsync();
             return Ok(dtos);
         }
     }

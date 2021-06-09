@@ -10,6 +10,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Monitoring
     public interface IMonitoringService
     {
         Task<List<TramKttvResponse>> GetTramKttvList();
-        Task<List<GetRainMinMaxResponse>> GetRainMinMax();
+        Task<List<GetRainResponse>> GetRainQuantityAsync();
     }
 }
