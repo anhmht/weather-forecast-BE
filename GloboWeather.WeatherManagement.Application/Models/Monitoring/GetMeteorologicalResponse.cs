@@ -1,11 +1,14 @@
 using System;
 
-namespace GloboWeather.WeatherManagement.Monitoring.MonitoringEntities
+namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
 {
-    public class Meteorological
+    public class GetMeteorologicalResponse
     {
-        public string StationId { get; set; }
+        public string ProvinceName { get; set; }
+        public string StationName { get; set; }
         public DateTime Date { get; set; }
+        public int ZipCode { get; set; }
+        public string StationId { get; set; }
         public float? Evaporation { get; set; }
         public float? Radiation { get; set; }
         public float? Humidity { get; set; }

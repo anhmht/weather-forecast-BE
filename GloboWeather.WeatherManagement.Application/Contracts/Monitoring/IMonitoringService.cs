@@ -10,6 +10,5 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Monitoring
     public interface IMonitoringService
     {
         Task<List<TramKttvResponse>> GetTramKttvList();
-        Task<List<GetRainResponse>> GetRainQuantityAsync();
     }
 }

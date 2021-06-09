@@ -7,6 +7,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.IRepository
 {
     public interface IRainRepository : IAsyncRepository<Rain>
     {
-         Task<List<GetRainResponse>> GetRainQuanlityAsync();
+         Task<List<GetRainResponse>> GetRainQuantityAsync();
     }
 }
