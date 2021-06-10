@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
+using GloboWeather.WeatherManagement.Api.Worker;
 using GloboWeather.WeatherManagement.Application;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
@@ -45,6 +46,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddMonitoringService(Configuration);
 
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
+           // services.AddHostedService<ImportDataWeatherWorker>();       
             services.AddControllers();
             services.AddCors(options =>
             {

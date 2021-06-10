@@ -20,8 +20,8 @@ namespace GloboWeather.WeatherManagement.Persistence
             
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            
-           
+
+            services.AddScoped<IWeatherInformationRepository, WeatherInformationRepository>();
             return services;
         }
     }
