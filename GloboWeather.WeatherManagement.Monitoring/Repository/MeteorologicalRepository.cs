@@ -14,14 +14,14 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
         {
         }
 
-        public async Task<List<GetMeteorologicalResponse>> GetMeteotologicalsAsync()
+        public async Task<List<GetMeteorologicalResponse>> GetMeteorologicalsAsync(IEnumerable<int> zipcodes)
         {
             var maxDate = _dbContext.Set<Meteorological>().Max(h => h.Date);
             
             var entryDatas = await (from p in _dbContext.Set<Province>()
                 join tramKttv in _dbContext.Set<TramKttv>() on p.ZipCode equals tramKttv.ZipCode
                 join  meteorological in _dbContext.Set<Meteorological>() on tramKttv.StationId equals meteorological.StationId
-                where meteorological.Date.Equals(maxDate)
+                where meteorological.Date.Equals(maxDate) && zipcodes.Contains(p.ZipCode)
                 orderby p.ZipCode descending
                 select new GetMeteorologicalResponse()
                 {

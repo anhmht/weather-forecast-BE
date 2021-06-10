@@ -33,7 +33,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<List<GetRainResponse>>> GetRainQuantityList([FromServices]IRainingService rainingService,
             [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
-            var dtos = await rainingService.GetRainingQuantityAsync();
+            var dtos = await rainingService.GetRainingQuantityAsync(zipcodes);
             return Ok(dtos);
         }
 
@@ -43,7 +43,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             [FromServices] IMeteorologicalService meteorologicalService,
             [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
-            var dtos = await meteorologicalService.GetMeteorologicalAsync();
+            var dtos = await meteorologicalService.GetMeteorologicalAsync(zipcodes);
             return Ok(dtos);
         }
 
@@ -53,7 +53,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             [FromServices] IHydrologicalService hydrologicalService,
             [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> zipcodes)
         {
-            var dtos = await hydrologicalService.GetHydrologicalAsync();
+            var dtos = await hydrologicalService.GetHydrologicalAsync(zipcodes);
             return Ok(dtos);
         }
         

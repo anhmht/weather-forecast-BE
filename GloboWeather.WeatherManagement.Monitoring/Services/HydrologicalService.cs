@@ -16,11 +16,11 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
         {
             _hydrologicalRepository = hydrologicalRepository;
         }
-        public async Task<List<GetHydrologicalResponse>> GetHydrologicalAsync()
+        public async Task<List<GetHydrologicalResponse>> GetHydrologicalAsync(IEnumerable<int> zipcodes)
         {
             try
             {
-                return await _hydrologicalRepository.GetHydrologicalAsync();
+                return await _hydrologicalRepository.GetHydrologicalAsync(zipcodes);
             }
             catch (Exception e)
             {

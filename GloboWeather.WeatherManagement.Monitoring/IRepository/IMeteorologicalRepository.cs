@@ -8,6 +8,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.IRepository
 {
     public interface IMeteorologicalRepository : IAsyncRepository<Meteorological>
     {
-        Task<List<GetMeteorologicalResponse>> GetMeteotologicalsAsync();
+        Task<List<GetMeteorologicalResponse>> GetMeteorologicalsAsync(IEnumerable<int> zipcodes);
     }
 }

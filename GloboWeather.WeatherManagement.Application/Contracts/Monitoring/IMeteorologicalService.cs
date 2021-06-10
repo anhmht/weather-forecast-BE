@@ -6,6 +6,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Monitoring
 {
     public interface IMeteorologicalService
     {
-        Task<List<GetMeteorologicalResponse>> GetMeteorologicalAsync();
+        Task<List<GetMeteorologicalResponse>> GetMeteorologicalAsync(IEnumerable<int> zipcodes);
     }
 }

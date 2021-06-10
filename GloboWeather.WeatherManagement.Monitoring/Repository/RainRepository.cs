@@ -17,14 +17,14 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
            
         }
 
-        public async Task<List<GetRainResponse>> GetRainQuantityAsync()
+        public async Task<List<GetRainResponse>> GetRainQuantityAsync(IEnumerable<int> zipcodes)
         {
             var maxDate = _dbContext.Set<Rain>().Max(r => r.Date);
 
             var entryPoint = await (from p in _dbContext.Set<Province>()
                 join tramKttv in _dbContext.Set<TramKttv>() on p.ZipCode equals tramKttv.ZipCode
                 join rain in _dbContext.Set<Rain>() on tramKttv.StationId equals rain.StationId
-                where rain.Date.Equals(maxDate)
+                where rain.Date.Equals(maxDate) && zipcodes.Contains(p.ZipCode)
                 orderby p.ZipCode descending
                 select new GetRainResponse()
                 {

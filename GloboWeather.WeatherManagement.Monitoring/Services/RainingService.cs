@@ -15,11 +15,11 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
         {
             _rainRepository = rainRepository;
         }
-        public async Task<List<GetRainResponse>> GetRainingQuantityAsync()
+        public async Task<List<GetRainResponse>> GetRainingQuantityAsync(IEnumerable<int> zipcodes)
         {
             try
             {
-                return await _rainRepository.GetRainQuantityAsync();
+                return await _rainRepository.GetRainQuantityAsync(zipcodes);
             }
             catch (Exception e)
             {
