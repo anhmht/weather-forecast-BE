@@ -1,5 +1,6 @@
 using System.Reflection;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.CreateWeatherInformation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
