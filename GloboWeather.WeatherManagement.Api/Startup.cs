@@ -46,7 +46,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddMonitoringService(Configuration);
 
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
-            services.AddHostedService<ImportDataWeatherWorker>();       
+           // services.AddHostedService<ImportDataWeatherWorker>();       
             services.AddControllers();
             services.AddCors(options =>
             {
