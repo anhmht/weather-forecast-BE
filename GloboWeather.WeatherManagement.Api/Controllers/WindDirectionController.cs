@@ -11,20 +11,20 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HuongGioController : ControllerBase
+    public class WindDirectionController : ControllerBase
     {
         private readonly IWindDirectionService _windDirectionService;
 
-        public HuongGioController(IWindDirectionService windDirectionService)
+        public WindDirectionController(IWindDirectionService windDirectionService)
         {
             _windDirectionService = windDirectionService;
         }
-     
-        [HttpGet("get-du-bao-huong-gio", Name = "GetDuHuongGio")]
+
+        [HttpGet("get-min-max-wind-direction", Name = "GetMinMaxWindDirection")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WeatherPredictionResponse>> GetHuongGioByDay(string diaDuBaoId)
+        public async Task<ActionResult<WindDirectionPredictionResponse>> GetHuongGioByDay(string diemDuBaoId)
         {
-            var dtos = await _windDirectionService.GetWindDirectionByDiemId(diemDuBaoId: diaDuBaoId);
+            var dtos = await _windDirectionService.GetWindDirectionByDiemId(diemDuBaoId: diemDuBaoId);
             return Ok(dtos);
         }
     }
