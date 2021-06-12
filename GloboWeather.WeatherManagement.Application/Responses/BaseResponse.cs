@@ -2,20 +2,20 @@ using System.Collections.Generic;
 
 namespace GloboWeather.WeatherManegement.Application.Responses
 {
-    public class BaseReponse
+    public class BaseResponse
     {
-        public BaseReponse()
+        public BaseResponse()
         {
             Success = true;
         }
 
-        public BaseReponse(string message = null)
+        public BaseResponse(string message = null)
         {
             Success = true;
             Message = message;
         }
 
-        public BaseReponse(string message, bool success)
+        public BaseResponse(string message, bool success)
         {
             Success = success;
             Message = message;

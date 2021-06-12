@@ -28,7 +28,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
         public async Task<ImportWeatherInformationResponse> Handle(ImportWeatherInformationCommand request, CancellationToken token)
         {
             var validator = new ImportWeatherInformationValidator(_weatherInfomationRepository);
-            var response = new ImportWeatherInformationResponse();
+            var response = new ImportWeatherInformationResponse() { Success = true };
             if (!request.File.ContentType.Contains("ms-excel"))
             {
                 response.Success = false;
