@@ -20,7 +20,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("import", Name = nameof(ImportAsync))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<bool>> ImportAsync(IFormFile file)
+        public async Task<ActionResult<ImportWeatherInformationResponse>> ImportAsync(IFormFile file)
         {
             ImportWeatherInformationCommand cmd = new ImportWeatherInformationCommand() { File = file };
             var response = await _mediator.Send(cmd);
