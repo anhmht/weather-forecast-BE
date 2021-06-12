@@ -1,0 +1,4 @@
+1. First row is field name -> put data from 2nd rows
+2. [DiaDiemId] must match with Id of Station data dictionary
+3. [NgayGio] is formated datetime type
+4. If user doesn't input value for [DoAm], [GioGiat], [HuongGio], [TocDoGio], [LuongMua], [NhietDo], [ThoiTiet] -> these fields will not be updated

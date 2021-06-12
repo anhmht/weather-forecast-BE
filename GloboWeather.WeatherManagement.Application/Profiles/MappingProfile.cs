@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Commands.Update
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Update;
 
@@ -36,6 +37,25 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Status, CreateStatusCommand>().ReverseMap();
             CreateMap<Status, CreateCategoryDto>().ReverseMap();
             CreateMap<Status, StatusesListVm>().ReverseMap();
+            CreateMap<ImportWeatherInformationDto, WeatherInformation>()
+                .ForMember(dest => dest.StationId,
+                    opt => opt.MapFrom(src => src.DiaDiemId))
+                .ForMember(dest => dest.RefDate,
+                    opt => opt.MapFrom(src => src.NgayGio))
+                .ForMember(dest => dest.Humidity,
+                    opt => opt.MapFrom(src => src.DoAm))
+                .ForMember(dest => dest.WindLevel,
+                    opt => opt.MapFrom(src => src.GioGiat))
+                .ForMember(dest => dest.WindDirection,
+                    opt => opt.MapFrom(src => src.HuongGio))
+                .ForMember(dest => dest.WindSpeed,
+                    opt => opt.MapFrom(src => src.TocDoGio))
+                .ForMember(dest => dest.RainAmount,
+                    opt => opt.MapFrom(src => src.LuongMua))
+                .ForMember(dest => dest.Temperature,
+                    opt => opt.MapFrom(src => src.NhietDo))
+                .ForMember(dest => dest.Weather,
+                    opt => opt.MapFrom(src => src.ThoiTiet));
         }
     }
 }

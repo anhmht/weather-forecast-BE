@@ -12,5 +12,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<IReadOnlyList<T>> GetPagedResponseAsync(int page, int size);
+        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
+        Task UpdateRangeAsync(List<T> entities);
     }
 }

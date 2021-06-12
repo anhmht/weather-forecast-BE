@@ -49,5 +49,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         {
             return await _dbContext.Set<T>().Skip((page - 1) * size).AsNoTracking().ToListAsync();
         }
+
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.SaveChangesAsync();
+
+            return entities;
+        }
+
+        public async Task UpdateRangeAsync(List<T> entities)
+        {
+            entities.ForEach(entity => { _dbContext.Entry(entity).State = EntityState.Modified; });
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }
