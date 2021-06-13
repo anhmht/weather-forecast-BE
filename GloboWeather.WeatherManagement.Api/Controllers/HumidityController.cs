@@ -6,6 +6,9 @@ using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using GloboWeather.WeatherManagement.Application.Requests;
+using MediatR;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 
 namespace GloboWeather.WeatherManagement.Api.Controllers
 {
@@ -13,27 +16,27 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     [ApiController]
     public class HumidityController : ControllerBase
     {
-        private readonly IHumidityService _humidityService;
+        private readonly IMediator _mediator;
 
-        public HumidityController(IHumidityService humidityService)
+        public HumidityController(IMediator mediator)
         {
-            _humidityService = humidityService;
+            _mediator = mediator;
         }
-     
-        [HttpGet("get-min-max-humidity", Name = "GetMinMaxHumidity")]
+
+        [HttpPost("get-min-max-humidity", Name = "GetMinMaxHumidity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HumidityPredictionResponse>> GetMinMaxHumidityByDiemId(string diaDuBaoId)
+        public async Task<ActionResult<HumidityPredictionResponse>> GetMinMaxHumidity([FromBody] GetMinMaxHumidityRequest request)
         {
-            var dtos = await _humidityService.GetHumidityMinMaxByDiemId(diemDuBaoId: diaDuBaoId);
-            return Ok(dtos);
+            var response = await _mediator.Send(request);
+            return Ok(response);
         }
-        
-        [HttpGet("get-humidity", Name = "GetHumidity")]
+
+        [HttpPost("get-humidity", Name = "GetHumidity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HumidityResponse>> GetHumidityBy(string diemDuBaoId)
+        public async Task<ActionResult<HumidityResponse>> GetHumidity([FromBody] GetHumidityRequest request)
         {
-            var dtos = await _humidityService.GetHumidityBy(diemDuBaoId);
-            return Ok(dtos);
+            var response = await _mediator.Send(request);
+            return Ok(response);
         }
     }
 }

@@ -21,14 +21,9 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         {
         }
 
-        public async Task<bool> SaveAsync(List<WeatherInformation> WeatherInformations)
-        {
-            return true;
-        }
-
         public async Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, List<string> stationIds, CancellationToken token)
         {
-            return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)).ToListAsync(token);
+            return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)).OrderBy(x => x.RefDate).ToListAsync(token);
         }
 
         #region Sync Data weather from my sql to sql

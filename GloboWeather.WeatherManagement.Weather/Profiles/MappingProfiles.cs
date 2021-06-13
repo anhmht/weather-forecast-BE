@@ -22,6 +22,14 @@ namespace GloboWeather.WeatherManagement.Weather.Profiles
             CreateMap<WinLevelResponse, GioGiat>().ReverseMap();
             CreateMap<RainAmountResponse, AmountOfRain>().ReverseMap();
             CreateMap<WindDirectionResponse, HuongGio>().ReverseMap();
+            CreateMap<BaseModelWeather, HumidityResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, AmountOfRainResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, RainAmountResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, TemperatureResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, WindLevelResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, WinLevelResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, WindSpeedResponse>().ReverseMap();
+            CreateMap<BaseModelWeather, HumidityResponse>().ReverseMap();
         }
     }
 }
