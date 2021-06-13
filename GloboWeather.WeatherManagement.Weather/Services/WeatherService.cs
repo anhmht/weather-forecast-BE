@@ -41,5 +41,16 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             return _mapper.Map<WeatherResponse>(weatherEntity);
         }
 
+        public async Task<List<WeatherResponse>> ListAllAsync()
+        {
+            var data = await _weatherRepository.ListAllAsync();
+            var result = new List<WeatherResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<WeatherResponse>(item));
+            }
+            return result;
+        }
+
     }
 }

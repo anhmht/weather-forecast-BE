@@ -12,5 +12,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
         Task<WindLevelResponse> GetWindLevelBy(string diemdubaoId);
 
         Task<List<WinLevelResponse>> ListAllAsync();
+
     }
 }

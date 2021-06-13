@@ -9,5 +9,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
         Task<HumidityPredictionResponse> GetHumidityMinMaxByDiemId(string diemDuBaoId);
 
         Task<HumidityResponse> GetHumidityBy(string diemDuBaoId);
+
+        Task<List<HumidityResponse>> ListAllAsync();
     }
 }

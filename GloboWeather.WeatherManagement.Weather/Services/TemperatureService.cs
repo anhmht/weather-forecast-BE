@@ -96,6 +96,16 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             var nhietDoEntity = await _temperatureRepository.GetByIdAsync(diemDuBaoId);
             return _mapper.Map<TemperatureResponse>(nhietDoEntity);
         }
-      
+
+        public async Task<List<TemperatureResponse>> ListAllAsync()
+        {
+            var data = await _temperatureRepository.ListAllAsync();
+            var result = new List<TemperatureResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<TemperatureResponse>(item));
+            }
+            return result;
+        }
     }
 }

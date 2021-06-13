@@ -22,7 +22,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpGet("get-wind-direction", Name = "GetWindDirection")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<WindDirectionPredictionResponse>> GetHuongGioByDay(string diemDuBaoId)
+        public async Task<ActionResult<WindDirectionPredictionResponse>> GetWindDirectionByDiemId(string diemDuBaoId)
         {
             var dtos = await _windDirectionService.GetWindDirectionByDiemId(diemDuBaoId: diemDuBaoId);
             return Ok(dtos);

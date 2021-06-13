@@ -1,14 +1,32 @@
 
+using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
+using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
 {
     public interface IWeatherInformationRepository : IAsyncRepository<WeatherInformation>
     {
-        Task UpdateWinLevelAsync(List<WinLevelResponse> WeatherInformations, DateTime lastUpdate);
+        Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, List<string> stationIds, CancellationToken token);
+
+        Task SyncWinLevelAsync(List<WinLevelResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncHumidityAsync(List<HumidityResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncWindDirectionAsync(List<WindDirectionResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncWindSpeedAsync(List<WindSpeedResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncTemperatureAsync(List<TemperatureResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncRainAmountAsync(List<RainAmountResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
+
+        Task SyncWeatherAsync(List<WeatherResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
     }
 }

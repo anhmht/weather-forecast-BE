@@ -16,6 +16,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         public BackgroundServiceTrackingRepository(GloboWeatherDbContext dbContext) : base(dbContext)
         {
         }
-     
+
+        public async Task<BackgroundServiceTracking> GetLastBackgroundServiceTracking()
+        {
+            var result = _dbContext.BackgroundServiceTrackings.OrderByDescending(x=>x.LastDownload).Take(1).ToList().FirstOrDefault();
+            return result;
+        }
     }
 }
