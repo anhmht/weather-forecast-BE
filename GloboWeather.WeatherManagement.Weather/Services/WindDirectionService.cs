@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Weather.IRepository;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 
@@ -83,6 +84,17 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             windDirectionPredictionResponse.WindDirectionByDays = windDirectionDayResponses;        
             return windDirectionPredictionResponse;
         }
-      
+
+
+        public async Task<List<WindDirectionResponse>> ListAllAsync()
+        {
+            var data = await _huongGioRepository.ListAllAsync();
+            var result = new List<WindDirectionResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<WindDirectionResponse>(item));
+            }
+            return result;
+        }
     }
 }

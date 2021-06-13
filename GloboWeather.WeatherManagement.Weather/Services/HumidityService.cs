@@ -96,6 +96,17 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             var humidityEntity = await _humidityRepository.GetByIdAsync(diemDuBaoId);
             return _mapper.Map<HumidityResponse>(humidityEntity);
         }
-      
+
+        public async Task<List<HumidityResponse>> ListAllAsync()
+        {
+            var data = await _humidityRepository.ListAllAsync();
+            var result = new List<HumidityResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<HumidityResponse>(item));
+            }
+            return result;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 
+using GloboWeather.WeatherManagement.Application.Models.BackgroundService;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,17 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddDbContext<GloboWeatherDbContext>(options =>
                 options.UseSqlServer(
                     configuration.GetConnectionString("GloboWeatherWeatherManagementConnectionString")), ServiceLifetime.Transient);
+
            
+
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddScoped<IWeatherInformationRepository, WeatherInformationRepository>();
+            services.AddScoped<IBackgroundServiceTrackingRepository, BackgroundServiceTrackingRepository>();
+            
             return services;
         }
     }
