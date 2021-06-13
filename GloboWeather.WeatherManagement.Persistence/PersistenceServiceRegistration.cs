@@ -22,6 +22,8 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddScoped<IWeatherInformationRepository, WeatherInformationRepository>();
+            services.AddScoped<IBackgroundServiceTrackingRepository, BackgroundServiceTrackingRepository>();
+            
             return services;
         }
     }

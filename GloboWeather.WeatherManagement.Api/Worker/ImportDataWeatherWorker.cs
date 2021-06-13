@@ -1,5 +1,7 @@
 ﻿using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.CreateWeatherInformation;
+using GloboWeather.WeatherManagement.Weather.IRepository;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,33 +18,39 @@ namespace GloboWeather.WeatherManagement.Api.Worker
         private Timer _timer;
         private readonly IMediator _mediator;
         private readonly IServiceProvider _serviceProvider;
-       
         public ImportDataWeatherWorker(IMediator mediator, IServiceProvider serviceProvider)
         {
             _mediator = mediator;
             _serviceProvider = serviceProvider;
-         
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var createEventCommand = new CreateWeatherInformationCommand()
-            {
-                StationId = "Test",
-
-            };
-
             _timer = new Timer(async state =>
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<IWeatherInformationRepository>();
-                    await service.AddAsync(new Domain.Entities.WeatherInformation());
+                    var _windLevelService = scope.ServiceProvider.GetRequiredService<IWindLevelService>();
+                    var _backgroundServiceTrackingRepository = scope.ServiceProvider.GetRequiredService<IBackgroundServiceTrackingRepository>();
+                    var _weatherInformationRepository = scope.ServiceProvider.GetRequiredService<IWeatherInformationRepository>();
+                    var importTimes = await _backgroundServiceTrackingRepository.ListAllAsync();
+                    var importTime = DateTime.MinValue;
+                    if (importTimes.Any())
+                        importTime = importTimes.FirstOrDefault().LastDownload;
+                    try
+                    {
+                        var winLevels = await _windLevelService.ListAllAsync();
+                        await _weatherInformationRepository.UpdateWinLevelAsync(winLevels, importTime);
+                    }
+                    catch (Exception ex)
+                    {
 
-                }
+                        throw;
+                    }
+                 
+                }               
 
-
-            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10000));
 
         }
     }

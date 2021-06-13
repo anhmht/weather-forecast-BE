@@ -20,7 +20,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             _windDirectionService = windDirectionService;
         }
 
-        [HttpGet("get-min-max-wind-direction", Name = "GetMinMaxWindDirection")]
+        [HttpGet("get-wind-direction", Name = "GetWindDirection")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<WindDirectionPredictionResponse>> GetHuongGioByDay(string diemDuBaoId)
         {

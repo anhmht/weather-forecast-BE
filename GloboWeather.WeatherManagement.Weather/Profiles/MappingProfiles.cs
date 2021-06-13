@@ -1,5 +1,6 @@
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
 using GloboWeather.WeatherManagement.Weather.weathercontext;
 
 namespace GloboWeather.WeatherManagement.Weather.Profiles
@@ -16,6 +17,7 @@ namespace GloboWeather.WeatherManagement.Weather.Profiles
             CreateMap<WindSpeedResponse, TocDoGio>().ReverseMap();
             CreateMap<WeatherResponse, ThoiTiet>().ReverseMap();
             CreateMap<AmountOfRainResponse, AmountOfRain>().ReverseMap();
+            CreateMap<WinLevelResponse, GioGiat>().ReverseMap();
         }
     }
 }

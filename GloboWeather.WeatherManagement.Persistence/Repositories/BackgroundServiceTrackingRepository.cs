@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
-    public class WeatherMinMaxDataRepository: BaseRepository<WeatherMinMaxData>, IWeatherMinMaxDataRepository
+    public class BackgroundServiceTrackingRepository: BaseRepository<BackgroundServiceTracking>, IBackgroundServiceTrackingRepository
     {
-        public WeatherMinMaxDataRepository(GloboWeatherDbContext dbContext) : base(dbContext)
+        public BackgroundServiceTrackingRepository(GloboWeatherDbContext dbContext) : base(dbContext)
         {
         }
      
