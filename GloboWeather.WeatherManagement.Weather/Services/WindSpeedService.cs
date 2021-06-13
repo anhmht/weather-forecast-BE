@@ -97,6 +97,17 @@ namespace GloboWeather.WeatherManagement.Weather.Services
 
             return _mapper.Map<WindSpeedResponse>(windSpeedEntity);
         }
-      
+
+        public async Task<List<WindSpeedResponse>> ListAllAsync()
+        {
+            var data = await _windSpeedRepository.ListAllAsync();
+            var result = new List<WindSpeedResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<WindSpeedResponse>(item));
+            }
+            return result;
+        }
+
     }
 }

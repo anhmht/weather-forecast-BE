@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Weather.IRepository;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 
@@ -97,6 +98,16 @@ namespace GloboWeather.WeatherManagement.Weather.Services
 
             return _mapper.Map<AmountOfRainResponse>(rainEntity);
         }
-      
+
+        public async Task<List<RainAmountResponse>> ListAllAsync()
+        {
+            var data = await _rainAmountRepository.ListAllAsync();
+            var result = new List<RainAmountResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<RainAmountResponse>(item));
+            }
+            return result;
+        }
     }
 }

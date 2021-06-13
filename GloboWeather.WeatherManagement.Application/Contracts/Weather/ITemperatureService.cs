@@ -8,5 +8,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Weather
     {   
         Task<TemperaturePredictionResponse> GetTemperatureMinMaxByDiemId(string diemDuBaoId);
         Task<TemperatureResponse> GetTemperatureBy(string diemDuBaoId);
+
+        Task<List<TemperatureResponse>> ListAllAsync();
     }
 }

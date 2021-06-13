@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
 using GloboWeather.WeatherManagement.Weather.IRepository;
+using GloboWeather.WeatherManagement.Weather.weathercontext;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 
 namespace GloboWeather.WeatherManagement.Weather.Services
@@ -95,6 +97,17 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             var windLevelEntity = await _windLevelRepository.GetByIdAsync(diemdubaoId);
             
             return _mapper.Map<WindLevelResponse>(windLevelEntity);
+        }
+
+        public async Task<List<WinLevelResponse>> ListAllAsync()
+        {
+            var data  = await _windLevelRepository.ListAllAsync();
+            var result = new List<WinLevelResponse>();
+            foreach (var item in data)
+            {
+                result.Add(_mapper.Map<WinLevelResponse>(item));
+            }
+            return result;
         }
     }
 }
