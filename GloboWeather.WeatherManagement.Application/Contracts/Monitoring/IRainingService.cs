@@ -6,6 +6,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Monitoring
 {
     public interface IRainingService
     {
-        Task<List<GetRainResponse>> GetRainingQuantityAsync(IEnumerable<int> zipcodes);
+        Task<GetRainListResponse> GetByPagedAsync(GetRainsListQuery query);
     }
 }

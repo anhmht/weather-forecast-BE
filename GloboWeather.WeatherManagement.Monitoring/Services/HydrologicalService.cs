@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
+using GloboWeather.WeatherManagement.Application.Models.Monitoring.Hydrological;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Services
@@ -16,11 +17,11 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
         {
             _hydrologicalRepository = hydrologicalRepository;
         }
-        public async Task<List<GetHydrologicalResponse>> GetHydrologicalAsync(IEnumerable<int> zipcodes)
+        public async Task<GetHydrologicalListResponse> GetByPagedAsync(GetHydrologicalListQuery query)
         {
             try
             {
-                return await _hydrologicalRepository.GetHydrologicalAsync(zipcodes);
+                return await _hydrologicalRepository.GetByPagedAsync(query);
             }
             catch (Exception e)
             {

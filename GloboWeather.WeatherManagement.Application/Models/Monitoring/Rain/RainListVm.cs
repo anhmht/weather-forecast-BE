@@ -2,7 +2,7 @@ using System;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
 {
-    public class GetRainResponse
+    public class RainListVm
     {
         
         public string ProvinceName { get; set; }
@@ -11,5 +11,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
         public int ZipCode { get; set; }
         public string StationId { get; set; }
         public float RainQuantity { get; set; }
+        public string Address { get; set; }
     }
 }

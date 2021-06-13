@@ -1,8 +1,8 @@
 using System;
 
-namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
+namespace GloboWeather.WeatherManagement.Application.Models.Monitoring.Meteoroligical
 {
-    public class GetMeteorologicalResponse
+    public class MeteorologicalListVm
     {
         public string ProvinceName { get; set; }
         public string StationName { get; set; }
@@ -22,5 +22,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Monitoring
         public float? Tdgm60 { get; set; }
         public float? WindSpeed { get; set; }
         public float? ZluyKe { get; set; }
+        public string Address { get; set; }
     }
 }
