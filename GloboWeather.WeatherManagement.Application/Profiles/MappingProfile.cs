@@ -9,6 +9,9 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Commands.Update
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenario;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenario;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Update;
@@ -56,6 +59,11 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
                     opt => opt.MapFrom(src => src.NhietDo))
                 .ForMember(dest => dest.Weather,
                     opt => opt.MapFrom(src => src.ThoiTiet));
+
+            CreateMap<Scenario, CreateScenarioCommand>().ReverseMap();
+            CreateMap<Scenario, UpdateScenarioCommand>().ReverseMap();
+            CreateMap<Scenario, ScenarioDetailVm>().ReverseMap();
+
         }
     }
 }

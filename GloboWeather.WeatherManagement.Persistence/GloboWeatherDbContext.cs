@@ -39,6 +39,8 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<Station> Stations { get; set; }
         public DbSet<BackgroundServiceTracking> BackgroundServiceTrackings { get; set; }
         public DbSet<WeatherInformation> WeatherInformations { get; set; }
+        
+        public DbSet<Scenario> Scenarios { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

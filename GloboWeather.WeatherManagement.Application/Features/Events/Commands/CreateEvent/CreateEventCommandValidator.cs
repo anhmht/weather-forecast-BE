@@ -6,12 +6,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
 {
     public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
     {
-        private readonly IEventRepository _eventRepository;
-
-        public CreateEventCommandValidator(IEventRepository eventRepository)
+        
+        public CreateEventCommandValidator()
         {
-            _eventRepository = eventRepository;
-
             RuleFor(p => p.Title)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
