@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210614170123_AddScenarioTable")]
+    partial class AddScenarioTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
