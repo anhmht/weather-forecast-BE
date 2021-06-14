@@ -45,7 +45,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
 
     public enum WeatherType
     {
-        Humidity,
+        Humidity = 1,
         WindLevel,
         WindDirection,
         WindSpeed,

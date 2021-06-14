@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
@@ -21,9 +19,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         {
         }
 
-        public async Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, List<string> stationIds, CancellationToken token)
+        public async Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, IEnumerable<string> stationIds, CancellationToken token)
         {
-            return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)).OrderBy(x => x.RefDate).ToListAsync(token);
+            if (stationIds?.Any() == true)
+                return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)).OrderBy(x => x.RefDate).ToListAsync(token);
+            else
+                return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate).OrderBy(x => x.RefDate).ToListAsync(token);
         }
 
         #region Sync Data weather from my sql to sql

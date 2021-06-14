@@ -13,7 +13,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
 {
     public interface IWeatherInformationRepository : IAsyncRepository<WeatherInformation>
     {
-        Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, List<string> stationIds, CancellationToken token);
+        Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, IEnumerable<string> stationIds, CancellationToken token);
 
         Task SyncWinLevelAsync(List<WinLevelResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
 
