@@ -23,7 +23,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-
+            services.AddScoped<IScenarioRepository, ScenarioRepository>();
             services.AddScoped<IWeatherInformationRepository, WeatherInformationRepository>();
             services.AddScoped<IBackgroundServiceTrackingRepository, BackgroundServiceTrackingRepository>();
             

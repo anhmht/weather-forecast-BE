@@ -31,7 +31,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpPost("get-rain-quantity", Name = "GetRainQuantity")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<RainListVm>>> GetRainQuantityList(
+        public async Task<ActionResult<GetRainListResponse>> GetRainQuantityList(
             [FromServices] IRainingService rainingService,
             [FromBody] GetRainsListQuery query)
         {
@@ -41,7 +41,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpPost("get-meteorological", Name = "GetMeteorological")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<GetMeteorologicalListResponse>>> GetMeteorologicalList(
+        public async Task<ActionResult<GetMeteorologicalListResponse>> GetMeteorologicalList(
             [FromServices] IMeteorologicalService meteorologicalService,
             [FromBody] GetMeteorologicalListQuery query)
         {
@@ -51,7 +51,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpPost("get-hydrological", Name = "GetHydrological")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HydrologicalListVm>>> GetHydrologicalList(
+        public async Task<ActionResult<GetHydrologicalListResponse>> GetHydrologicalList(
             [FromServices] IHydrologicalService hydrologicalService,
             [FromBody] GetHydrologicalListQuery query)
         {

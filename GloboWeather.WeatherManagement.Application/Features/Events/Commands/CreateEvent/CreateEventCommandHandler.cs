@@ -28,7 +28,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
         
         public async Task<Guid> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateEventCommandValidator(_eventRepository);
+            var validator = new CreateEventCommandValidator();
             var validationResult = await validator.ValidateAsync(request);
 
             if (validationResult.Errors.Any())
