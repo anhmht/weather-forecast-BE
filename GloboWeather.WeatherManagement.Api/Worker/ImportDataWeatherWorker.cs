@@ -107,7 +107,7 @@ namespace GloboWeather.WeatherManagement.Api.Worker
                     }
                 }
 
-            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(100));
+            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
         }
     }
