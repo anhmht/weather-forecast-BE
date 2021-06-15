@@ -4,11 +4,7 @@ namespace GloboWeather.WeatherManagement.Application.Models.Monitoring.Meteoroli
 {
     public class MeteorologicalListVm
     {
-        public string ProvinceName { get; set; }
-        public string StationName { get; set; }
         public DateTime Date { get; set; }
-        public int ZipCode { get; set; }
-        public string StationId { get; set; }
         public float? Evaporation { get; set; }
         public float? Radiation { get; set; }
         public float? Humidity { get; set; }
@@ -22,6 +18,5 @@ namespace GloboWeather.WeatherManagement.Application.Models.Monitoring.Meteoroli
         public float? Tdgm60 { get; set; }
         public float? WindSpeed { get; set; }
         public float? ZluyKe { get; set; }
-        public string Address { get; set; }
     }
 }

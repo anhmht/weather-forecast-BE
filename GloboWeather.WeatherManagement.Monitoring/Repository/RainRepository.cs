@@ -16,44 +16,27 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
         public RainRepository(
             MonitoringContext dbContext) : base(dbContext)
         {
-           
         }
 
         public async Task<GetRainListResponse> GetByPagedAsync(GetRainsListQuery query)
         {
-            var entryPoint = from p in _dbContext.Set<Province>()
-                join tramKttv in _dbContext.Set<TramKttv>() on p.ZipCode equals tramKttv.ZipCode
-                join rain in _dbContext.Set<Rain>() on tramKttv.StationId equals rain.StationId
-                where query.ZipCodes.Contains(p.ZipCode) && (rain.Date >= query.DateFrom.Date && rain.Date <= query.DateTo.Date)
-                orderby p.ZipCode descending
-                select new RainListVm()
-                {
-                    ZipCode = p.ZipCode,
-                    ProvinceName = p.Name,
-                    StationName = tramKttv.Name,
-                    StationId = tramKttv.StationId,
-                    Date = rain.Date,
-                    RainQuantity = rain.Quality,
-                    Address =  tramKttv.Address
-                };
-            var collection = await entryPoint.PaginateAsync(query.Page, query.Limit, new CancellationToken());
+            var entryDatas = await _dbContext.Set<Rain>()
+                .AsNoTracking()
+                .Where(r => r.StationId.Equals(query.StationId)
+                            && (r.Date >= query.DateFrom.Date && r.Date <= query.DateTo.Date))
+                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+
             return new GetRainListResponse()
             {
-                CurrentPage = collection.CurrentPage,
-                TotalPages = collection.TotalPages,
-                TotalItems = collection.TotalItems,
-                Rains = collection.Items.Select(r => new RainListVm
+                CurrentPage = entryDatas.CurrentPage,
+                TotalPages = entryDatas.TotalPages,
+                TotalItems = entryDatas.TotalPages,
+                Rains = entryDatas.Items.Select(e => new RainListVm()
                 {
-                    ZipCode = r.ZipCode,
-                    ProvinceName = r.ProvinceName,
-                    StationName = r.StationName,
-                    StationId = r.StationId,
-                    Date = r.Date,
-                    RainQuantity = r.RainQuantity,
-                    Address =  r.Address
+                    Date = e.Date,
+                    RainQuantity = e.Quality
                 }).ToList()
             };
-            
         }
     }
 }

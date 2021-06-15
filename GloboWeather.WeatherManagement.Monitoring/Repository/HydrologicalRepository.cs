@@ -19,43 +19,27 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
         
         public async Task<GetHydrologicalListResponse> GetByPagedAsync(GetHydrologicalListQuery query)
         {
-            var entryDatas = from p in _dbContext.Set<Province>()
-                join tramKttv in _dbContext.Set<TramKttv>() on p.ZipCode equals tramKttv.ZipCode
-                join hydrological in _dbContext.Set<Hydrological>() on tramKttv.StationId equals hydrological.StationId
-                where query.ZipCodes.Contains(p.ZipCode) && (hydrological.Date >= query.DateFrom && hydrological.Date <= query.DateTo)
-                orderby p.ZipCode descending
-                select new HydrologicalListVm()
-                {
-                    ZipCode = p.ZipCode,
-                    ProvinceName = p.Name,
-                    StationName = tramKttv.Name,
-                    StationId = tramKttv.StationId,
-                    Date = hydrological.Date,
-                    Rain = hydrological.Rain,
-                    WaterLevel = hydrological.WaterLevel,
-                    ZLuyKe = hydrological.ZLuyKe,
-                    Address =  tramKttv.Address
-                };
-            
-            var collection = await entryDatas.PaginateAsync(query.Page, query.Limit, new CancellationToken());
+            var entryDatas = await _dbContext.Set<Hydrological>()
+                .AsNoTracking()
+                .Where(r => r.StationId.Equals(query.StationId)
+                            && (r.Date >= query.DateFrom.Date && r.Date <= query.DateTo.Date))
+                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+
             return new GetHydrologicalListResponse()
             {
-                CurrentPage = collection.CurrentPage,
-                TotalPages = collection.TotalPages,
-                TotalItems = collection.TotalItems,
-                Hydrologicals = collection.Items.Select(h => new HydrologicalListVm()
+                CurrentPage = entryDatas.CurrentPage,
+                TotalItems = entryDatas.TotalItems,
+                TotalPages = entryDatas.TotalPages,
+                Hydrologicals = entryDatas.Items.Select(h => new HydrologicalListVm()
                 {
-                    ZipCode = h.ZipCode,
-                    ProvinceName = h.ProvinceName,
-                    StationName = h.StationName,
-                    StationId = h.StationId,
                     Date = h.Date,
                     Rain = h.Rain,
                     WaterLevel = h.WaterLevel,
                     ZLuyKe = h.ZLuyKe,
-                    Address =  h.Address
                 }).ToList()
+
             };
+           
         }
     }
 }
