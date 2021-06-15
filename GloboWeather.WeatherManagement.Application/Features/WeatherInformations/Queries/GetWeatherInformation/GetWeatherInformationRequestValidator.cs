@@ -2,9 +2,9 @@
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation
 {
-    class GetWeatherInformationRequestValidator : AbstractValidator<GetWeatherInformationRequest>
+    class GetWeatherInformationBaseRequestValidator : AbstractValidator<GetWeatherInformationBaseRequest>
     {
-        public GetWeatherInformationRequestValidator()
+        public GetWeatherInformationBaseRequestValidator()
         {
             //RuleFor(p => p.FromDate)
             //    .NotEmpty().WithMessage("{PropertyName} is required.")

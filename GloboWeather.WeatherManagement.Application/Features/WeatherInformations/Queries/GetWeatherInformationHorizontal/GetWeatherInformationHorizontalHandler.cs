@@ -1,4 +1,5 @@
-﻿using GloboWeather.WeatherManegement.Application.Contracts.Weather;
+﻿using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
+using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 using MediatR;
 using System.Linq;
 using System.Threading;
@@ -6,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation
 {
-    public class GetWeatherInformationHandler : IRequestHandler<GetWeatherInformationRequest, GetWeatherInformationResponse>
+    public class GetWeatherInformationHorizontalHandler : IRequestHandler<GetWeatherInformationHorizontalRequest, GetWeatherInformationHorizontalResponse>
     {
         private readonly IWeatherInformationService _weatherInformationService;
 
-        public GetWeatherInformationHandler(IWeatherInformationService weatherInformationService)
+        public GetWeatherInformationHorizontalHandler(IWeatherInformationService weatherInformationService)
         {
             _weatherInformationService = weatherInformationService;
         }
 
-        public async Task<GetWeatherInformationResponse> Handle(GetWeatherInformationRequest request, CancellationToken cancellationToken)
+        public async Task<GetWeatherInformationHorizontalResponse> Handle(GetWeatherInformationHorizontalRequest request, CancellationToken cancellationToken)
         {
             var validator = new GetWeatherInformationBaseRequestValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -25,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
                 throw new Exceptions.ValidationException(validationResult);
             }
 
-            var response = await _weatherInformationService.GetWeatherInformationsAsync(request, cancellationToken);
+            var response = await _weatherInformationService.GetWeatherInformationHorizontalAsync(request, cancellationToken);
 
             return response;
         }

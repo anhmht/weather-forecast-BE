@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
-using GloboWeather.WeatherManagement.Application.Models.Weather;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +29,19 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost("get-weather-information", Name = nameof(GetWeatherInformationAsync))]
+        [HttpPost("get-detail", Name = nameof(GetWeatherInformationAsync))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<GetWeatherInformationResponse>> GetWeatherInformationAsync(GetWeatherInformationRequest request)
+        {
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
+        [HttpPost("get-horizontal", Name = nameof(GetWeatherInformationHorizontalAsync))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetWeatherInformationHorizontalResponse>> GetWeatherInformationHorizontalAsync(GetWeatherInformationHorizontalRequest request)
         {
             var response = await _mediator.Send(request);
             return Ok(response);

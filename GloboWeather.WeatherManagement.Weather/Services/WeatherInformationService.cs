@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Domain.Entities;
@@ -107,7 +107,7 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             var startDate = fromDate.GetStartOfDate();
             for (int i = 0; i < 120; i++)
             {
-                var weatherInformation = weatherInformations.SingleOrDefault(x => x.RefDate == startDate.AddHours(i + 1));
+                var weatherInformation = weatherInformations.SingleOrDefault(x => x.RefDate == startDate.AddHours(i));
                 if (weatherInformation == null)
                     continue;
 
@@ -207,7 +207,7 @@ namespace GloboWeather.WeatherManagement.Weather.Services
 
         public async Task<GetWeatherInformationResponse> GetWeatherInformationsAsync(GetWeatherInformationRequest request, CancellationToken cancelToken)
         {
-            StandadizeGetWeatherInformationRequest(request);
+            StandadizeGetWeatherInformationBaseRequest(request);
             var response = new GetWeatherInformationResponse();
 
             var weatherInformations = await _weatherInformationRepository.GetByRefDateStationAsync(request.FromDate.Value, request.ToDate.Value, request.StationIds, cancelToken);
@@ -215,12 +215,14 @@ namespace GloboWeather.WeatherManagement.Weather.Services
                 return response;
 
             var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
-            foreach (var weatherType in request.WeatherTypes)
+            foreach (var stationId in stationIds)
             {
-                foreach (var stationId in stationIds)
-                {
-                    var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
+                var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
+                if (!weatherInformationByStations.Any())
+                    continue;
 
+                foreach (var weatherType in request.WeatherTypes)
+                {
                     var weatherInformationByStation = new WeatherInformationByStation()
                     {
                         StationId = stationId,
@@ -249,22 +251,25 @@ namespace GloboWeather.WeatherManagement.Weather.Services
                                 Value = value
                             });
 
-                            if (value.GetInt() == weatherInformationByDay.MinValue)
+                            if (weatherType != WeatherType.WindDirection)
                             {
-                                weatherInformationByDay.WeatherInformationMins.Add(new WeatherInformationByHour()
+                                if (value.GetInt() == weatherInformationByDay.MinValue)
                                 {
-                                    Hour = weatherInfo.RefDate.Hour,
-                                    Value = value
-                                });
-                            }
+                                    weatherInformationByDay.WeatherInformationMins.Add(new WeatherInformationByHour()
+                                    {
+                                        Hour = weatherInfo.RefDate.Hour,
+                                        Value = value
+                                    });
+                                }
 
-                            if (value.GetInt() == weatherInformationByDay.MaxValue)
-                            {
-                                weatherInformationByDay.WeatherInformationMaxs.Add(new WeatherInformationByHour()
+                                if (value.GetInt() == weatherInformationByDay.MaxValue)
                                 {
-                                    Hour = weatherInfo.RefDate.Hour,
-                                    Value = value
-                                });
+                                    weatherInformationByDay.WeatherInformationMaxs.Add(new WeatherInformationByHour()
+                                    {
+                                        Hour = weatherInfo.RefDate.Hour,
+                                        Value = value
+                                    });
+                                }
                             }
                         }
 
@@ -280,7 +285,7 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             return response;
         }
 
-        private void StandadizeGetWeatherInformationRequest(GetWeatherInformationRequest request)
+        private void StandadizeGetWeatherInformationBaseRequest(GetWeatherInformationBaseRequest request)
         {
             if (!request.FromDate.HasValue)
             {
@@ -319,6 +324,54 @@ namespace GloboWeather.WeatherManagement.Weather.Services
             {
                 request.WeatherTypes = Enum.GetValues<WeatherType>();
             }
+        }
+
+        public async Task<GetWeatherInformationHorizontalResponse> GetWeatherInformationHorizontalAsync(GetWeatherInformationHorizontalRequest request, CancellationToken cancelToken)
+        {
+            StandadizeGetWeatherInformationBaseRequest(request);
+            var response = new GetWeatherInformationHorizontalResponse();
+
+            var weatherInformations = await _weatherInformationRepository.GetByRefDateStationAsync(request.FromDate.Value, request.ToDate.Value.AddDays(4), request.StationIds, cancelToken);
+            if (weatherInformations?.Any() == false)
+                return response;
+
+            var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
+            foreach (var stationId in stationIds)
+            {
+                var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
+                if (!weatherInformationByStations.Any())
+                    continue;
+
+                foreach (var weatherType in request.WeatherTypes)
+                {
+                    var dateInterval = request.FromDate.Value;
+                    while (dateInterval <= request.ToDate)
+                    {
+                        var weatherInformationHorizontal = new GetWeatherInformationHorizontal()
+                        {
+                            StationId = stationId,
+                            RefDate = dateInterval,
+                            WeatherType = weatherType
+                        };
+
+                        for (int i = 0; i < 120; i++)
+                        {
+                            var weatherInformation = weatherInformationByStations.SingleOrDefault(x => x.RefDate == dateInterval.AddHours(i));
+                            if (weatherInformation == null)
+                                continue;
+                            var value = GetValueByWeatherType(weatherInformation, weatherType);
+                            var fieldName = $"_{i + 1}";
+                            var propertyInfo = weatherInformationHorizontal.GetType().GetProperty(fieldName);
+                            propertyInfo?.SetValue(weatherInformationHorizontal, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+                        }
+                        response.GetWeatherInformationHorizontals.Add(weatherInformationHorizontal);
+
+                        dateInterval = dateInterval.AddDays(1);
+                    }
+                }
+            }
+
+            return response;
         }
     }
 }
