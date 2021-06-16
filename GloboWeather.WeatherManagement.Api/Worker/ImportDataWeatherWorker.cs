@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManagement.Api.Worker
 {
-    public class ImportDataWeatherWorker : BackgroundService
+    public class ImportDataWeatherWorker : IHostedService
     {
         private Timer _timer;
         private readonly IMediator _mediator;
@@ -29,12 +29,13 @@ namespace GloboWeather.WeatherManagement.Api.Worker
             _configuration = configuration;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+
+        public virtual async Task StartAsync(CancellationToken cancellationToken)
         {
             var timeToRun = _configuration.GetSection("SyncWeatherDataSettings:RunTime").Get<DateTime[]>().ToList();
             _timer = new Timer(async state =>
             {
-                if (timeToRun.Select(x => x.ToString("HH:mm")).Contains(DateTime.Now.ToString("HH:mm")))
+                if (timeToRun.Select(x => x.ToString("HH:mm")).Contains(DateTime.Now.ToString("HH:mm")) )
                 {
 
                     using (var scope = _serviceProvider.CreateScope())
@@ -108,7 +109,11 @@ namespace GloboWeather.WeatherManagement.Api.Worker
                 }
 
             }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+        }
 
+        public virtual async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await Task.CompletedTask;
         }
     }
 }

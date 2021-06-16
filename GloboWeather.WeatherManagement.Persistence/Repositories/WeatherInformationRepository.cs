@@ -51,6 +51,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.WindLevel = ((int)value).ToString();
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -93,6 +94,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.Humidity = ((int)value).ToString();
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -135,6 +137,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.WindDirection = (string)value;
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -177,6 +180,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.WindSpeed = ((int)value).ToString();
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -219,6 +223,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.Temperature = ((int)value).ToString();
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -255,6 +260,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.RainAmount = ((int)value).ToString();
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
@@ -291,6 +297,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     if (weatherInformation != null)
                     {
                         weatherInformation.Weather = (string)value;
+                        weatherInformation.LastModifiedDate = DateTime.Now;
                     }
                     else
                     {
