@@ -11,6 +11,9 @@ namespace GloboWeather.WeatherManagement.Monitoring.Mapping
             builder.HasKey(t => t.StationId);
             builder.ToTable("thuyvan");
 
+            builder.Property(e => e.StationId)
+                .HasColumnName("stationid");
+            
             builder.Property(e => e.Date)
                 .HasColumnName("dt");
             builder.Property(e => e.Rain)
