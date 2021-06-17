@@ -6,6 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Worker\**" />
+      <Content Remove="Worker\**" />
+      <EmbeddedResource Remove="Worker\**" />
+      <None Remove="Worker\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="Startup.cs~RF84bb0bb.TMP" />
     </ItemGroup>
 
@@ -36,6 +43,7 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj" />
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj" />
 	    <ProjectReference Include="..\GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj" />
+      <ProjectReference Include="..\WeatherBackgroundService\WeatherBackgroundService.csproj" />
     </ItemGroup>
 
 </Project>

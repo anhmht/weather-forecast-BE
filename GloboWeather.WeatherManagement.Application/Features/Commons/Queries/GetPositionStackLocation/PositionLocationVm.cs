@@ -31,9 +31,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Queries.Ge
         [JsonPropertyName("county")]
         public string County { get; set; }
         
-        [JsonPropertyName("country")]
-        public string Country { get; set; }
-        
         [JsonPropertyName("country_code")]
         public string CountryCode { get; set; }
         

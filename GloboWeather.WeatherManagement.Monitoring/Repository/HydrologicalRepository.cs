@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,30 +17,37 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
         public HydrologicalRepository(MonitoringContext dbContext) : base(dbContext)
         {
         }
-        
+
         public async Task<GetHydrologicalListResponse> GetByPagedAsync(GetHydrologicalListQuery query)
         {
-            var entryDatas = await _dbContext.Set<Hydrological>()
-                .AsNoTracking()
-                .Where(r => r.StationId.Equals(query.StationId)
-                            && (r.Date >= query.DateFrom.Date && r.Date <= query.DateTo.Date))
-                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
-
-            return new GetHydrologicalListResponse()
+            try
             {
-                CurrentPage = entryDatas.CurrentPage,
-                TotalItems = entryDatas.TotalItems,
-                TotalPages = entryDatas.TotalPages,
-                Hydrologicals = entryDatas.Items.Select(h => new HydrologicalListVm()
+                var entryDatas = await _dbContext.Set<Hydrological>()
+                    .AsNoTracking()
+                    .Where(r => r.StationId.Equals(query.StationId)
+                                && (r.Date >= query.DateFrom.Date && r.Date <= query.DateTo.Date))
+                    .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+                
+                return new GetHydrologicalListResponse()
                 {
-                    Date = h.Date,
-                    Rain = h.Rain,
-                    WaterLevel = h.WaterLevel,
-                    ZLuyKe = h.ZLuyKe,
-                }).ToList()
-
-            };
-           
+                    CurrentPage = entryDatas.CurrentPage,
+                    TotalItems = entryDatas.TotalItems,
+                    TotalPages = entryDatas.TotalPages,
+                    Hydrologicals = entryDatas.Items.Select(h => new HydrologicalListVm()
+                    {
+                        Date = h.Date,
+                        Rain = h.Rain,
+                        WaterLevel = h.WaterLevel,
+                        ZLuyKe = h.ZLuyKe,
+                    }).ToList()
+                };
+              
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

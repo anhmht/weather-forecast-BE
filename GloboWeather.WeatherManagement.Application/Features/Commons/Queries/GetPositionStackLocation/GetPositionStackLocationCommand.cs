@@ -4,5 +4,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Queries.Ge
     {
         public  decimal Lat { get; set; }
         public  decimal Lon { get; set; }
+        
+        public string IpAddress { get; set; }
     }  
 }
