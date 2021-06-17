@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenariosList;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities;
@@ -11,14 +12,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
     public class ScenarioRepository : BaseRepository<Scenario>, IScenarioRepository
     {
-        public ScenarioRepository(GloboWeatherDbContext dbContext) : base(dbContext)
+        private readonly IUnitOfWork _;
+        public ScenarioRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
-            
+            _ = unitOfWork;
         }
 
         public async Task<GetScenariosListResponse> GetByPagedAsync(GetScenariosListQuery query, CancellationToken token)
         {
-            var scenarios = await _dbContext.Scenarios
+            var scenarios = await _.ScenarioRepository.GetAllQuery()
                 .AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, token);
 

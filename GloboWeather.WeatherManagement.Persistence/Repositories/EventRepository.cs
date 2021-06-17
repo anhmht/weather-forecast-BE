@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -15,20 +14,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
     public class EventRepository: BaseRepository<Event>, IEventRepository
     {
-        public EventRepository(GloboWeatherDbContext dbContext) : base(dbContext)
+        private readonly IUnitOfWork _;
+        public EventRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
+            _ = unitOfWork;
         }
 
-        public Task<bool> IsEventNameAndDateUnique(string name, DateTime eventDate)
+        public async Task<bool> IsEventNameAndDateUnique(string name, DateTime eventDate)
         {
-            var matches = _dbContext.Events.Any(e => e.Title.Equals(name) && e.DatePosted.Date.Equals(eventDate.Date));
-
-            return Task.FromResult(matches);
+            return await _.EventRepository.GetWhereQuery(e => e.Title.Equals(name) && e.DatePosted.Date.Equals(eventDate.Date)).AnyAsync();
         }
 
         public async Task<GetEventsListResponse> GetByPageAsync(GetEventsListQuery query,  CancellationToken token)
         {
-            var events =  _dbContext.Events as IQueryable<Event>;
+            var events =  _.EventRepository as IQueryable<Event>;
             if (query.CategoryId.HasValue)
             {
                 events = events.Where(e => e.CategoryId == query.CategoryId);
@@ -63,8 +62,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<List<Event>> GetEventListByAsync(Guid categoryId, Guid statusId, CancellationToken token)
         {
-            return await _dbContext.Events.Where(e => e.CategoryId == categoryId
-                                                         && e.StatusId == statusId).ToListAsync(token);
+            return (await _.EventRepository.Where(e => e.CategoryId == categoryId
+                                                         && e.StatusId == statusId, token)).ToList();
             
         }
     }

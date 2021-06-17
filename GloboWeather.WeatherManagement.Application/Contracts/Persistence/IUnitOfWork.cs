@@ -8,6 +8,7 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         //GloboWeatherDbContext GetContext();
         Task<int> CommitAsync([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "", [System.Runtime.CompilerServices.CallerMemberName] string memberName = "");
         void Dispose();
+        IBackgroundServiceTrackingRepository BackgroundServiceTrackingRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IConfigurationRepository ConfigurationRepository { get; }
         IEventRepository EventRepository { get; }

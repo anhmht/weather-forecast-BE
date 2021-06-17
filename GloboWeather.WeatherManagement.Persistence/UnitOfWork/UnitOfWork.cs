@@ -63,47 +63,50 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         #region Repositories
 
-        private ICategoryRepository _CategoryRepository;
-        ICategoryRepository IUnitOfWork.CategoryRepository => _CategoryRepository ?? new CategoryRepository(_context, this);
+        private IBackgroundServiceTrackingRepository _BackgroundServiceTrackingRepository;
+        IBackgroundServiceTrackingRepository IUnitOfWork.BackgroundServiceTrackingRepository => _BackgroundServiceTrackingRepository ?? new BackgroundServiceTrackingRepository(_context, this);
 
-        private IConfigurationRepository _ConfigurationRepository;
-        IConfigurationRepository IUnitOfWork.ConfigurationRepository => _ConfigurationRepository ?? new ConfigurationRepository(_context, this);
+        private ICategoryRepository _categoryRepository;
+        ICategoryRepository IUnitOfWork.CategoryRepository => _categoryRepository ?? new CategoryRepository(_context, this);
 
-        private IEventRepository _EventRepository;
-        IEventRepository IUnitOfWork.EventRepository => _EventRepository ?? new EventRepository(_context, this);
+        private IConfigurationRepository _configurationRepository;
+        IConfigurationRepository IUnitOfWork.ConfigurationRepository => _configurationRepository ?? new ConfigurationRepository(_context, this);
 
-        private IForumRepository _ForumRepository;
-        IForumRepository IUnitOfWork.ForumRepository => _ForumRepository ?? new ForumRepository(_context, this);
+        private IEventRepository _eventRepository;
+        IEventRepository IUnitOfWork.EventRepository => _eventRepository ?? new EventRepository(_context, this);
 
-        private IForumCategoryRepository _ForumCategoryRepository;
-        IForumCategoryRepository IUnitOfWork.ForumCategoryRepository => _ForumCategoryRepository ?? new ForumCategoryRepository(_context, this);
+        private IForumRepository _forumRepository;
+        IForumRepository IUnitOfWork.ForumRepository => _forumRepository ?? new ForumRepository(_context, this);
 
-        private IForumPostRepository _ForumPostRepository;
-        IForumPostRepository IUnitOfWork.ForumPostRepository => _ForumPostRepository ?? new ForumPostRepository(_context, this);
+        private IForumCategoryRepository _forumCategoryRepository;
+        IForumCategoryRepository IUnitOfWork.ForumCategoryRepository => _forumCategoryRepository ?? new ForumCategoryRepository(_context, this);
 
-        private IForumTopicRepository _ForumTopicRepository;
-        IForumTopicRepository IUnitOfWork.ForumTopicRepository => _ForumTopicRepository ?? new ForumTopicRepository(_context, this);
+        private IForumPostRepository _forumPostRepository;
+        IForumPostRepository IUnitOfWork.ForumPostRepository => _forumPostRepository ?? new ForumPostRepository(_context, this);
 
-        private IScenarioRepository _ScenarioRepository;
-        IScenarioRepository IUnitOfWork.ScenarioRepository => _ScenarioRepository ?? new ScenarioRepository(_context, this);
+        private IForumTopicRepository _forumTopicRepository;
+        IForumTopicRepository IUnitOfWork.ForumTopicRepository => _forumTopicRepository ?? new ForumTopicRepository(_context, this);
 
-        private ISitePageRepository _SitePageRepository;
-        ISitePageRepository IUnitOfWork.SitePageRepository => _SitePageRepository ?? new SitePageRepository(_context, this);
+        private IScenarioRepository _scenarioRepository;
+        IScenarioRepository IUnitOfWork.ScenarioRepository => _scenarioRepository ?? new ScenarioRepository(_context, this);
 
-        private IStationRepository _StationRepository;
-        IStationRepository IUnitOfWork.StationRepository => _StationRepository ?? new StationRepository(_context, this);
+        private ISitePageRepository _sitePageRepository;
+        ISitePageRepository IUnitOfWork.SitePageRepository => _sitePageRepository ?? new SitePageRepository(_context, this);
 
-        private IStatusRepository _StatusRepository;
-        IStatusRepository IUnitOfWork.StatusRepository => _StatusRepository ?? new StatusRepository(_context, this);
+        private IStationRepository _stationRepository;
+        IStationRepository IUnitOfWork.StationRepository => _stationRepository ?? new StationRepository(_context, this);
 
-        private IThemeRepository _ThemeRepository;
-        IThemeRepository IUnitOfWork.ThemeRepository => _ThemeRepository ?? new ThemeRepository(_context, this);
+        private IStatusRepository _statusRepository;
+        IStatusRepository IUnitOfWork.StatusRepository => _statusRepository ?? new StatusRepository(_context, this);
 
-        private ITopicSubscriptionRepository _TopicSubscriptionRepository;
-        ITopicSubscriptionRepository IUnitOfWork.TopicSubscriptionRepository => _TopicSubscriptionRepository ?? new TopicSubscriptionRepository(_context, this);
+        private IThemeRepository _themeRepository;
+        IThemeRepository IUnitOfWork.ThemeRepository => _themeRepository ?? new ThemeRepository(_context, this);
 
-        private IUpDownVoteRepository _UpDownVoteRepository;
-        IUpDownVoteRepository IUnitOfWork.UpDownVoteRepository => _UpDownVoteRepository ?? new UpDownVoteRepository(_context, this);
+        private ITopicSubscriptionRepository _topicSubscriptionRepository;
+        ITopicSubscriptionRepository IUnitOfWork.TopicSubscriptionRepository => _topicSubscriptionRepository ?? new TopicSubscriptionRepository(_context, this);
+
+        private IUpDownVoteRepository _upDownVoteRepository;
+        IUpDownVoteRepository IUnitOfWork.UpDownVoteRepository => _upDownVoteRepository ?? new UpDownVoteRepository(_context, this);
 
         private IWeatherInformationRepository _weatherInformationRepository;
         IWeatherInformationRepository IUnitOfWork.WeatherInformationRepository => _weatherInformationRepository ?? new WeatherInformationRepository(_context, this);

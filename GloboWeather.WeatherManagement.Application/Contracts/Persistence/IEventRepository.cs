@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence

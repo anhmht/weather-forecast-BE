@@ -1,11 +1,9 @@
-
 using GloboWeather.WeatherManagement.Domain.Entities;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
 {
-    public interface IWeatherMinMaxDataRepository : IAsyncRepository<WeatherMinMaxData>
-    {       
-  
+    public interface ITopicSubscriptionRepository : IAsyncRepository<TopicSubscription>
+    {
         
     }
 }
