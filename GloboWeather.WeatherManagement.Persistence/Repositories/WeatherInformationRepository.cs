@@ -3,28 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
     public class WeatherInformationRepository : BaseRepository<WeatherInformation>, IWeatherInformationRepository
     {
-        public WeatherInformationRepository(GloboWeatherDbContext dbContext) : base(dbContext)
+        private readonly IUnitOfWork _;
+        public WeatherInformationRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
+            _ = unitOfWork;
         }
 
         public async Task<IEnumerable<WeatherInformation>> GetByRefDateStationAsync(DateTime startDate, DateTime endDate, IEnumerable<string> stationIds, CancellationToken token)
         {
             if (stationIds?.Any() == true)
-                return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)).OrderBy(x => x.RefDate).ToListAsync(token);
+            {
+                return (await _.WeatherInformationRepository.Where(x =>
+                        x.RefDate <= endDate && x.RefDate >= startDate && stationIds.Contains(x.StationId)))
+                    .OrderBy(x => x.RefDate);
+            }
             else
-                return await _dbContext.WeatherInformations.Where(x => x.RefDate <= endDate && x.RefDate >= startDate).OrderBy(x => x.RefDate).ToListAsync(token);
+            {
+                return (await _.WeatherInformationRepository.Where(x =>
+                        x.RefDate <= endDate && x.RefDate >= startDate))
+                    .OrderBy(x => x.RefDate);
+            }
         }
 
         #region Sync Data weather from my sql to sql
@@ -37,15 +46,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         /// <returns></returns>
         public async Task SyncWinLevelAsync(List<WinLevelResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp = await _.WeatherInformationRepository.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -63,32 +71,33 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
+
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         /// <summary>
         /// sync data doamtb
         /// </summary>
-        /// <param name="WeatherInformations"></param>
+        /// <param name="weatherInformations"></param>
         /// <param name="lastUpdate"></param>
+        /// <param name="isSaveDb"></param>
         /// <returns></returns>
-        public async Task SyncHumidityAsync(List<HumidityResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
+        public async Task SyncHumidityAsync(List<HumidityResponse> weatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
-            foreach (var item in WeatherInformations)
+            foreach (var item in weatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp = await _.WeatherInformationRepository.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -106,13 +115,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         /// <summary>
@@ -123,15 +132,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         /// <returns></returns>
         public async Task SyncWindDirectionAsync(List<WindDirectionResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp = await _.WeatherInformationRepository.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -149,13 +157,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         /// <summary>
@@ -166,15 +174,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         /// <returns></returns>
         public async Task SyncWindSpeedAsync(List<WindSpeedResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp =
+                    await _.WeatherInformationRepository.Where(
+                        x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -192,13 +201,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         /// <summary>
@@ -209,15 +218,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         /// <returns></returns>
         public async Task SyncTemperatureAsync(List<TemperatureResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp =
+                    await _.WeatherInformationRepository.Where(
+                        x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -235,26 +245,27 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         public async Task SyncRainAmountAsync(List<RainAmountResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp =
+                    await _.WeatherInformationRepository.Where(
+                        x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -272,26 +283,27 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         public async Task SyncWeatherAsync(List<WeatherResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false)
         {
-            var predictData = _dbContext.WeatherInformations.Where(x => x.RefDate > lastUpdate).ToList();
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp =
+                    await _.WeatherInformationRepository.Where(
+                        x => x.RefDate > currentDay && x.StationId == item.DiemId);
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);
-                    var value = item.GetType().GetProperty($"_{i}").GetValue(item, null);
+                    var value = item.GetType().GetProperty($"_{i}")?.GetValue(item, null);
 
                     var weatherInformation = predictDataTmp.FirstOrDefault(x => x.RefDate == predictTime);
                     if (weatherInformation != null)
@@ -309,13 +321,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                             StationId = item.DiemId,
                             CreateBy = "System"
                         };
-                        _dbContext.WeatherInformations.Add(newWeatherInformation);
+                        await _.WeatherInformationRepository.AddAsync(newWeatherInformation);
                     }
                 }
 
             }
             if (isSaveDb)
-                _dbContext.SaveChanges();
+                await _.CommitAsync();
         }
 
         #endregion

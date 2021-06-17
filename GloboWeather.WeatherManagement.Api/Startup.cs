@@ -6,10 +6,12 @@ using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
 using GloboWeather.WeatherManagement.Api.Worker;
 using GloboWeather.WeatherManagement.Application;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
 using GloboWeather.WeatherManagement.Monitoring;
 using GloboWeather.WeatherManagement.Persistence;
+using GloboWeather.WeatherManagement.Persistence.UnitOfWork;
 using GloboWeather.WeatherManagement.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +40,8 @@ namespace GloboWeather.WeatherManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwagger(services);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
             services.AddPersistenceServices(Configuration);

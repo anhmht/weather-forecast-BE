@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
@@ -14,5 +15,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
         Task<IReadOnlyList<T>> GetPagedResponseAsync(int page, int size);
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task UpdateRangeAsync(List<T> entities);
+        Task<IEnumerable<T>> Where(Expression<Func<T, bool>> where, string[] includes = null);
     }
 }

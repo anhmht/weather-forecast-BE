@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;

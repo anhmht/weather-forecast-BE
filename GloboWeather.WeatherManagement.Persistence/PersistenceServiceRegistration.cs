@@ -1,4 +1,5 @@
 
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Models.BackgroundService;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;

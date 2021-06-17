@@ -13,6 +13,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 
 namespace GloboWeather.WeatherManagement.Api.Worker
 {

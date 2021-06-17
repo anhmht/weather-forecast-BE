@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Weather", "GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj", "{B2C00D79-9E67-47BF-8E88-84105F0FDECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GloboWeather.WeatherManagement.Monitoring", "GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj", "{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GloboWeather.WeatherManagement.Monitoring", "GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj", "{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,15 +1,15 @@
-
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
-namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
+namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
 {
     public interface IWeatherInformationRepository : IAsyncRepository<WeatherInformation>
     {

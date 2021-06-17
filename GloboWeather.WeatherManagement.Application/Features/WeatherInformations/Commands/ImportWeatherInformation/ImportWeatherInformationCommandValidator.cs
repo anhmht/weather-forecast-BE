@@ -1,6 +1,6 @@
 using FluentValidation;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using System;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation
 {
