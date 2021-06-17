@@ -213,7 +213,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             foreach (var item in WeatherInformations)
             {
                 var currentDay = item.RefDate;
-                var predictDataTmp = _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToList();
+                var predictDataTmp = await _dbContext.WeatherInformations.Where(x => x.RefDate > currentDay && x.StationId == item.DiemId).ToListAsync();
                 for (int i = 1; i < 121; i++)
                 {
                     var predictTime = currentDay.AddHours(i);

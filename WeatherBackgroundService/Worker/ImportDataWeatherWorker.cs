@@ -27,7 +27,7 @@ namespace WeatherBackgroundService.Worker
         }
 
 
-        public virtual async Task StartAsync(CancellationToken cancellationToken)
+        public  async Task StartAsync(CancellationToken cancellationToken)
         {
             var timeToRun = _configuration.GetSection("SyncWeatherDataSettings:RunTime").Get<DateTime[]>().ToList();
             _timer = new Timer(async state =>
