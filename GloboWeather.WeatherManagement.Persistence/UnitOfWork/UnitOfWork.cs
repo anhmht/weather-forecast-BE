@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Domain.Common;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
+using GloboWeather.WeatherManegement.Application.Contracts;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 {
     public class UnitOfWork : IDisposable, IUnitOfWork
     {
         #region Variables
+        private readonly ILoggedInUserService _loggedInUserService;
         private readonly GloboWeatherDbContext _context;
         private bool _disposed;
         #endregion
@@ -17,6 +23,11 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         public UnitOfWork(GloboWeatherDbContext context)
         {
             _context = context;
+        }
+        public UnitOfWork(GloboWeatherDbContext context, ILoggedInUserService loggedInUserService)
+        {
+            _context = context; 
+            _loggedInUserService = loggedInUserService;
         }
         #endregion
 
@@ -28,6 +39,21 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         public async Task<int> CommitAsync([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "", [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
+            foreach (var entry in _context.ChangeTracker.Entries<AuditableEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreateDate = DateTime.Now;
+                        entry.Entity.CreateBy = _loggedInUserService.UserId;
+                        break;
+                    case EntityState.Modified:
+                        entry.Entity.LastModifiedDate = DateTime.Now;
+                        entry.Entity.LastModifiedBy = _loggedInUserService.UserId;
+                        break;
+                }
+            }
+
             int affectedCount = await _context.SaveChangesAsync();
 
             //if (affectedCount > 0)

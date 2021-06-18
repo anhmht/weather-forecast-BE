@@ -14,20 +14,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
     public class EventRepository: BaseRepository<Event>, IEventRepository
     {
-        private readonly IUnitOfWork _;
+        private readonly IUnitOfWork _unitOfWork;
         public EventRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
-            _ = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> IsEventNameAndDateUnique(string name, DateTime eventDate)
         {
-            return await _.EventRepository.GetWhereQuery(e => e.Title.Equals(name) && e.DatePosted.Date.Equals(eventDate.Date)).AnyAsync();
+            return await _unitOfWork.EventRepository.GetWhereQuery(e => e.Title.Equals(name) && e.DatePosted.Date.Equals(eventDate.Date)).AnyAsync();
         }
 
         public async Task<GetEventsListResponse> GetByPageAsync(GetEventsListQuery query,  CancellationToken token)
         {
-            var events =  _.EventRepository as IQueryable<Event>;
+            var events =  _unitOfWork.EventRepository as IQueryable<Event>;
             if (query.CategoryId.HasValue)
             {
                 events = events.Where(e => e.CategoryId == query.CategoryId);
@@ -62,9 +62,28 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<List<Event>> GetEventListByAsync(Guid categoryId, Guid statusId, CancellationToken token)
         {
-            return (await _.EventRepository.Where(e => e.CategoryId == categoryId
+            return (await _unitOfWork.EventRepository.GetWhereAsync(e => e.CategoryId == categoryId
                                                          && e.StatusId == statusId, token)).ToList();
-            
+
+        }
+
+        public async Task<Event> AddAsync(Event entity)
+        {
+            _unitOfWork.EventRepository.Insert(entity);
+            await _unitOfWork.CommitAsync();
+            return entity;
+        }
+
+        public async Task<int> UpdateAsync(Event entity)
+        {
+            _unitOfWork.EventRepository.Update(entity);
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<int> DeleteAsync(Event entity)
+        {
+            _unitOfWork.EventRepository.Delete(entity);
+            return await _unitOfWork.CommitAsync();
         }
     }
 }

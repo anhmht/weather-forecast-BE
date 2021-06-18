@@ -12,15 +12,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
     public class ScenarioRepository : BaseRepository<Scenario>, IScenarioRepository
     {
-        private readonly IUnitOfWork _;
+        private readonly IUnitOfWork _unitOfWork;
         public ScenarioRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
-            _ = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<GetScenariosListResponse> GetByPagedAsync(GetScenariosListQuery query, CancellationToken token)
         {
-            var scenarios = await _.ScenarioRepository.GetAllQuery()
+            var scenarios = await _unitOfWork.ScenarioRepository.GetAllQuery()
                 .AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, token);
 
@@ -37,7 +37,25 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                 }).ToList()
             };
             
-            
+        }
+
+        public async Task<Scenario> AddAsync(Scenario entity)
+        {
+            _unitOfWork.ScenarioRepository.Insert(entity);
+            await _unitOfWork.CommitAsync();
+            return entity;
+        }
+
+        public async Task<int> UpdateAsync(Scenario entity)
+        {
+            _unitOfWork.ScenarioRepository.Update(entity);
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<int> DeleteAsync(Scenario entity)
+        {
+            _unitOfWork.ScenarioRepository.Delete(entity);
+            return await _unitOfWork.CommitAsync();
         }
     }
 }

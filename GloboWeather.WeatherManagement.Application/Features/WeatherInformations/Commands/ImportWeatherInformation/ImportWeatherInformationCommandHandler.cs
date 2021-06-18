@@ -63,63 +63,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
                 }
 
                 var importData = _mapper.Map<List<WeatherInformation>>(weatherInformations);
-                var maxRefDate = importData.Max(x => x.RefDate);
-                var minRefDate = importData.Min(x => x.RefDate);
-                var stationIds = importData.Select(x => x.StationId).Distinct().ToList();
-                var existingData = await _weatherInfomationRepository.GetByRefDateStationAsync(minRefDate, maxRefDate, stationIds, token);
-
-                var listInsert = (from i in importData
-                                  join e in existingData on new { i.StationId, i.RefDate } equals new { e.StationId, e.RefDate }
-                                  into t
-                                  from vkl in t.DefaultIfEmpty()
-                                  where vkl == null
-                                  select new WeatherInformation()
-                                  {
-                                      //CreateBy = "import",
-                                      //CreateDate = DateTime.Now,
-                                      Humidity = i.Humidity,
-                                      ID = Guid.NewGuid(),
-                                      //LastModifiedBy = "import",
-                                      //LastModifiedDate = DateTime.Now,
-                                      RainAmount = i.RainAmount,
-                                      RefDate = i.RefDate,
-                                      StationId = i.StationId,
-                                      Temperature = i.Temperature,
-                                      Weather = i.Weather,
-                                      WindDirection = i.WindDirection,
-                                      WindLevel = i.WindLevel,
-                                      WindSpeed = i.WindSpeed
-                                  }).ToList();
-
-                if (listInsert.Count > 0)
-                    await _weatherInfomationRepository.AddRangeAsync(listInsert);
-
-                if (existingData.Any())
-                {
-                    foreach (var item in existingData)
-                    {
-                        var updateItem = importData.FirstOrDefault(x => x.StationId == item.StationId && x.RefDate == item.RefDate);
-                        if (updateItem != null)
-                        {
-                            if (!string.IsNullOrWhiteSpace(updateItem.Humidity)) //Don't update if don't input value for this field
-                                item.Humidity = updateItem.Humidity;
-                            if (!string.IsNullOrWhiteSpace(updateItem.RainAmount)) //Don't update if don't input value for this field
-                                item.RainAmount = updateItem.RainAmount;
-                            if (!string.IsNullOrWhiteSpace(updateItem.Temperature)) //Don't update if don't input value for this field
-                                item.Temperature = updateItem.Temperature;
-                            if (!string.IsNullOrWhiteSpace(updateItem.Weather)) //Don't update if don't input value for this field
-                                item.Weather = updateItem.Weather;
-                            if (!string.IsNullOrWhiteSpace(updateItem.WindDirection)) //Don't update if don't input value for this field
-                                item.WindDirection = updateItem.WindDirection;
-                            if (!string.IsNullOrWhiteSpace(updateItem.WindLevel)) //Don't update if don't input value for this field
-                                item.WindLevel = updateItem.WindLevel;
-                            if (!string.IsNullOrWhiteSpace(updateItem.WindSpeed)) //Don't update if don't input value for this field
-                                item.WindSpeed = updateItem.WindSpeed;
-                        }
-                    }
-
-                    await _weatherInfomationRepository.UpdateRangeAsync(existingData.ToList());
-                }
+                await _weatherInfomationRepository.ImportAsync(importData, token);
             }
 
             return response;

@@ -11,9 +11,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Categories.Queries
     public class GetCategoryDetailQueryHandler : IRequestHandler<GetCategoryDetailQuery, CategoryDetailVm>
     {
         private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Category> _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public GetCategoryDetailQueryHandler(IMapper mapper, IAsyncRepository<Category> categoryRepository)
+        public GetCategoryDetailQueryHandler(IMapper mapper, ICategoryRepository categoryRepository)
         {
             _mapper = mapper;
             _categoryRepository = categoryRepository;

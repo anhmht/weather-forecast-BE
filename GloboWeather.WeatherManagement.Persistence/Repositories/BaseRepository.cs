@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
@@ -26,51 +27,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IReadOnlyList<T>> ListAllAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
-        public async Task<T> AddAsync(T entity)
-        {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-
-            return entity;
-        }
-
-        public async Task UpdateAsync(T entity)
-        {
-            _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(T entity)
-        {
-            _dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task<IReadOnlyList<T>> GetPagedResponseAsync(int page, int size)
         {
             return await _dbSet.Skip((page - 1) * size).AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
-        {
-            await _dbSet.AddRangeAsync(entities);
-            await _dbContext.SaveChangesAsync();
-
-            return entities;
-        }
-
-        public async Task UpdateRangeAsync(List<T> entities)
-        {
-            entities.ForEach(entity => { _dbContext.Entry(entity).State = EntityState.Modified; });
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> where, CancellationToken token = default, string[] includes = null)
+        public async Task<IEnumerable<T>> GetWhereAsync(Expression<Func<T, bool>> where, CancellationToken token = default, string[] includes = null)
             => await GetWhereQuery(where, includes).ToListAsync(token);
 
         public virtual IQueryable<T> GetWhereQuery(Expression<Func<T, bool>> where, string[] includes = null)
@@ -117,7 +79,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public virtual void Add(T entity)
         {
-            _dbSet.Add(entity);
+            _dbSet.Add(entity); 
         }
 
         public virtual void AddRange(IEnumerable<T> entities)
@@ -125,15 +87,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             _dbSet.AddRange(entities);
         }
 
-        //public virtual void Update(T entity)
-        //{
-        //    _dbSet.Attach(entity);
-        //    _dbContext.Entry(entity).State = EntityState.Modified;
-        //}
-
         public virtual void Update(T entity)
         {
-            _dbSet.Update(entity);
+            _dbSet.Attach(entity);
+            _dbContext.Entry(entity).State = EntityState.Modified;
+        }
+
+        //public virtual void Update(T entity)
+        //{
+        //    _dbSet.Update(entity);
+        //}
+
+        public virtual EntityEntry<T> Insert(T entity)
+        {
+            return _dbSet.Add(entity);
         }
 
         public virtual void UpdateRange(IEnumerable<T> entities)

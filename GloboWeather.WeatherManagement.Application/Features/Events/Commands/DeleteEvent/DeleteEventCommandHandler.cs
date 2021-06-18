@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Exceptions;
-using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -13,10 +10,10 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.De
 {
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
-        private readonly IAsyncRepository<Event> _eventRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly IImageService _imageService;
 
-        public DeleteEventCommandHandler(IAsyncRepository<Event> eventRepository, IImageService imageService)
+        public DeleteEventCommandHandler(IEventRepository eventRepository, IImageService imageService)
         {
             _eventRepository = eventRepository;
             _imageService = imageService;

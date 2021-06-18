@@ -21,5 +21,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                 .OrderByDescending(x => x.LastDownload).Take(1).ToListAsync()).FirstOrDefault();
             return result;
         }
+
+        public new async Task<int> AddAsync(BackgroundServiceTracking backgroundServiceTracking)
+        {
+            _.BackgroundServiceTrackingRepository.Add(backgroundServiceTracking);
+            return await _.CommitAsync();
+        }
     }
 }

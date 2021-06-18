@@ -39,8 +39,6 @@ namespace GloboWeather.WeatherManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwagger(services);
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
             services.AddPersistenceServices(Configuration);

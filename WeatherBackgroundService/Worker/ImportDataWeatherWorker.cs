@@ -17,12 +17,10 @@ namespace WeatherBackgroundService.Worker
     public class ImportDataWeatherWorker : IHostedService
     {
         private Timer _timer;
-        private readonly IMediator _mediator;
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        public ImportDataWeatherWorker(IMediator mediator, IServiceProvider serviceProvider, IConfiguration configuration)
+        public ImportDataWeatherWorker(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            _mediator = mediator;
             _serviceProvider = serviceProvider;
             _configuration = configuration;
         }

@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using GloboWeather.WeatherManagement.Application.Features.Categories.Commands.CreateCategory;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
@@ -13,9 +11,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Commands.C
     public class CreateStatusCommandHander : IRequestHandler<CreateStatusCommand, CreateStatusCommandResponse>
     {
         private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Status> _statusRepository;
+        private readonly IStatusRepository _statusRepository;
 
-        public CreateStatusCommandHander(IMapper mapper, IAsyncRepository<Status> statusRepository)
+        public CreateStatusCommandHander(IMapper mapper, IStatusRepository statusRepository)
         {
             _mapper = mapper;
             _statusRepository = statusRepository;

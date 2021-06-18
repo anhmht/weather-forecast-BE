@@ -1,5 +1,6 @@
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Features.Categories.Commands.CreateCategory;
+using GloboWeather.WeatherManagement.Application.Features.Categories.Commands.UpdateCategory;
 using GloboWeather.WeatherManagement.Application.Features.Categories.Queries.GetCategoryDetail;
 using GloboWeather.WeatherManagement.Application.Features.Categories.Queries.GetCategoryList;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus;
@@ -63,6 +64,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Scenario, CreateScenarioCommand>().ReverseMap();
             CreateMap<Scenario, UpdateScenarioCommand>().ReverseMap();
             CreateMap<Scenario, ScenarioDetailVm>().ReverseMap();
+            CreateMap<UpdateCategoryCommand, Category>().ReverseMap();
 
         }
     }

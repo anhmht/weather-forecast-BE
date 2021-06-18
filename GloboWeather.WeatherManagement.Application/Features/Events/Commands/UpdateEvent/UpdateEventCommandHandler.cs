@@ -9,7 +9,6 @@ using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent
 {
@@ -17,10 +16,10 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
 
     {
         private readonly IMapper _mapper;
-        private readonly IAsyncRepository<Event> _eventRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly IImageService _imageService;
 
-        public UpdateEventCommandHandler(IMapper mapper, IAsyncRepository<Event> eventRepository, IImageService imageService)
+        public UpdateEventCommandHandler(IMapper mapper, IEventRepository eventRepository, IImageService imageService)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;

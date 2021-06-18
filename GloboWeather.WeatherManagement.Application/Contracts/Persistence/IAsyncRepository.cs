@@ -5,36 +5,32 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
 {
     public interface IAsyncRepository<T> where T : class
     {
         Task<T> GetByIdAsync(Guid id);
-        Task<IReadOnlyList<T>> ListAllAsync();
-        Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
         Task<IReadOnlyList<T>> GetPagedResponseAsync(int page, int size);
-        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
-        Task UpdateRangeAsync(List<T> entities);
-        Task<IEnumerable<T>> Where(Expression<Func<T, bool>> where, CancellationToken token = default, string[] includes = null);
+        Task<IEnumerable<T>> GetWhereAsync(Expression<Func<T, bool>> where, CancellationToken token = default, string[] includes = null);
         
-        public DbSet<T> Db { get; }
-        public Task<T> FindAsync(Expression<Func<T, bool>> predicate);
-        public Task<IEnumerable<T>> GetAllAsync();
-        public Task<IEnumerable<T>> GetAllAsync(string[] includes);
-        public IQueryable<T> GetWhereQuery(Expression<Func<T, bool>> where, string[] includes = null);
-        public void Add(T entity);
-        public void AddRange(IEnumerable<T> entities);
-        public void Update(T entity);
-        public void UpdateRange(IEnumerable<T> entities);
-        public void Delete(T entity);
-        public void DeleteById(string id);
-        public void DeleteRange(IEnumerable<T> entities);
-        public void DeleteWhere(Expression<Func<T, bool>> where);
-        public Task<int> CountAsync(Expression<Func<T, bool>> where);
-        public IQueryable<T> GetAllQuery(string[] includes = null);
-        public bool Contains(Expression<Func<T, bool>> predicate);
+        DbSet<T> Db { get; }
+        Task<T> FindAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync(string[] includes);
+        IQueryable<T> GetWhereQuery(Expression<Func<T, bool>> where, string[] includes = null);
+        void Add(T entity);
+        EntityEntry<T> Insert(T entity);
+        void AddRange(IEnumerable<T> entities);
+        void Update(T entity);
+        void UpdateRange(IEnumerable<T> entities);
+        void Delete(T entity);
+        void DeleteById(string id);
+        void DeleteRange(IEnumerable<T> entities);
+        void DeleteWhere(Expression<Func<T, bool>> where);
+        Task<int> CountAsync(Expression<Func<T, bool>> where);
+        IQueryable<T> GetAllQuery(string[] includes = null);
+        bool Contains(Expression<Func<T, bool>> predicate);
     }
 }

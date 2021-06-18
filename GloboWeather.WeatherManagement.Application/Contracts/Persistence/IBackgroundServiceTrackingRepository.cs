@@ -6,7 +6,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
 {
     public interface IBackgroundServiceTrackingRepository : IAsyncRepository<BackgroundServiceTracking>
     {
-
         Task<BackgroundServiceTracking> GetLastBackgroundServiceTracking();
+        Task<int> AddAsync(BackgroundServiceTracking backgroundServiceTracking);
     }
 }
