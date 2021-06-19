@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportSingleStation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
@@ -47,20 +48,21 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(response);
         }
 
-        //[HttpPost("get-min-max-humidity", Name = "GetMinMaxHumidity")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public async Task<ActionResult<HumidityPredictionResponse>> GetMinMaxHumidity([FromBody] GetMinMaxHumidityRequest request)
-        //{
-        //    var response = await _mediator.Send(request);
-        //    return Ok(response);
-        //}
+        [HttpPost("import-single-station", Name = nameof(ImportSingleStationAsync))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<ImportSingleStationResponse>> ImportSingleStationAsync(string stationId, string stationName
+            , IFormFile file)
+        {
+            ImportSingleStationCommand request = new ImportSingleStationCommand()
+            {
+                File = file,
+                StationId = stationId,
+                StationName = stationName
+            };
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
 
-        //[HttpPost("get-humidity", Name = "GetHumidity")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public async Task<ActionResult<HumidityResponse>> GetHumidity([FromBody] GetHumidityRequest request)
-        //{
-        //    var response = await _mediator.Send(request);
-        //    return Ok(response);
-        //}
     }
 }

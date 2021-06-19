@@ -9,26 +9,34 @@ using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using MediatR;
-using RowError = GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation.RowError;
 
-namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInfomation
+namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportSingleStation
 {
-    public class ImportWeatherInformationCommandHandler : IRequestHandler<ImportWeatherInformationCommand, ImportWeatherInformationResponse>
+    public class ImportSingleStationCommandHandler : IRequestHandler<ImportSingleStationCommand, ImportSingleStationResponse>
     {
 
         private readonly IMapper _mapper;
         private readonly IWeatherInformationRepository _weatherInfomationRepository;
 
-        public ImportWeatherInformationCommandHandler(IMapper mapper, IWeatherInformationRepository weatherInfomationRepository)
+        public ImportSingleStationCommandHandler(IMapper mapper, IWeatherInformationRepository weatherInfomationRepository)
         {
             _mapper = mapper;
             _weatherInfomationRepository = weatherInfomationRepository;
         }
 
-        public async Task<ImportWeatherInformationResponse> Handle(ImportWeatherInformationCommand request, CancellationToken token)
+        public async Task<ImportSingleStationResponse> Handle(ImportSingleStationCommand request, CancellationToken token)
         {
-            var validator = new ImportWeatherInformationValidator(_weatherInfomationRepository);
-            var response = new ImportWeatherInformationResponse() { Success = true };
+            var validatorCommand = new ImportSingleStationCommandValidator(_weatherInfomationRepository);
+            var validatorDto = new ImportSingleStationDtoValidator(_weatherInfomationRepository);
+            var response = new ImportSingleStationResponse() { Success = true };
+
+            var validationCommandResult = await validatorCommand.ValidateAsync(request);
+
+            if (validationCommandResult.Errors.Any())
+            {
+                throw new Exceptions.ValidationException(validationCommandResult);
+            }
+
             if (!request.File.ContentType.Contains("ms-excel"))
             {
                 response.Success = false;
@@ -40,20 +48,19 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
             using (var streamReader = new StreamReader(reader))
             using (var csv = new CsvReader(streamReader))
             {
-                var weatherInformations = csv.GetRecords<ImportWeatherInformationDto>().ToList();
+                var weatherInformations = csv.GetRecords<ImportSingleStationDto>().ToList();
 
                 var errorItems = new List<RowError>();
                 for (int i = 0; i < weatherInformations.Count; i++)
                 {
-                    var validationResult = await validator.ValidateAsync(weatherInformations[i]);
+                    var validationResult = await validatorDto.ValidateAsync(weatherInformations[i]);
 
                     if (validationResult.Errors.Any())
                     {
-                        errorItems.Add(new RowError() { RowIndex = i + 2, ErrorMessage = validationResult.Errors.Select(x => x.ErrorMessage) });
+                        errorItems.Add(new RowError { RowIndex = i + 2, ErrorMessage = validationResult.Errors.Select(x => x.ErrorMessage) });
                     }
 
-                    if (weatherInformations.Count(x => x.NgayGio == weatherInformations[i].NgayGio
-                                                       && x.DiaDiemId == weatherInformations[i].DiaDiemId) > 1)
+                    if (weatherInformations.Count(x => x.NgayGio == weatherInformations[i].NgayGio) > 1)
                     {
                         errorItems.Add(new RowError { RowIndex = i + 2, ErrorMessage = new[] { $"{weatherInformations[i].NgayGio} currently has more than one record. Please keep only one record and delete the others." } });
                     }
@@ -68,7 +75,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
                 }
 
                 var importData = _mapper.Map<List<WeatherInformation>>(weatherInformations);
-                await _weatherInfomationRepository.ImportAsync(importData, token);
+                response.Data = await _weatherInfomationRepository.ImportSingleStationAsync(request.StationId, request.StationName, importData, token);
             }
 
             return response;

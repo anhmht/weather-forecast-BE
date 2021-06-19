@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
+using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
@@ -345,6 +348,174 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             var maxRefDate = importData.Max(x => x.RefDate);
             var minRefDate = importData.Min(x => x.RefDate);
             var stationIds = importData.Select(x => x.StationId).Distinct().ToList();
+
+            await Import(minRefDate, maxRefDate, stationIds, importData, token);
+        }
+
+        public async Task<GetWeatherInformationResponse> ImportSingleStationAsync(string stationId, string stationName, List<WeatherInformation> importData, CancellationToken token)
+        {
+            var station = await _unitOfWork.StationRepository.FindAsync(x => x.ID == stationId);
+            if (station == null)
+            {
+                station = new Station()
+                {
+                    ID = stationId,
+                    Name = stationName
+                };
+                _unitOfWork.StationRepository.Add(station);
+            }
+
+            importData.ForEach(item => item.StationId = stationId);
+            var maxRefDate = importData.Max(x => x.RefDate);
+            var minRefDate = importData.Min(x => x.RefDate);
+            var stationIds = new List<string>() {stationId};
+
+            await Import(minRefDate, maxRefDate, stationIds, importData, token);
+
+            var getWeatherInformationRequest = new GetWeatherInformationRequest()
+            {
+                FromDate = minRefDate,
+                StationIds = stationIds,
+                ToDate = maxRefDate
+            };
+
+            return await GetWeatherInformationsAsync(getWeatherInformationRequest, token, false);
+        }
+
+        public async Task<GetWeatherInformationResponse> GetWeatherInformationsAsync(GetWeatherInformationRequest request
+            , CancellationToken cancelToken, bool isWholeDay = true)
+        {
+            StandadizeGetWeatherInformationBaseRequest(request, isWholeDay);
+            var response = new GetWeatherInformationResponse();
+
+            var weatherInformations = await GetByRefDateStationAsync(request.FromDate.Value, request.ToDate.Value, request.StationIds, cancelToken);
+            if (weatherInformations?.Any() == false)
+                return response;
+
+            var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
+            foreach (var stationId in stationIds)
+            {
+                var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
+                if (!weatherInformationByStations.Any())
+                    continue;
+
+                foreach (var weatherType in request.WeatherTypes)
+                {
+                    var weatherInformationByStation = new WeatherInformationByStation()
+                    {
+                        StationId = stationId,
+                        WeatherType = weatherType,
+                        MinValue = GetMinValueByWeatherType(weatherInformationByStations, weatherType),
+                        MaxValue = GetMaxValueByWeatherType(weatherInformationByStations, weatherType)
+                    };
+
+                    var dateInterval = request.FromDate;
+                    while (dateInterval <= request.ToDate)
+                    {
+                        var weatherInformationInDate = weatherInformationByStations.Where(x => x.RefDate.Date == dateInterval.Value.Date).OrderBy(x => x.RefDate);
+                        var weatherInformationByDay = new WeatherInformationByDay()
+                        {
+                            Date = dateInterval.Value,
+                            MinValue = GetMinValueByWeatherType(weatherInformationInDate, weatherType).GetInt(),
+                            MaxValue = GetMaxValueByWeatherType(weatherInformationInDate, weatherType).GetInt()
+                        };
+
+                        foreach (var weatherInfo in weatherInformationInDate)
+                        {
+                            var value = GetValueByWeatherType(weatherInfo, weatherType);
+                            weatherInformationByDay.WeatherInformationByHours.Add(new WeatherInformationByHour()
+                            {
+                                Hour = weatherInfo.RefDate.Hour,
+                                Value = value
+                            });
+
+                            if (weatherType != WeatherType.WindDirection)
+                            {
+                                if (value.GetInt() == weatherInformationByDay.MinValue)
+                                {
+                                    weatherInformationByDay.WeatherInformationMins.Add(new WeatherInformationByHour()
+                                    {
+                                        Hour = weatherInfo.RefDate.Hour,
+                                        Value = value
+                                    });
+                                }
+
+                                if (value.GetInt() == weatherInformationByDay.MaxValue)
+                                {
+                                    weatherInformationByDay.WeatherInformationMaxs.Add(new WeatherInformationByHour()
+                                    {
+                                        Hour = weatherInfo.RefDate.Hour,
+                                        Value = value
+                                    });
+                                }
+                            }
+                        }
+
+                        weatherInformationByStation.WeatherInformationByDays.Add(weatherInformationByDay);
+
+                        dateInterval = dateInterval.Value.AddDays(1);
+                    }
+
+                    response.WeatherInformationByStations.Add(weatherInformationByStation);
+                }
+            }
+
+            return response;
+        }
+
+
+        public async Task<GetWeatherInformationHorizontalResponse> GetWeatherInformationHorizontalAsync(GetWeatherInformationHorizontalRequest request, CancellationToken cancelToken)
+        {
+            StandadizeGetWeatherInformationBaseRequest(request);
+            var response = new GetWeatherInformationHorizontalResponse();
+
+            var weatherInformations = await GetByRefDateStationAsync(request.FromDate.Value, request.ToDate.Value.AddDays(4), request.StationIds, cancelToken);
+            if (weatherInformations?.Any() == false)
+                return response;
+
+            var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
+            foreach (var stationId in stationIds)
+            {
+                var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
+                if (!weatherInformationByStations.Any())
+                    continue;
+
+                foreach (var weatherType in request.WeatherTypes)
+                {
+                    var dateInterval = request.FromDate.Value;
+                    while (dateInterval <= request.ToDate)
+                    {
+                        var weatherInformationHorizontal = new GetWeatherInformationHorizontal()
+                        {
+                            StationId = stationId,
+                            RefDate = dateInterval,
+                            WeatherType = weatherType
+                        };
+
+                        for (int i = 0; i < 120; i++)
+                        {
+                            var weatherInformation = weatherInformationByStations.SingleOrDefault(x => x.RefDate == dateInterval.AddHours(i));
+                            if (weatherInformation == null)
+                                continue;
+                            var value = GetValueByWeatherType(weatherInformation, weatherType);
+                            var fieldName = $"_{i + 1}";
+                            var propertyInfo = weatherInformationHorizontal.GetType().GetProperty(fieldName);
+                            propertyInfo?.SetValue(weatherInformationHorizontal, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+                        }
+                        response.GetWeatherInformationHorizontals.Add(weatherInformationHorizontal);
+
+                        dateInterval = dateInterval.AddDays(1);
+                    }
+                }
+            }
+
+            return response;
+        }
+        #region Private functions
+
+        private async Task Import(DateTime minRefDate, DateTime maxRefDate, IEnumerable<string> stationIds
+            , List<WeatherInformation> importData, CancellationToken token)
+        {
             var existingData =
                 await GetByRefDateStationAsync(minRefDate, maxRefDate, stationIds, token);
 
@@ -406,5 +577,138 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
             await _unitOfWork.CommitAsync();
         }
+
+        private void StandadizeGetWeatherInformationBaseRequest(GetWeatherInformationBaseRequest request, bool isWholeDay = true)
+        {
+            if (!request.FromDate.HasValue)
+            {
+                if (!request.ToDate.HasValue)
+                {
+                    request.FromDate = DateTime.Now.GetStartOfDate();
+                    request.ToDate = DateTime.Now.GetEndOfDate();
+                }
+                else
+                {
+                    if (isWholeDay)
+                    {
+                        request.FromDate = request.ToDate.GetStartOfDate();
+                        request.ToDate = request.ToDate.GetEndOfDate();
+                    }
+                }
+            }
+            else
+            {
+                if (isWholeDay)
+                {
+                    request.FromDate = request.FromDate.GetStartOfDate();
+                }
+
+                if (!request.ToDate.HasValue)
+                {
+                    request.ToDate = request.FromDate.GetEndOfDate();
+                }
+                else
+                {
+                    if (isWholeDay)
+                    {
+                        request.ToDate = request.ToDate.GetEndOfDate();
+                    }
+                }
+            }
+
+            if (request.FromDate > request.ToDate)
+            {
+                var dateTemp = request.FromDate;
+                request.FromDate = request.ToDate;
+                request.ToDate = dateTemp;
+            }
+
+            if (request.WeatherTypes == null || !request.WeatherTypes.Any())
+            {
+                request.WeatherTypes = Enum.GetValues<WeatherType>();
+            }
+        }
+
+        private object GetValueByWeatherType(WeatherInformation weatherInformation, WeatherType weatherType)
+        {
+            if (weatherInformation != null)
+            {
+                switch (weatherType)
+                {
+                    case WeatherType.Humidity:
+                        return weatherInformation.Humidity.GetInt();
+                    case WeatherType.RainAmount:
+                        return weatherInformation.RainAmount.GetInt();
+                    case WeatherType.Temperature:
+                        return weatherInformation.Temperature.GetInt();
+                    case WeatherType.Weather:
+                        return weatherInformation.Weather;
+                    case WeatherType.WindDirection:
+                        return weatherInformation.WindDirection;
+                    case WeatherType.WindLevel:
+                        return weatherInformation.WindLevel.GetInt();
+                    case WeatherType.WindSpeed:
+                        return weatherInformation.WindSpeed.GetInt();
+                }
+            }
+
+            return null;
+        }
+
+        private int? GetMinValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
+        {
+            if (weatherInformation != null)
+            {
+                switch (weatherType)
+                {
+                    case WeatherType.Humidity:
+                        return weatherInformation.Select(x => x.Humidity.GetInt()).Min();
+                    case WeatherType.RainAmount:
+                        return weatherInformation.Select(x => x.RainAmount.GetInt()).Min();
+                    case WeatherType.Temperature:
+                        return weatherInformation.Select(x => x.Temperature.GetInt()).Min();
+                    case WeatherType.Weather:
+                        return null;//weatherInformation.Select(x => x.Weather).Min();
+                    case WeatherType.WindDirection:
+                        return null;// weatherInformation.Select(x => x.WindDirection).Min();
+                    case WeatherType.WindLevel:
+                        return weatherInformation.Select(x => x.WindLevel.GetInt()).Min();
+                    case WeatherType.WindSpeed:
+                        return weatherInformation.Select(x => x.WindSpeed.GetInt()).Min();
+                }
+            }
+
+            return null;
+        }
+
+        private int? GetMaxValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
+        {
+            if (weatherInformation != null)
+            {
+                switch (weatherType)
+                {
+                    case WeatherType.Humidity:
+                        return weatherInformation.Select(x => x.Humidity.GetInt()).Max();
+                    case WeatherType.RainAmount:
+                        return weatherInformation.Select(x => x.RainAmount.GetInt()).Max();
+                    case WeatherType.Temperature:
+                        return weatherInformation.Select(x => x.Temperature.GetInt()).Max();
+                    case WeatherType.Weather:
+                        return null;//weatherInformation.Select(x => x.Weather).Max();
+                    case WeatherType.WindDirection:
+                        return null;// weatherInformation.Select(x => x.WindDirection).Max();
+                    case WeatherType.WindLevel:
+                        return weatherInformation.Select(x => x.WindLevel.GetInt()).Max();
+                    case WeatherType.WindSpeed:
+                        return weatherInformation.Select(x => x.WindSpeed.GetInt()).Max();
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
     }
 }
