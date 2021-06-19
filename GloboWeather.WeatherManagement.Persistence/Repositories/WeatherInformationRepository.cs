@@ -657,7 +657,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         private int? GetMinValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
         {
-            if (weatherInformation != null)
+            if (weatherInformation != null && weatherInformation.Any())
             {
                 switch (weatherType)
                 {
@@ -683,7 +683,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         private int? GetMaxValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
         {
-            if (weatherInformation != null)
+            if (weatherInformation != null && weatherInformation.Any())
             {
                 switch (weatherType)
                 {
