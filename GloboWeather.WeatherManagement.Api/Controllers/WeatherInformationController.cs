@@ -51,18 +51,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("import-single-station", Name = nameof(ImportSingleStationAsync))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<ImportSingleStationResponse>> ImportSingleStationAsync(string stationId, string stationName
-            , IFormFile file)
+        public async Task<ActionResult<ImportSingleStationResponse>> ImportSingleStationAsync([FromForm] ImportSingleStationCommand request)
         {
-            ImportSingleStationCommand request = new ImportSingleStationCommand()
-            {
-                File = file,
-                StationId = stationId,
-                StationName = stationName
-            };
             var response = await _mediator.Send(request);
             return Ok(response);
         }
-
     }
 }
