@@ -27,7 +27,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<GetEventsListResponse> GetByPageAsync(GetEventsListQuery query,  CancellationToken token)
         {
-            var events =  _unitOfWork.EventRepository as IQueryable<Event>;
+            var events =  _unitOfWork.EventRepository.GetAllQuery();
             if (query.CategoryId.HasValue)
             {
                 events = events.Where(e => e.CategoryId == query.CategoryId);
