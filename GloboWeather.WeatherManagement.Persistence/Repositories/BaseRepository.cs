@@ -89,7 +89,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public virtual void Update(T entity)
         {
-            _dbSet.Attach(entity);
+            if (!_dbSet.Local.Any(e => e == entity))
+                _dbSet.Attach(entity);
             _dbContext.Entry(entity).State = EntityState.Modified;
         }
 
@@ -97,11 +98,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         //{
         //    _dbSet.Update(entity);
         //}
-
-        public virtual EntityEntry<T> Insert(T entity)
-        {
-            return _dbSet.Add(entity);
-        }
 
         public virtual void UpdateRange(IEnumerable<T> entities)
         {
@@ -140,5 +136,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         {
             return _dbSet.Count(predicate) > 0;
         }
+
     }
 }

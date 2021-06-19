@@ -1,26 +1,26 @@
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.DeleteEvent
 {
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IImageService _imageService;
 
-        public DeleteEventCommandHandler(IEventRepository eventRepository, IImageService imageService)
+        public DeleteEventCommandHandler(IUnitOfWork unitOfWork, IImageService imageService)
         {
-            _eventRepository = eventRepository;
+            _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
         public async Task<Unit> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
         {
-            var eventToDelete = await _eventRepository.GetByIdAsync(request.EventId);
+            var eventToDelete = await _unitOfWork.EventRepository.GetByIdAsync(request.EventId);
             if (eventToDelete == null)
             {
                 throw new NotFoundException(nameof(Event), request.EventId);
@@ -28,8 +28,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.De
 
             await _imageService.DeleteImagesInPostsContainerAsync(request.EventId.ToString());
 
-            await _eventRepository.DeleteAsync(eventToDelete);
-        
+            _unitOfWork.EventRepository.Delete(eventToDelete);
+            await _unitOfWork.CommitAsync();
+
             return  Unit.Value;
         }
     }

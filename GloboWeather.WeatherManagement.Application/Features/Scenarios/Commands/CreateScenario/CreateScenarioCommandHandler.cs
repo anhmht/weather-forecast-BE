@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenario
@@ -12,12 +12,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
     public class CreateScenarioCommandHandler : IRequestHandler<CreateScenarioCommand, Guid>
     {
         private readonly IMapper _mapper;
-        private readonly IScenarioRepository _scenarioRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateScenarioCommandHandler(IMapper mapper, IScenarioRepository scenarioRepository)
+        public CreateScenarioCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _scenarioRepository = scenarioRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Guid> Handle(CreateScenarioCommand request, CancellationToken cancellationToken)
         {
@@ -32,7 +32,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 
             var @scenario = _mapper.Map<Scenario>(request);
 
-            @scenario = await _scenarioRepository.AddAsync(@scenario);
+            _unitOfWork.ScenarioRepository.Add(@scenario);
+            await _unitOfWork.CommitAsync();
 
             return @scenario.ScenarioId;
 

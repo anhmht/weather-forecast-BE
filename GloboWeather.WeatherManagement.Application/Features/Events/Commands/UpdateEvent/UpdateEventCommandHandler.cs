@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent
@@ -16,18 +16,18 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
 
     {
         private readonly IMapper _mapper;
-        private readonly IEventRepository _eventRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IImageService _imageService;
 
-        public UpdateEventCommandHandler(IMapper mapper, IEventRepository eventRepository, IImageService imageService)
+        public UpdateEventCommandHandler(IMapper mapper, IUnitOfWork unitOfWork, IImageService imageService)
         {
             _mapper = mapper;
-            _eventRepository = eventRepository;
+            _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
         public async Task<Unit> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
-            var eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
+            var eventToUpdate = await _unitOfWork.EventRepository.GetByIdAsync(request.EventId);
             var imageListUrlsNeedToDelete = new List<string>();
            // imageListUrlsNeedToDelete.AddRange(request.ImageNormalDeletes);
             if (eventToUpdate == null)
@@ -71,8 +71,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
             }
             _mapper.Map(request, eventToUpdate, typeof(UpdateEventCommand), typeof(Event));
 
-            await _eventRepository.UpdateAsync(eventToUpdate);
-            
+            _unitOfWork.EventRepository.Update(eventToUpdate);
+            await _unitOfWork.CommitAsync();
+
             return Unit.Value;
         }
     }

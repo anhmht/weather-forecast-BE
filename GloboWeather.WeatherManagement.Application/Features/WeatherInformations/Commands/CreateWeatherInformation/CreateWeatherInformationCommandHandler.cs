@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.CreateWeatherInformation
@@ -15,12 +13,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
     {
 
         private readonly IMapper _mapper;
-        private readonly IWeatherInformationRepository _weatherInfomationRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateWeatherInformationCommandHandler(IMapper mapper, IWeatherInformationRepository WeatherInfomationRepository)
+        public CreateWeatherInformationCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _weatherInfomationRepository = WeatherInfomationRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Guid> Handle(CreateWeatherInformationCommand request, CancellationToken cancellationToken)
@@ -34,8 +32,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
             }
 
             var @WeatherInfomation = _mapper.Map<WeatherInformation>(request);
-            @WeatherInfomation = await _weatherInfomationRepository.AddAsync(@WeatherInfomation);
-
+            _unitOfWork.WeatherInformationRepository.Add(@WeatherInfomation);
+            await _unitOfWork.CommitAsync();
             return @WeatherInfomation.ID;
         }
 

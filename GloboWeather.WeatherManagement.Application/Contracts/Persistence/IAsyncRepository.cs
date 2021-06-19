@@ -21,7 +21,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
         Task<IEnumerable<T>> GetAllAsync(string[] includes);
         IQueryable<T> GetWhereQuery(Expression<Func<T, bool>> where, string[] includes = null);
         void Add(T entity);
-        EntityEntry<T> Insert(T entity);
         void AddRange(IEnumerable<T> entities);
         void Update(T entity);
         void UpdateRange(IEnumerable<T> entities);

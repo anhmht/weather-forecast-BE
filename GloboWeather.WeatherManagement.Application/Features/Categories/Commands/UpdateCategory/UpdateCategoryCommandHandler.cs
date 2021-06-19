@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Categories.Commands.UpdateCategory
@@ -11,16 +11,16 @@ namespace GloboWeather.WeatherManagement.Application.Features.Categories.Command
     public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand>
     {
         private readonly IMapper _mapper;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateCategoryCommandHandler(IMapper mapper, ICategoryRepository categoryRepository)
+        public UpdateCategoryCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryToUpdate = await _categoryRepository.GetByIdAsync(request.CategoryId);
+            var categoryToUpdate = await _unitOfWork.CategoryRepository.GetByIdAsync(request.CategoryId);
             
             if (categoryToUpdate == null)
             {
@@ -28,7 +28,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Categories.Command
             }
 
             var validator = new UpdateCategoryCommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (validationResult.Errors.Count > 0)
             {
@@ -37,8 +37,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Categories.Command
 
             _mapper.Map(request, categoryToUpdate, typeof(UpdateCategoryCommand), typeof(Category));
 
-            await _categoryRepository.UpdateAsync(categoryToUpdate);
-            
+            _unitOfWork.CategoryRepository.Update(categoryToUpdate);
+            await _unitOfWork.CommitAsync();
+
             return Unit.Value;
         }
     }

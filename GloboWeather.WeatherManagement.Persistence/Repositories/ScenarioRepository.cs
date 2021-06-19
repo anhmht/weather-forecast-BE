@@ -38,24 +38,5 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             };
             
         }
-
-        public async Task<Scenario> AddAsync(Scenario entity)
-        {
-            _unitOfWork.ScenarioRepository.Insert(entity);
-            await _unitOfWork.CommitAsync();
-            return entity;
-        }
-
-        public async Task<int> UpdateAsync(Scenario entity)
-        {
-            _unitOfWork.ScenarioRepository.Update(entity);
-            return await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<int> DeleteAsync(Scenario entity)
-        {
-            _unitOfWork.ScenarioRepository.Delete(entity);
-            return await _unitOfWork.CommitAsync();
-        }
     }
 }

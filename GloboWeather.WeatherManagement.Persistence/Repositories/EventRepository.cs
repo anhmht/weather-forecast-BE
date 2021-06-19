@@ -67,23 +67,5 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         }
 
-        public async Task<Event> AddAsync(Event entity)
-        {
-            _unitOfWork.EventRepository.Insert(entity);
-            await _unitOfWork.CommitAsync();
-            return entity;
-        }
-
-        public async Task<int> UpdateAsync(Event entity)
-        {
-            _unitOfWork.EventRepository.Update(entity);
-            return await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<int> DeleteAsync(Event entity)
-        {
-            _unitOfWork.EventRepository.Delete(entity);
-            return await _unitOfWork.CommitAsync();
-        }
     }
 }

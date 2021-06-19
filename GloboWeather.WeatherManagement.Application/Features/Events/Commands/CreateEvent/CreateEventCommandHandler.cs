@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent
@@ -16,13 +16,13 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
     {
      
         private readonly IMapper _mapper;
-        private readonly IEventRepository _eventRepository;
         private readonly IImageService _imageService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateEventCommandHandler(IMapper mapper, IEventRepository eventRepository, IImageService imageService)
+        public CreateEventCommandHandler(IMapper mapper, IUnitOfWork unitOfWork, IImageService imageService)
         {
             _mapper = mapper;
-            _eventRepository = eventRepository;
+            _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
         
@@ -52,8 +52,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
                 @event.ImageUrl = (await _imageService.CopyImageToEventPost(new List<string> {request.ImageUrl},
                     @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
             }
-           
-            @event = await _eventRepository.AddAsync(@event);
+
+            _unitOfWork.EventRepository.Add(@event);
+            await _unitOfWork.CommitAsync();
             
             return  @event.EventId;
         }

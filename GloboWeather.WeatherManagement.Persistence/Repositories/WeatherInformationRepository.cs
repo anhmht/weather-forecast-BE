@@ -336,13 +336,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         #endregion
 
-        public async Task<WeatherInformation> AddAsync(WeatherInformation information)
-        {
-            _unitOfWork.WeatherInformationRepository.Insert(information);
-            await _unitOfWork.CommitAsync();
-            return information;
-        }
-
         public async Task ImportAsync(List<WeatherInformation> importData, CancellationToken token)
         {
             var maxRefDate = importData.Max(x => x.RefDate);

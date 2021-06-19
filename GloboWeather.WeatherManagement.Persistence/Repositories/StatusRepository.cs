@@ -13,11 +13,5 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Status> AddAsync(Status entity)
-        {
-            _unitOfWork.StatusRepository.Insert(entity);
-            await _unitOfWork.CommitAsync();
-            return entity;
-        }
     }
 }

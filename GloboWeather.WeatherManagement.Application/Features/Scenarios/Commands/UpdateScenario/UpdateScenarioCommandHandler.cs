@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -11,12 +12,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 {
     public class UpdateScenarioCommandHandler : IRequestHandler<UpdateScenarioCommand>
     {
-        private readonly IScenarioRepository _scenarioRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateScenarioCommandHandler(IScenarioRepository scenarioRepository, IMapper mapper)
+        public UpdateScenarioCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _scenarioRepository = scenarioRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<Unit> Handle(UpdateScenarioCommand request, CancellationToken cancellationToken)
@@ -29,7 +30,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
                 throw new Exceptions.ValidationException(validationResult);
             }
 
-            var scenarioToUpdate = await _scenarioRepository.GetByIdAsync(request.ScenarioId);
+            var scenarioToUpdate = await _unitOfWork.ScenarioRepository.GetByIdAsync(request.ScenarioId);
             if (scenarioToUpdate == null)
             {
                 throw new NotFoundException(nameof(Scenario), request.ScenarioId);
@@ -37,8 +38,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 
             _mapper.Map(request, scenarioToUpdate, typeof(UpdateScenarioCommand), typeof(Scenario));
 
-            await _scenarioRepository.UpdateAsync(scenarioToUpdate);
-            
+            _unitOfWork.ScenarioRepository.Update(scenarioToUpdate);
+            await _unitOfWork.CommitAsync();
+
             return Unit.Value;
 
         }

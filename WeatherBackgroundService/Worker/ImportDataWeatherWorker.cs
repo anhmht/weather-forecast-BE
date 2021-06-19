@@ -45,6 +45,7 @@ namespace WeatherBackgroundService.Worker
                         var _windDirectionService = scope.ServiceProvider.GetRequiredService<IWindDirectionService>();
                         var _backgroundServiceTrackingRepository = scope.ServiceProvider.GetRequiredService<IBackgroundServiceTrackingRepository>();
                         var _weatherInformationRepository = scope.ServiceProvider.GetRequiredService<IWeatherInformationRepository>();
+                        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                         var lastImportTimes = await _backgroundServiceTrackingRepository.GetLastBackgroundServiceTracking();
                         var importTime = DateTime.MinValue;
                         if (lastImportTimes != null)
@@ -89,12 +90,12 @@ namespace WeatherBackgroundService.Worker
                             listImportTime.Add(windDirections.Min(x => x.RefDate));
 
                             var minImportTime = listImportTime.Min();
-                            await _backgroundServiceTrackingRepository.AddAsync(new BackgroundServiceTracking()
+                            unitOfWork.BackgroundServiceTrackingRepository.Add(new BackgroundServiceTracking()
                             {
                                 LastDownload = minImportTime,
                                 LastUpdate = DateTime.Now
                             });
-
+                            await unitOfWork.CommitAsync();
                         }
                         catch (Exception ex)
                         {

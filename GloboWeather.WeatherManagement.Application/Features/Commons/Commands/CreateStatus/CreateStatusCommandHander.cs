@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus
@@ -11,12 +11,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Commands.C
     public class CreateStatusCommandHander : IRequestHandler<CreateStatusCommand, CreateStatusCommandResponse>
     {
         private readonly IMapper _mapper;
-        private readonly IStatusRepository _statusRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateStatusCommandHander(IMapper mapper, IStatusRepository statusRepository)
+        public CreateStatusCommandHander(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _statusRepository = statusRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<CreateStatusCommandResponse> Handle(CreateStatusCommand request, CancellationToken cancellationToken)
         {
@@ -38,7 +38,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Commands.C
             if (createStatusCommandResponse.Success)
             {
                 var status = new Status() { Name = request.Name };
-                status = await _statusRepository.AddAsync(status);
+                _unitOfWork.StatusRepository.Add(status);
+                await _unitOfWork.CommitAsync();
                 createStatusCommandResponse.Status = _mapper.Map<CreateStatusDto>(status);
             }
 

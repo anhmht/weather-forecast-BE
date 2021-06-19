@@ -30,7 +30,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         Task SyncRainAmountAsync(List<RainAmountResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
 
         Task SyncWeatherAsync(List<WeatherResponse> WeatherInformations, DateTime lastUpdate, bool isSaveDb = false);
-        Task<WeatherInformation> AddAsync(WeatherInformation information);
         Task ImportAsync(List<WeatherInformation> importData, CancellationToken token);
         Task<GetWeatherInformationResponse> ImportSingleStationAsync(string stationId, string stationName, List<WeatherInformation> importData, CancellationToken token);
         Task<GetWeatherInformationResponse> GetWeatherInformationsAsync(GetWeatherInformationRequest request, CancellationToken cancelToken, bool isWholeDay = true);
