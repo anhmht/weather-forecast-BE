@@ -70,5 +70,23 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(dtos);
         }
 
+        [HttpPost("get-hydrologicalforecast-by-station", Name = "GetHydrologicalForecastByStationAsync")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetHydrologicalForecastListResponse>> GetHydrologicalForecastByStationAsync(
+            [FromServices] IHydrologicalForecastService hydrologicalForecastingService,
+            [FromBody] GetHydrologicalForecastByStationQuery querySingle)
+        {
+            var query = new GetHydrologicalForecastListQuery()
+            {
+                DateFrom = querySingle.DateFrom, 
+                Page = querySingle.Page, 
+                Limit = querySingle.Limit, 
+                DateTo = querySingle.DateTo, 
+                StationIds = new[] { querySingle.StationId}
+            };
+            var dtos = await hydrologicalForecastingService.GetByPagedAsync(query);
+            return Ok(dtos);
+        }
+
     }
 }

@@ -52,7 +52,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                             Date = intervalDate.AddDays(i),
                             Max = max,
                             Min = min,
-                            Value = max == null && min == null ? null : $"{min.GetString("--")}m - {max.GetString("--")}m"
+                            Value = max == null && min == null ? null : $"({min.GetString("--")})m ~ ({max.GetString("--")})m"
                         });
                     }
 
