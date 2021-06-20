@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,31 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Paging
 
             paged.TotalItems =   totalItemsCount;
             paged.TotalPages = (int) Math.Ceiling(paged.TotalItems / (double) limit);
+
+            return paged;
+        }
+
+        public static PagedModel<TModel> Paginate<TModel>(
+            this IEnumerable<TModel> query,
+            int page,
+            int limit) where TModel : class
+        {
+            var paged = new PagedModel<TModel>();
+            page = (page < 0) ? 1 : page;
+
+            paged.CurrentPage = page;
+            paged.PageSize = limit;
+
+            var totalItemsCount = query.Count();
+
+            var startRow = (page - 1) * limit;
+            paged.Items = query
+                .Skip(startRow)
+                .Take(limit)
+                .ToList();
+
+            paged.TotalItems = totalItemsCount;
+            paged.TotalPages = (int)Math.Ceiling(paged.TotalItems / (double)limit);
 
             return paged;
         }

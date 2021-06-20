@@ -4,6 +4,7 @@ using GloboWeather.WeatherManagement.Api.Helpers;
 using GloboWeather.WeatherManagement.Application.Contracts.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring.Hydrological;
+using GloboWeather.WeatherManagement.Application.Models.Monitoring.HydrologicalForeCast;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring.Meteoroligical;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,5 +59,16 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             var dtos = await hydrologicalService.GetByPagedAsync(query);
             return Ok(dtos);
         }
+
+        [HttpPost("get-hydrologicalforecast", Name = "GetHydrologicalForecastListAsync")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetHydrologicalForecastListResponse>> GetHydrologicalForecastListAsync(
+            [FromServices] IHydrologicalForecastService hydrologicalForecastingService,
+            [FromBody] GetHydrologicalForecastListQuery query)
+        {
+            var dtos = await hydrologicalForecastingService.GetByPagedAsync(query);
+            return Ok(dtos);
+        }
+
     }
 }

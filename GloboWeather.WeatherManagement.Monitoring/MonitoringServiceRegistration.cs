@@ -6,13 +6,7 @@ using GloboWeather.WeatherManagement.Monitoring.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Monitoring.MonitoringEntities;
 
 namespace GloboWeather.WeatherManagement.Monitoring
 {
@@ -28,14 +22,16 @@ namespace GloboWeather.WeatherManagement.Monitoring
             services.AddTransient<IRainingService, RainingService>();
             services.AddTransient<IMeteorologicalService, MeteorologicalService>();
             services.AddTransient<IHydrologicalService, HydrologicalService>();
-            
-            
+            services.AddTransient<IHydrologicalForecastService, HydrologicalForecastService>();
+
+
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<ITramKttvRepository, TramKttvRepository>();
             services.AddScoped<IRainRepository, RainRepository>();
             services.AddScoped<IHydrologicalRepository, HydrologicalRepository>();
             services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
-            
+            services.AddScoped<IHydrologicalForecastRepository, HydrologicalForecastRepository>();
+
         }
     }
 }
