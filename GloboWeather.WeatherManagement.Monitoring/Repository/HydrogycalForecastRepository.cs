@@ -20,10 +20,15 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
         {
             var dateFrom = query.DateFrom.GetStartOfDate();
             var dateTo = query.DateTo.GetEndOfDate();
-            var entryDatas = await _dbContext.Set<HydrologicalForecast>()
+            var entryDatas = query.StationIds?.Length > 0 ?
+                await _dbContext.Set<HydrologicalForecast>()
                 .AsNoTracking()
                 .Where(r => query.StationIds.Contains(r.StationId)
-                            && (r.RefDate >= dateFrom && r.RefDate <= dateTo)).OrderBy(x=>x.RefDate).ToListAsync();
+                            && (r.RefDate >= dateFrom && r.RefDate <= dateTo)).OrderBy(x=>x.RefDate).ToListAsync()
+                : await _dbContext.Set<HydrologicalForecast>()
+                    .AsNoTracking()
+                    .Where(r => r.RefDate >= dateFrom && r.RefDate <= dateTo)
+                    .OrderBy(x => x.RefDate).ToListAsync();
             //.Paginate(query.Page, query.Limit, new CancellationToken());
 
             var response = new GetHydrologicalForecastListResponse();
@@ -85,5 +90,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
 
             return null;
         }
+
     }
 }
