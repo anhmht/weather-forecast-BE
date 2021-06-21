@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
@@ -33,6 +34,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
 
             var response = new GetHydrologicalForecastListResponse();
             var intervalDate = dateFrom;
+            var hydrologicalForecasts = new List<HydrologicalForecastListVm>();
             while (intervalDate < dateTo)
             {
                 foreach (var stationId in query.StationIds)
@@ -56,17 +58,19 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                         });
                     }
 
-                    response.GetHydrologicalForecasts.Add(hydrologicalForecast);
+                    hydrologicalForecasts.Add(hydrologicalForecast);
                 }
 
                 intervalDate = intervalDate.AddDays(1);
             }
 
-            var paging = response.GetHydrologicalForecasts.Paginate(query.Page, query.Limit);
+            var paging = hydrologicalForecasts.Paginate(query.Page, query.Limit);
             response.CurrentPage = paging.CurrentPage;
             response.TotalPages = paging.TotalPages;
             response.TotalItems = paging.TotalItems;
-            
+            response.GetHydrologicalForecasts = paging.Items.ToList();
+
+
             return response;
         }
 
