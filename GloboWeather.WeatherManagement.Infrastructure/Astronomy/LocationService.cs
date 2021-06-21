@@ -34,16 +34,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Astronomy
 
         public async Task<GetLocationResponse> GetCurrentLocation(GetPositionStackLocationCommand request, CancellationToken cancellationToken)
         {
-            string uri =
-                $"http://api.positionstack.com/v1/reverse?access_key={_positionSettings.AccessKey}&query={request.Lat},{request.Lon}";
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, uri);
-            using var response = await _httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseContentRead);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<GetLocationResponse>();
-            }
-
             string uriIpStack = $"http://api.ipstack.com/{request.IpAddress}?access_key={_positionSettings.AccessKeyForIp}";
             var httpRequestForIp = new HttpRequestMessage(HttpMethod.Get, uriIpStack);
             using var responseForIp = await _httpClient.SendAsync(httpRequestForIp, HttpCompletionOption.ResponseContentRead);

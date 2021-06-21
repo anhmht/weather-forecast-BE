@@ -5,9 +5,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Commons.Queries.Ge
 {
     public class GetLocationResponse
     {
-        [JsonPropertyName("data")]
-        public  List<PositionLocationVm> Location { get; set; }
-        
         [JsonPropertyName("ip")]
         public string Ip { get; set; }
         

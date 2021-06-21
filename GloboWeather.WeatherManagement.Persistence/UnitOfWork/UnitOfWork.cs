@@ -101,7 +101,7 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         private IEventRepository _eventRepository;
         IEventRepository IUnitOfWork.EventRepository => _eventRepository ?? new EventRepository(_context, this);
 
-        private IForumRepository _forumRepository;
+        private readonly IForumRepository _forumRepository;
         IForumRepository IUnitOfWork.ForumRepository => _forumRepository ?? new ForumRepository(_context, this);
 
         private IForumCategoryRepository _forumCategoryRepository;
