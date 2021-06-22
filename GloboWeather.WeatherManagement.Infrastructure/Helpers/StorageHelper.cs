@@ -205,5 +205,33 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
 
             return await Task.FromResult(urlImage);
         }
+        
+        public static async Task<string>
+            UploadAvatarToStorage(Stream fileStream, string fileName,
+                AzureStorageConfig _storageConfig)
+        {
+            //  fileName = Guid.NewGuid().ToString() + fileName;
+            string url = "https://" +
+                         _storageConfig.AccountName +
+                         ".blob.core.windows.net/" +
+                         _storageConfig.UserContainer + "/" + fileName;
+
+            // Create a URI to the blob
+            Uri blobUri = new Uri(url);
+
+            // Create StorageSharedKeyCredentials object by reading
+            // the values from the configuration (appsettings.json)
+            StorageSharedKeyCredential storageCredentials =
+                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+
+            // Create the blob client.
+            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
+
+
+            // Upload the file
+            await blobClient.UploadAsync(fileStream);
+            //  var stringUrl =  await  CopyFileToContainerImages(fileName, _storageConfig);
+            return await Task.FromResult(url);
+        }
     }
 }

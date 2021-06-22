@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,12 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<List<string>>> DeleteImagesList()
         {
             return Ok(await _imageService.DeleteAllImagesTempContainerAsync());
+        }
+        
+        [HttpPost("uploadAvatar")]
+        public async Task<ActionResult<ImageResponse>> UploadAvatar([FromBody] UploadAvatarRequest request)
+        {
+            return Ok(await _imageService.UploadAvatarForUserAsync(request.UserId, request.Image));
         }
         
     }

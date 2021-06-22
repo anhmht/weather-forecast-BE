@@ -54,7 +54,11 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 Id = user.Id,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 Email = user.Email,
-                UserName = user.UserName
+                UserName = user.UserName,
+                FirstName =  user.FirstName,
+                LastName =  user.LastName,
+                PhoneNumber = user.PhoneNumber
+
             };
             return response;
         }
@@ -66,7 +70,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             {
                 throw new Exception($"UserName {request.UserName} already exists.");
             }
-
+           
             var user = new ApplicationUser
             {
                 Email = request.Email,
@@ -75,6 +79,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 UserName = request.UserName,
                 EmailConfirmed = true
             };
+            await _userManagement.UpdateAsync(user);
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
             if (existingEmail == null)
             {

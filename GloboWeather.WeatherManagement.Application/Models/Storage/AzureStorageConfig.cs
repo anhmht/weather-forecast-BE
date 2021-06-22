@@ -9,5 +9,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Storage
         public string EventContainer { get; set; }
         public string TempContainer { get; set; }
         public string PostContainer { get; set; }
+        public string UserContainer { get; set; }
     }
 }

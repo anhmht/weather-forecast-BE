@@ -68,7 +68,34 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
             return imageUrlsAfterPost ;
         }
-        
+
+        public async Task<ImageResponse> UploadAvatarForUserAsync(string userId, IFormFile file)
+        {
+            string imageUrl = string.Empty;
+            if (StorageHelper.IsImage(file))
+            {
+                if (file.Length > 0)
+                {
+                    using (Stream stream = file.OpenReadStream())
+                    {
+                        _logger.LogInformation("Image Upload");
+                        var fileName = userId + file.FileName.Replace(" ", String.Empty);
+                        imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                _logger.LogError("Image uploading failed");
+            }
+
+            return new ImageResponse
+            {
+                Url = imageUrl
+            };
+        }
+
         public async Task<List<string>> GetAllImagesAsync()
         {
             return await StorageHelper.GetImageUrls(_storageConfig);
