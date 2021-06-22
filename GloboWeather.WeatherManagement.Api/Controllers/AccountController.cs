@@ -1,5 +1,6 @@
 
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Models.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,12 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<RegistrationResponse>> RegisterAsync(RegistrationRequest request)
         {
             return Ok(await _authenticationService.RegisterAsync(request: request));
+        }
+
+        [HttpPut("updateProfile")]
+        public async Task<ActionResult<string>> UpdateProfile(UpdatingRequest request)
+        {
+            return Ok(await _authenticationService.UpdateUserProfileAsync(request: request));
         }
         
     }

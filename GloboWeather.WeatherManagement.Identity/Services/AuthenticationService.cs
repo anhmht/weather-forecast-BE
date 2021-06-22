@@ -33,6 +33,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
         {
+            
             var user = await _userManagement.FindByEmailAsync(request.Email);
             if (user == null)
             {
@@ -57,18 +58,20 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 UserName = user.UserName,
                 FirstName =  user.FirstName,
                 LastName =  user.LastName,
-                PhoneNumber = user.PhoneNumber
-
+                PhoneNumber = user.PhoneNumber,
+                AvartarUrl =  user.AvatarUrl
             };
             return response;
         }
 
         public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
         {
+            var registrationResponse = new RegistrationResponse();
             var existingUser = await _userManagement.FindByNameAsync(request.UserName);
             if (existingUser != null)
             {
-                throw new Exception($"UserName {request.UserName} already exists.");
+                registrationResponse.Success = false;
+                registrationResponse.Message = $"UserName {request.UserName} already exists.";
             }
            
             var user = new ApplicationUser
@@ -79,7 +82,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 UserName = request.UserName,
                 EmailConfirmed = true
             };
-            await _userManagement.UpdateAsync(user);
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
             if (existingEmail == null)
             {
@@ -90,13 +92,40 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 }
                 else
                 {
-                    throw new Exception($"{result.Errors}");
+                    registrationResponse.Success = false;
+                    registrationResponse.ValidationErrors = new List<string>();
+                    foreach (var error in result.Errors)
+                    {
+                        registrationResponse.ValidationErrors.Add(error.Description);
+                    }
                 }
             }
             else
             {
-                throw new Exception($"Email {request.Email} already exits.");
+                registrationResponse.Success = false;
+                registrationResponse.Message = $"UserName {request.UserName} already exists.";
+
             }
+            return registrationResponse;
+            
+        }
+
+        public async Task<string> UpdateUserProfileAsync(UpdatingRequest request)
+        {
+            var user = await _userManagement.FindByNameAsync(request.UserName);
+            if (user == null)
+            {
+                throw new Exception($"User with {request.UserName} not found");
+            }
+
+            //Map Model
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.AvatarUrl = request.AvatarUrl;
+            user.PhoneNumber = request.PhoneNumber;
+
+            return (await _userManagement.UpdateAsync(user)).ToString();
+
         }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)

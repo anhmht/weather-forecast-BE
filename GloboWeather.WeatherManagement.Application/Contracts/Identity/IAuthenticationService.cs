@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManegement.Application.Models.Authentication;
 
 namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
@@ -7,5 +8,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
     {
         Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
         Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
+
+        Task<string> UpdateUserProfileAsync(UpdatingRequest request);
     }
 }

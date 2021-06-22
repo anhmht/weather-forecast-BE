@@ -1,3 +1,5 @@
+using GloboWeather.WeatherManegement.Application.Responses;
+
 namespace GloboWeather.WeatherManegement.Application.Models.Authentication
 {
     public class AuthenticationResponse
@@ -9,5 +11,6 @@ namespace GloboWeather.WeatherManegement.Application.Models.Authentication
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string PhoneNumber { get; set; }
+        public string AvartarUrl { get; set; }
     }
 }
