@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage;
@@ -12,6 +15,7 @@ using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Win32.SafeHandles;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Media
 {
@@ -115,7 +119,19 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         {
             return await StorageHelper.DeleteBlobInPostContainerByNameAsync(_storageConfig,imageUrls, eventId);
         }
-        
-        
+
+        public async Task<ImageResponse> GenerateQRCodeAsync(string text)
+        {
+            var qrCode = QRCodeHelper.CreateQRCodeStream(text);
+            
+            var fileName = $"QR_CODE_{Guid.NewGuid()}.jpg";
+            var url = await StorageHelper.UploadFileToStorage(qrCode.FileStream, fileName, _storageConfig);
+            await qrCode.FileStream.DisposeAsync();
+            File.Delete(qrCode.FilePath);
+            return new ImageResponse
+            {
+                Url = url
+            };
+        }
     }
 }

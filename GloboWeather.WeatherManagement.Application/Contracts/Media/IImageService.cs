@@ -15,6 +15,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName);
 
         Task<ImageResponse> UploadAvatarForUserAsync(string userId, IFormFile file);
+        Task<ImageResponse> GenerateQRCodeAsync(string text);
 
     }
 }

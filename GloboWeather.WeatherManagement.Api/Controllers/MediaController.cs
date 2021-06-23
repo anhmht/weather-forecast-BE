@@ -48,6 +48,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             return Ok(await _imageService.UploadAvatarForUserAsync(request.UserId, request.Image));
         }
-        
+
+        [HttpGet("generate-qr-code")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<ImageResponse>> GenerateQRCodeAsync([FromQuery] string text)
+        {
+            return Ok(await _imageService.GenerateQRCodeAsync(text));
+        }
     }
 }
