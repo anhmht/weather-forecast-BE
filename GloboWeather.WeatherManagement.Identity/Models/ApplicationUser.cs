@@ -9,4 +9,6 @@ namespace GloboWeather.WeatherManagement.Identity.Models
 
         public string AvatarUrl { get; set; }
     }
+    
+    
 }

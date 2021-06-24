@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Models.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GloboWeather.WeatherManagement.Api.Controllers
@@ -34,6 +35,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<string>> UpdateProfile(UpdatingRequest request)
         {
             return Ok(await _authenticationService.UpdateUserProfileAsync(request: request));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllRoles")]
+        public async Task<ActionResult<RoleResponse>> GetAllRoles()
+        {
+            return Ok(await _authenticationService.GetRolesListAsync());
         }
         
     }

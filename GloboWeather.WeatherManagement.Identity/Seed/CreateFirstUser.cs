@@ -12,15 +12,19 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
             {
                 FirstName = "Phuong",
                 LastName = "Last",
-                UserName = "zigzac",
-                Email = "phuongle@test.com",
+                UserName = "zigzacvy",
+                Email = "phuongle99@test.com",
                 EmailConfirmed = true
             };
 
             var user = await userManager.FindByEmailAsync(applicationUser.Email);
             if (user == null)
             {
-                await userManager.CreateAsync(applicationUser, "Phu@ng123");
+                var createPowerUser =  await userManager.CreateAsync(applicationUser, "Phu@ng123");
+                if (createPowerUser.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(applicationUser, "Admin");
+                }
             }
         }
     }

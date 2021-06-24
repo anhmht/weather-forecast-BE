@@ -20,15 +20,18 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly UserManager<ApplicationUser> _userManagement;
         private readonly JwtSettings _jwtSettings;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthenticationService(
             UserManager<ApplicationUser> userManagement, 
             IOptions<JwtSettings> jwtSettings,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManagement = userManagement;
             _jwtSettings = jwtSettings.Value;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -126,6 +129,17 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             return (await _userManagement.UpdateAsync(user)).ToString();
 
+        }
+
+        public async Task<List<RoleResponse>> GetRolesListAsync()
+        {
+            var roles = _roleManager.Roles.Select(x => new RoleResponse()
+            {
+                Name = x.Name,
+                NormalizedName = x.NormalizedName
+            }).ToList();
+                
+            return await Task.FromResult(roles);
         }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)

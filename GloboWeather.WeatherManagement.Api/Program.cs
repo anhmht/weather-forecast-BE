@@ -33,8 +33,10 @@ namespace GloboWeather.WeatherManagement.Api
                 try
                 {
                     var useManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
                     await Identity.Seed.UserCreator.SeedAsync(useManager);
+                    await Identity.Seed.RolesCreator.SeedAsync(roleManager);
                     Log.Information("Application Starting");
                 }
                 catch (Exception e)
