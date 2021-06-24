@@ -20,7 +20,7 @@ namespace WeatherBackgroundService.Worker
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var interval = _configuration.GetSection("BackgroundWokerConfigs:DeleteCloudTempFileEveryHours").Get<int>();
+            var interval = _configuration.GetSection("BackgroundWorkerConfigs:DeleteCloudTempFileEveryHours").Get<int>();
             new Timer(async state =>
             {
                 try

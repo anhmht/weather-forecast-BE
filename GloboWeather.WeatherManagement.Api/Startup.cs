@@ -39,7 +39,7 @@ namespace GloboWeather.WeatherManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwagger(services);
-            services.AddApplicationServices();
+            services.AddApplicationServices(Configuration);
             services.AddInfrastructureServices(Configuration);
             services.AddPersistenceServices(Configuration);
             services.AddIdentityServices(Configuration);

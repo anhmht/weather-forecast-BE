@@ -10,6 +10,7 @@ namespace WeatherBackgroundService
         {
             services.AddHostedService<ImportDataWeatherWorker>();
             services.AddHostedService<DeleteCloudTempFileWorker>();
+            services.AddHostedService<AutoGenerateCacheWorker>();
         }
     }
 }
