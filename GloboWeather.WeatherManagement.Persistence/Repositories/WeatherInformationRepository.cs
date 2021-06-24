@@ -12,6 +12,7 @@ using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
+using GloboWeather.WeatherManagement.Application.Requests;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
@@ -373,13 +374,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                 ToDate = maxRefDate
             };
 
-            return await GetWeatherInformationsAsync(getWeatherInformationRequest, token, false);
+            RequestHelper.StandadizeGetWeatherInformationBaseRequest(getWeatherInformationRequest, false);
+            return await GetWeatherInformationsAsync(getWeatherInformationRequest, token);
         }
 
         public async Task<GetWeatherInformationResponse> GetWeatherInformationsAsync(GetWeatherInformationRequest request
-            , CancellationToken cancelToken, bool isWholeDay = true)
+            , CancellationToken cancelToken)
         {
-            StandadizeGetWeatherInformationBaseRequest(request, isWholeDay);
             var response = new GetWeatherInformationResponse();
 
             var weatherInformations = await GetByRefDateStationAsync(request.FromDate.Value, request.ToDate.Value, request.StationIds, cancelToken);
@@ -468,7 +469,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
         public async Task<GetWeatherInformationHorizontalResponse> GetWeatherInformationHorizontalAsync(
             GetWeatherInformationHorizontalRequest request, CancellationToken cancelToken)
         {
-            StandadizeGetWeatherInformationBaseRequest(request);
             var response = new GetWeatherInformationHorizontalResponse();
 
             var weatherInformations = await GetByRefDateStationAsync(request.FromDate.Value,
@@ -586,57 +586,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             }
 
             await _unitOfWork.CommitAsync();
-        }
-
-        private void StandadizeGetWeatherInformationBaseRequest(GetWeatherInformationBaseRequest request, bool isWholeDay = true)
-        {
-            if (!request.FromDate.HasValue)
-            {
-                if (!request.ToDate.HasValue)
-                {
-                    request.FromDate = DateTime.Now.GetStartOfDate();
-                    request.ToDate = DateTime.Now.GetEndOfDate();
-                }
-                else
-                {
-                    if (isWholeDay)
-                    {
-                        request.FromDate = request.ToDate.GetStartOfDate();
-                        request.ToDate = request.ToDate.GetEndOfDate();
-                    }
-                }
-            }
-            else
-            {
-                if (isWholeDay)
-                {
-                    request.FromDate = request.FromDate.GetStartOfDate();
-                }
-
-                if (!request.ToDate.HasValue)
-                {
-                    request.ToDate = request.FromDate.GetEndOfDate();
-                }
-                else
-                {
-                    if (isWholeDay)
-                    {
-                        request.ToDate = request.ToDate.GetEndOfDate();
-                    }
-                }
-            }
-
-            if (request.FromDate > request.ToDate)
-            {
-                var dateTemp = request.FromDate;
-                request.FromDate = request.ToDate;
-                request.ToDate = dateTemp;
-            }
-
-            if (request.WeatherTypes == null || !request.WeatherTypes.Any())
-            {
-                request.WeatherTypes = Enum.GetValues<WeatherType>();
-            }
         }
 
         private object GetValueByWeatherType(WeatherInformation weatherInformation, WeatherType weatherType)
