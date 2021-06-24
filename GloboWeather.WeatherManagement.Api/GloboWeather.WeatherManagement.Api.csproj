@@ -17,6 +17,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CorrelationId" Version="3.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="5.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="5.0.7" />
+        <PackageReference Include="Microsoft.Azure.SignalR" Version="1.8.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.10">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -44,6 +50,10 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj" />
 	    <ProjectReference Include="..\GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj" />
       <ProjectReference Include="..\WeatherBackgroundService\WeatherBackgroundService.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="COntex\" />
     </ItemGroup>
 
 </Project>

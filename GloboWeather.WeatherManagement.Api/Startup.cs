@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
+using GloboWeather.WeatherManagement.Api.SignalR;
 using GloboWeather.WeatherManagement.Application;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Identity;
@@ -48,10 +49,17 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddWeatherBackgroundService(Configuration);
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();         
             services.AddControllers();
+
             services.AddCors(options =>
             {
-                options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            });
+                options.AddDefaultPolicy(builder =>
+                    builder.SetIsOriginAllowed(_ => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            }); ;
+
+            services.AddSignalR().AddAzureSignalR();
 
         }
 
@@ -105,18 +113,36 @@ namespace GloboWeather.WeatherManagement.Api
            
             app.UseHttpsRedirection();
 
+
+
             app.UseRouting();
+
+            app.UseCors();
+            var hostName = Environment.GetEnvironmentVariable("HOST_HOSTNAME");
+            app.Use((context, next) =>
+            {
+                context.Response.Headers["Server"] = string.IsNullOrEmpty(hostName) ? Environment.MachineName : hostName;
+                context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                context.Response.Headers["Access-Control-Allow-Methods"] = "*";
+                context.Response.Headers["Access-Control-Allow-Headers"] = "*";
+                return next();
+            });
+            app.UseMiddleware<SignalRConnectedMiddleware>();
             app.UseAuthentication();
             
             app.UseSwagger();
             app.UseSwaggerUI(c =>
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "GloboWeather.WeatherManagement.Api v1"));
             
-            app.UseCustomExceptionHander();
-            app.UseCors("Open");
+            app.UseCustomExceptionHander();           
             
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            app.UseAzureSignalR(routes =>
+            {              
+                routes.MapHub<NotificationHub>("/notifications");
+            });
         }
     }
 }
