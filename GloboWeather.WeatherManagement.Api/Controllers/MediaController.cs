@@ -44,9 +44,9 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
         
         [HttpPost("uploadAvatar")]
-        public async Task<ActionResult<ImageResponse>> UploadAvatar([FromBody] UploadAvatarRequest request)
+        public async Task<ActionResult<ImageResponse>> UploadAvatar(string userId, IFormFile file)
         {
-            return Ok(await _imageService.UploadAvatarForUserAsync(request.UserId, request.Image));
+            return Ok(await _imageService.UploadAvatarForUserAsync(userId, file));
         }
 
         [HttpGet("generate-qr-code")]

@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Features.Commons.Queries.GetPos
 using GloboWeather.WeatherManagement.Application.Models.Astronomy;
 using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
