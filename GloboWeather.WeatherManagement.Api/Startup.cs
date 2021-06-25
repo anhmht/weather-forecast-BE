@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Api.Context;
 using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
 using GloboWeather.WeatherManagement.Api.SignalR;
@@ -49,7 +50,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddWeatherBackgroundService(Configuration);
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();         
             services.AddControllers();
-
+            services.AddScoped<WeatherContext>();
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>

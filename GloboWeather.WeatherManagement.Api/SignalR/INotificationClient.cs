@@ -7,6 +7,6 @@ namespace GloboWeather.WeatherManagement.Api.SignalR
 {
     public interface INotificationClient
     {        
-        Task ReceiveMessage(string user, string message);      
+        Task ReceiveMessage(object message);      
     }
 }

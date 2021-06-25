@@ -52,8 +52,4 @@
       <ProjectReference Include="..\WeatherBackgroundService\WeatherBackgroundService.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="COntex\" />
-    </ItemGroup>
-
 </Project>
