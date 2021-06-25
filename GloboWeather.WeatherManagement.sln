@@ -33,6 +33,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BackgroundServices", "Backg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherBackgroundService", "WeatherBackgroundService\WeatherBackgroundService.csproj", "{A66517F6-AB40-4C42-AA74-B0117859209C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestSignalR", "TestSignalR", "{98AB7D79-E075-43CE-A062-5E0961EFFB28}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRChat", "Test\SignalR\SignalRChat\SignalRChat.csproj", "{3729A60E-8910-46D5-8BAF-AA5705575C83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,10 @@ Global
 		{A66517F6-AB40-4C42-AA74-B0117859209C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A66517F6-AB40-4C42-AA74-B0117859209C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A66517F6-AB40-4C42-AA74-B0117859209C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3729A60E-8910-46D5-8BAF-AA5705575C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3729A60E-8910-46D5-8BAF-AA5705575C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3729A60E-8910-46D5-8BAF-AA5705575C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3729A60E-8910-46D5-8BAF-AA5705575C83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +101,8 @@ Global
 		{BD989529-6CF3-4DFA-ADCF-AD740A05A0C9} = {CFC146FD-C631-4C5A-A97D-2B6139622EB1}
 		{449D8D4E-8C93-4B37-BE81-49BB3E584D76} = {494BC627-FA20-40EA-8048-01A22E049361}
 		{A66517F6-AB40-4C42-AA74-B0117859209C} = {449D8D4E-8C93-4B37-BE81-49BB3E584D76}
+		{98AB7D79-E075-43CE-A062-5E0961EFFB28} = {4DD24AB2-8959-4615-88C6-9A85326AA8D0}
+		{3729A60E-8910-46D5-8BAF-AA5705575C83} = {98AB7D79-E075-43CE-A062-5E0961EFFB28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F90B87E3-CB7A-4CD8-9F3C-593905BBBAA2}

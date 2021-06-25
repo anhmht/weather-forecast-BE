@@ -19,9 +19,9 @@ namespace GloboWeather.WeatherManagement.Api.Middleware
         {
             if (context.Request.Path.Value.Contains("notifications"))
             {
-                var sesionId = context.Request.Headers["sesionId"].FirstOrDefault();
-                var weatherContext = context.RequestServices.GetRequiredService<WeatherContext>();
-                weatherContext.SignalRSessionId = sesionId;
+                //var sesionId = context.Request.Headers["sesionId"].FirstOrDefault();
+                //var weatherContext = context.RequestServices.GetRequiredService<WeatherContext>();
+                //weatherContext.SignalRSessionId = sesionId;
             }
             await Next.Invoke(context);
         }
