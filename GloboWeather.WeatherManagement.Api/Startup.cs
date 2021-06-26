@@ -57,8 +57,8 @@ namespace GloboWeather.WeatherManagement.Api
                     builder.SetIsOriginAllowed(_ => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials().WithOrigins("http://localhost:53353"));
-            }); ;
+                    .AllowCredentials().WithOrigins("http://localhost:53353", "https://localhost:8000", "http://localhost:8000"));
+            }); 
 
             services.AddSignalR().AddAzureSignalR();
 
