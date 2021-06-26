@@ -36,6 +36,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IThemeRepository, ThemeRepository>();
             services.AddScoped<ITopicSubscriptionRepository, TopicSubscriptionRepository>();
             services.AddScoped<IUpDownVoteRepository, UpDownVoteRepository>();
+            services.AddScoped<IWindRankRepository, WindRankRepository>();
 
             return services;
         }

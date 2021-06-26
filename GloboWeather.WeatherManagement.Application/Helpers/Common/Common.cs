@@ -45,12 +45,13 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
 
     public enum WeatherType
     {
-        Humidity = 1,
-        WindLevel,
-        WindDirection,
-        WindSpeed,
-        RainAmount,
-        Temperature,
-        Weather
+        Humidity = 1,   //DoAm
+        WindLevel,      //GioGiat
+        WindDirection,  //HuongGio
+        WindSpeed,      //TocDoGio
+        RainAmount,     //LuongMua
+        Temperature,    //NhietDo
+        Weather,        //ThoiTiet...
+        WindRank        //CapGio
     }
 }

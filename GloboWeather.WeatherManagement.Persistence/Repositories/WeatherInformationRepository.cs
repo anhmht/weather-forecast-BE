@@ -363,7 +363,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             importData.ForEach(item => item.StationId = stationId);
             var maxRefDate = importData.Max(x => x.RefDate);
             var minRefDate = importData.Min(x => x.RefDate);
-            var stationIds = new List<string>() {stationId};
+            var stationIds = new List<string>() { stationId };
 
             await Import(minRefDate, maxRefDate, stationIds, importData, token);
 
@@ -387,16 +387,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             if (weatherInformations?.Any() == false)
                 return response;
 
+            var windRanks = request.WeatherTypes.Contains(WeatherType.WindRank)
+                ? await _unitOfWork.WindRankRepository.GetAllAsync()
+                : null;
+
             var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
             var parallelOption = new ParallelOptions() { CancellationToken = cancelToken, MaxDegreeOfParallelism = 8 };
 
             var weatherInformationItems = new ConcurrentBag<WeatherInformationByStation>();
             Parallel.ForEach(stationIds, parallelOption, (stationId) =>
-                //foreach (var stationId in stationIds)
             {
                 var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
                 if (!weatherInformationByStations.Any())
-                    return; // continue;
+                    return;
 
                 foreach (var weatherType in request.WeatherTypes)
                 {
@@ -404,8 +407,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     {
                         StationId = stationId,
                         WeatherType = weatherType,
-                        MinValue = GetMinValueByWeatherType(weatherInformationByStations, weatherType),
-                        MaxValue = GetMaxValueByWeatherType(weatherInformationByStations, weatherType)
+                        MinValue = GetMinValueByWeatherType(weatherInformationByStations, weatherType, windRanks),
+                        MaxValue = GetMaxValueByWeatherType(weatherInformationByStations, weatherType, windRanks)
                     };
 
                     var dateInterval = request.FromDate;
@@ -416,13 +419,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                         var weatherInformationByDay = new WeatherInformationByDay()
                         {
                             Date = dateInterval.Value,
-                            MinValue = GetMinValueByWeatherType(weatherInformationInDate, weatherType).GetInt(),
-                            MaxValue = GetMaxValueByWeatherType(weatherInformationInDate, weatherType).GetInt()
+                            MinValue = GetMinValueByWeatherType(weatherInformationInDate, weatherType, windRanks),
+                            MaxValue = GetMaxValueByWeatherType(weatherInformationInDate, weatherType, windRanks)
                         };
 
                         foreach (var weatherInfo in weatherInformationInDate)
                         {
-                            var value = GetValueByWeatherType(weatherInfo, weatherType);
+                            var value = GetValueByWeatherType(weatherInfo, weatherType, windRanks);
                             weatherInformationByDay.WeatherInformationByHours.Add(new WeatherInformationByHour()
                             {
                                 Hour = weatherInfo.RefDate.Hour,
@@ -431,7 +434,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
                             if (weatherType != WeatherType.WindDirection)
                             {
-                                if (value.GetInt() == weatherInformationByDay.MinValue)
+                                if (value?.Equals(weatherInformationByDay.MinValue) == true)
                                 {
                                     weatherInformationByDay.WeatherInformationMins.Add(new WeatherInformationByHour()
                                     {
@@ -440,7 +443,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                                     });
                                 }
 
-                                if (value.GetInt() == weatherInformationByDay.MaxValue)
+                                if (value?.Equals(weatherInformationByDay.MaxValue) == true)
                                 {
                                     weatherInformationByDay.WeatherInformationMaxs.Add(new WeatherInformationByHour()
                                     {
@@ -476,14 +479,18 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             if (weatherInformations?.Any() == false)
                 return response;
 
+            var windRanks = request.WeatherTypes.Contains(WeatherType.WindRank)
+                ? await _unitOfWork.WindRankRepository.GetAllAsync()
+                : null;
+
             var weatherInformationHorizontals = new ConcurrentBag<GetWeatherInformationHorizontal>();
             var stationIds = weatherInformations.Select(x => x.StationId).Distinct();
-            var parallelOption = new ParallelOptions() {CancellationToken = cancelToken, MaxDegreeOfParallelism = 8};
+            var parallelOption = new ParallelOptions() { CancellationToken = cancelToken, MaxDegreeOfParallelism = 8 };
             Parallel.ForEach(stationIds, parallelOption, (stationId) =>
             {
                 var weatherInformationByStations = weatherInformations.Where(x => x.StationId == stationId);
                 if (!weatherInformationByStations.Any())
-                    return; //continue;
+                    return;
 
                 foreach (var weatherType in request.WeatherTypes)
                 {
@@ -504,7 +511,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                                     x.RefDate == dateInterval.AddHours(i));
                             if (weatherInformation == null)
                                 continue;
-                            var value = GetValueByWeatherType(weatherInformation, weatherType);
+                            var value = GetValueByWeatherType(weatherInformation, weatherType, windRanks);
                             var fieldName = $"_{i + 1}";
                             var propertyInfo = weatherInformationHorizontal.GetType().GetProperty(fieldName);
                             propertyInfo?.SetValue(weatherInformationHorizontal,
@@ -588,7 +595,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             await _unitOfWork.CommitAsync();
         }
 
-        private object GetValueByWeatherType(WeatherInformation weatherInformation, WeatherType weatherType)
+        private object GetValueByWeatherType(WeatherInformation weatherInformation, WeatherType weatherType
+            , IEnumerable<WindRank> windRanks)
         {
             if (weatherInformation != null)
             {
@@ -607,14 +615,18 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     case WeatherType.WindLevel:
                         return weatherInformation.WindLevel.GetInt();
                     case WeatherType.WindSpeed:
-                        return weatherInformation.WindSpeed.GetInt();
+                        return weatherInformation.WindSpeed.GetFloat();
+                    case WeatherType.WindRank:
+                        var windSpeed = weatherInformation.WindSpeed.GetFloat();
+                        return GetWindRankDescription(windRanks, windSpeed);
                 }
             }
 
             return null;
         }
 
-        private int? GetMinValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
+        private object GetMinValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType
+            , IEnumerable<WindRank> windRanks)
         {
             if (weatherInformation != null && weatherInformation.Any())
             {
@@ -633,14 +645,18 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     case WeatherType.WindLevel:
                         return weatherInformation.Select(x => x.WindLevel.GetInt()).Min();
                     case WeatherType.WindSpeed:
-                        return weatherInformation.Select(x => x.WindSpeed.GetInt()).Min();
+                        return weatherInformation.Select(x => x.WindSpeed.GetFloat()).Min();
+                    case WeatherType.WindRank:
+                        var minSpeed = weatherInformation.Select(x => x.WindSpeed.GetFloat()).Min();
+                        return GetWindRankDescription(windRanks, minSpeed);
                 }
             }
 
             return null;
         }
 
-        private int? GetMaxValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType)
+        private object GetMaxValueByWeatherType(IEnumerable<WeatherInformation> weatherInformation, WeatherType weatherType
+            , IEnumerable<WindRank> windRanks)
         {
             if (weatherInformation != null && weatherInformation.Any())
             {
@@ -659,13 +675,25 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     case WeatherType.WindLevel:
                         return weatherInformation.Select(x => x.WindLevel.GetInt()).Max();
                     case WeatherType.WindSpeed:
-                        return weatherInformation.Select(x => x.WindSpeed.GetInt()).Max();
+                        return weatherInformation.Select(x => x.WindSpeed.GetFloat()).Max();
+                    case WeatherType.WindRank:
+                        var maxSpeed = weatherInformation.Select(x => x.WindSpeed.GetFloat()).Max();
+                        return GetWindRankDescription(windRanks, maxSpeed);
                 }
             }
 
             return null;
         }
 
+        private string GetWindRankDescription(IEnumerable<WindRank> windRanks, float value)
+        {
+            if (windRanks?.Any() == true)
+            {
+                return windRanks.Where(x => x.WindSpeed <= value).OrderByDescending(x => x.WindSpeed).FirstOrDefault()?.Description;
+            }
+
+            return null;
+        }
         #endregion
 
 

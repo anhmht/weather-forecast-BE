@@ -21,9 +21,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
 
         public List<WeatherInformationByDay> WeatherInformationByDays { get; set; }
 
-        public int? MinValue { get; set; }
+        public object MinValue { get; set; }
 
-        public int? MaxValue { get; set; }
+        public object MaxValue { get; set; }
 
         public WeatherInformationByStation()
         {
@@ -41,9 +41,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformation
 
         public List<WeatherInformationByHour> WeatherInformationMaxs { get; set; }
 
-        public int? MinValue { get; set; }
+        public object MinValue { get; set; }
 
-        public int? MaxValue { get; set; }
+        public object MaxValue { get; set; }
 
         public WeatherInformationByDay()
         {
