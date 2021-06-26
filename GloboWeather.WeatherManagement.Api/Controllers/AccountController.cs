@@ -1,20 +1,22 @@
-
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Models.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GloboWeather.WeatherManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController:ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
 
-        public AccountController(IAuthenticationService authenticationService )
+        public AccountController(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
         }
@@ -43,6 +45,21 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             return Ok(await _authenticationService.GetRolesListAsync());
         }
+
+        [HttpPost("GetAllUsers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetUserListResponse>> GetAllUserList([FromBody] GetUsersListQuery query)
+        {
+            return Ok(await _authenticationService.GetUserListAsync(query));
+        }
         
+        
+        [HttpPost("createUser")]
+        public async Task<ActionResult<RegistrationResponse>> CreateUserAsync(CreateUserCommand request)
+        {
+            return Ok(await _authenticationService.CreateUserAsync(request: request));
+        }
+
     }
 }

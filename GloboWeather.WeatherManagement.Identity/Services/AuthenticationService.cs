@@ -9,9 +9,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent;
+using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
 using GloboWeather.WeatherManagement.Identity.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Identity.Services
 {
@@ -23,7 +29,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthenticationService(
-            UserManager<ApplicationUser> userManagement, 
+            UserManager<ApplicationUser> userManagement,
             IOptions<JwtSettings> jwtSettings,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager)
@@ -36,7 +42,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
         {
-            
             var user = await _userManagement.FindByEmailAsync(request.Email);
             if (user == null)
             {
@@ -49,7 +54,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             if (!result.Succeeded)
             {
                 throw new Exception($"Credentials for {request.Email} aren't valid.");
-                
             }
 
             JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
@@ -59,10 +63,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 Email = user.Email,
                 UserName = user.UserName,
-                FirstName =  user.FirstName,
-                LastName =  user.LastName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                AvartarUrl =  user.AvatarUrl
+                AvartarUrl = user.AvatarUrl
             };
             return response;
         }
@@ -76,7 +80,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"UserName {request.UserName} already exists.";
             }
-           
+
             var user = new ApplicationUser
             {
                 Email = request.Email,
@@ -107,10 +111,9 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             {
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"UserName {request.UserName} already exists.";
-
             }
+
             return registrationResponse;
-            
         }
 
         public async Task<string> UpdateUserProfileAsync(UpdatingRequest request)
@@ -128,7 +131,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             user.PhoneNumber = request.PhoneNumber;
 
             return (await _userManagement.UpdateAsync(user)).ToString();
-
         }
 
         public async Task<List<RoleResponse>> GetRolesListAsync()
@@ -138,8 +140,85 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 Name = x.Name,
                 NormalizedName = x.NormalizedName
             }).ToList();
-                
+
             return await Task.FromResult(roles);
+        }
+
+        public async Task<CreateUserResponse> CreateUserAsync(CreateUserCommand request)
+        {
+            var createUserResponse = new CreateUserResponse();
+            var existingUser = await _userManagement.FindByNameAsync(request.UserName);
+            if (existingUser != null)
+            {
+                createUserResponse.Success = false;
+                createUserResponse.Message = $"UserName {request.UserName} already exists.";
+            }
+
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                AvatarUrl = request.AvatarUrl,
+                EmailConfirmed = true
+            };
+            var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
+            if (existingEmail == null)
+            {
+                var result = await _userManagement.CreateAsync(user, request.Password);
+                if (result.Succeeded)
+                {
+                    if (request.RoleNames.Any())
+                    {
+                        await _userManagement.AddToRolesAsync(user, request.RoleNames);
+                    }
+
+                    return new CreateUserResponse() {UserId = user.Id};
+                }
+                else
+                {
+                    createUserResponse.Success = false;
+                    createUserResponse.ValidationErrors = new List<string>();
+                    foreach (var error in result.Errors)
+                    {
+                        createUserResponse.ValidationErrors.Add(error.Description);
+                    }
+                }
+            }
+            else
+            {
+                createUserResponse.Success = false;
+                createUserResponse.Message = $"UserName {request.UserName} already exists.";
+            }
+
+            return createUserResponse;
+        }
+
+        public async Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query)
+        {
+        //    var user = await  _userManagement.SupportsUserRole
+            var users = await _userManagement.Users.AsNoTracking()
+                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+
+            var usersResponse = new GetUserListResponse();
+            usersResponse.CurrentPage = users.CurrentPage;
+            usersResponse.TotalItems = users.TotalItems;
+            usersResponse.TotalItems = users.TotalItems;
+            usersResponse.Users = new List<UserListVm>();
+            foreach (var user in users.Items)
+            {
+                var userVm = new UserListVm();
+                userVm.Email = user.Email;
+                userVm.UserName = user.UserName;
+                userVm.UserId = user.Id;
+                userVm.AvatarUrl = user.AvatarUrl;
+                userVm.RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList());
+                usersResponse.Users.Add(userVm);
+            }
+
+            return usersResponse;
+            
         }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
@@ -147,8 +226,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var userClaims = await _userManagement.GetClaimsAsync(user);
             var roles = await _userManagement.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
-            
-            for(int i = 0; i < roles.Count; i++)
+
+            for (int i = 0; i < roles.Count; i++)
             {
                 roleClaims.Add(new Claim("roles", roles[i]));
             }
@@ -164,7 +243,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 .Union(roleClaims);
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var signinCredential = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-            
+
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
