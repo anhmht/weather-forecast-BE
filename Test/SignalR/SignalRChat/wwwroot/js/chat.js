@@ -7,11 +7,10 @@
 // See Es5-chat.js for a Babel transpiled version of the following code:
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:44327/notifications", {
-        headers: {
-            "sesionId": "valueSesionId",
-            transport: signalR.HttpTransportType.WebSockets
-        },
+    .withUrl("https://weathermanagement.azurewebsites.net/notifications",  options => {
+        options.Headers["Foo"] = "Bar";
+        options.SkipNegotiation = true;
+        options.Transports = HttpTransportType.WebSockets;   
     })
     .build();
 
