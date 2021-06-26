@@ -54,7 +54,7 @@ namespace WeatherBackgroundService.Worker
                         catch (Exception e)
                         {
                             //Write log
-                            throw;
+                            //throw;
                         }
                     }
 
@@ -72,7 +72,7 @@ namespace WeatherBackgroundService.Worker
                         catch (Exception e)
                         {
                             //Write log
-                            throw;
+                            //throw;
                         }
                     }
                 }

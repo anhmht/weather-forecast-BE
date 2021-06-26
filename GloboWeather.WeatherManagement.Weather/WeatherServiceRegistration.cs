@@ -40,6 +40,8 @@ namespace GloboWeather.WeatherManagement.Weather
             services.AddScoped<IWindSpeedRepository, WindSpeedRepository>();
             services.AddScoped<IHuongGioRepository, HuongGioRepository>();
             services.AddScoped<IWeatherInformationService, WeatherInformationService>();
+            services.AddScoped<IWindRankService, WindRankService>();
+            services.AddScoped<ICapGioRepository, CapGioRepository>();
         }
     }
 }

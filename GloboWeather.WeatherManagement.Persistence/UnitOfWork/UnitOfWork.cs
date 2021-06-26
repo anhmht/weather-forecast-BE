@@ -137,8 +137,8 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         private IWeatherInformationRepository _weatherInformationRepository;
         IWeatherInformationRepository IUnitOfWork.WeatherInformationRepository => _weatherInformationRepository ?? new WeatherInformationRepository(_context, this);
 
-
-        //Add more repository here
+        private IWindRankRepository _windRankRepository;
+        IWindRankRepository IUnitOfWork.WindRankRepository => _windRankRepository ?? new WindRankRepository(_context, this);
         #endregion
 
     }

@@ -3,6 +3,7 @@ using GloboWeather.WeatherManagement.Application.Models.Weather;
 using GloboWeather.WeatherManagement.Application.Models.Weather.RainAmount;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindDirection;
 using GloboWeather.WeatherManagement.Application.Models.Weather.WindLevel;
+using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManagement.Weather.weathercontext;
 
 namespace GloboWeather.WeatherManagement.Weather.Profiles
@@ -30,6 +31,22 @@ namespace GloboWeather.WeatherManagement.Weather.Profiles
             CreateMap<BaseModelWeather, WinLevelResponse>().ReverseMap();
             CreateMap<BaseModelWeather, WindSpeedResponse>().ReverseMap();
             CreateMap<BaseModelWeather, HumidityResponse>().ReverseMap();
+
+
+            CreateMap<Capgio, WindRank>()
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.WindSpeed,
+                    opt => opt.MapFrom(src => src.WindMS))
+                .ForMember(dest => dest.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description,
+                    opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Color,
+                    opt => opt.MapFrom(src => src.Color))
+                .ForMember(dest => dest.Wave,
+                    opt => opt.MapFrom(src => src.WaveM));
+
         }
     }
 }

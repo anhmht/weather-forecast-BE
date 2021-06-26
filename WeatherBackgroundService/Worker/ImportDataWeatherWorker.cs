@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,6 +45,7 @@ namespace WeatherBackgroundService.Worker
                         var _backgroundServiceTrackingRepository = scope.ServiceProvider.GetRequiredService<IBackgroundServiceTrackingRepository>();
                         var _weatherInformationRepository = scope.ServiceProvider.GetRequiredService<IWeatherInformationRepository>();
                         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                        var windRankService = scope.ServiceProvider.GetRequiredService<IWindRankService>();
                         var lastImportTimes = await _backgroundServiceTrackingRepository.GetLastBackgroundServiceTracking();
                         var importTime = DateTime.MinValue;
                         if (lastImportTimes != null)
@@ -96,11 +96,14 @@ namespace WeatherBackgroundService.Worker
                                 LastUpdate = DateTime.Now
                             });
                             await unitOfWork.CommitAsync();
+
+                            //Download windRank
+                            await windRankService.DownloadAsync();
                         }
                         catch (Exception ex)
                         {
-
-                            throw;
+                            //Log
+                            //throw;
                         }
                     }
                 }

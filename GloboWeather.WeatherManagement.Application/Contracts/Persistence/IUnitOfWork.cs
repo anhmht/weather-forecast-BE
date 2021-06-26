@@ -24,5 +24,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         ITopicSubscriptionRepository TopicSubscriptionRepository { get; }
         IUpDownVoteRepository UpDownVoteRepository { get; }
         IWeatherInformationRepository WeatherInformationRepository { get; }
+        IWindRankRepository WindRankRepository { get; }
     }
 }
