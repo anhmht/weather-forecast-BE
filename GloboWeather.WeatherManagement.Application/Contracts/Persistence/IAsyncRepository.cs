@@ -31,5 +31,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Persistence
         Task<int> CountAsync(Expression<Func<T, bool>> where);
         IQueryable<T> GetAllQuery(string[] includes = null);
         bool Contains(Expression<Func<T, bool>> predicate);
+        Task<T> AddAsync(T entity);
     }
 }

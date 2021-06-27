@@ -137,5 +137,9 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             return _dbSet.Count(predicate) > 0;
         }
 
+        public Task<T> AddAsync(T entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
