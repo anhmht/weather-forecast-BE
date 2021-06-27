@@ -11,6 +11,6 @@ namespace GloboWeather.WeatherManegement.Application.Models.Authentication
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string PhoneNumber { get; set; }
-        public string AvartarUrl { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList
@@ -9,5 +10,8 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiri
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
         public string RoleName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

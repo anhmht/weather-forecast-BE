@@ -66,7 +66,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                AvartarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl
             };
             return response;
         }
@@ -209,17 +209,20 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             usersResponse.Users = new List<UserListVm>();
             foreach (var user in users.Items)
             {
-                var userVm = new UserListVm();
-                userVm.Email = user.Email;
-                userVm.UserName = user.UserName;
-                userVm.UserId = user.Id;
-                userVm.AvatarUrl = user.AvatarUrl;
-                userVm.RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList());
+                var userVm = new UserListVm
+                {
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    UserId = user.Id,
+                    AvatarUrl = user.AvatarUrl,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    CreatedOn = user.CreatedOn,
+                    RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList())
+                };
                 usersResponse.Users.Add(userVm);
             }
-
             return usersResponse;
-            
         }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)

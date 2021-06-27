@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Identity;
 
 namespace GloboWeather.WeatherManagement.Identity.Models
@@ -8,6 +9,7 @@ namespace GloboWeather.WeatherManagement.Identity.Models
         public string LastName { get; set; }
 
         public string AvatarUrl { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
     
     
