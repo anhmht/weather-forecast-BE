@@ -4,5 +4,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication
     {
         public  string Name { get; set; }
         public string NormalizedName { get; set; }
+        public string Id { get; set; }
     }
 }

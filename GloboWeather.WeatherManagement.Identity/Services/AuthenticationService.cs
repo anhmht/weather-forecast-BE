@@ -138,7 +138,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var roles = _roleManager.Roles.Select(x => new RoleResponse()
             {
                 Name = x.Name,
-                NormalizedName = x.NormalizedName
+                NormalizedName = x.NormalizedName,
+                Id = x.Id
             }).ToList();
 
             return await Task.FromResult(roles);
