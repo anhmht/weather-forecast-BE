@@ -44,7 +44,7 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<WindRank> WindRanks { get; set; }
         public DbSet<MeteorologicalStationType> MeteorologicalStationTypes { get; set; }
         public DbSet<HydrologicalForeCast> HydrologicalForeCasts { get; set; }
-        public DbSet<RainQuantity> RainLevels { get; set; }
+        public DbSet<RainQuantity> RainQuantities { get; set; }
         public DbSet<Hydrological> Hydrologicals { get; set; }
         public DbSet<MeteorologicalStation> MeteorologicalStations { get; set; }
         public DbSet<Province> Provinces { get; set; }
