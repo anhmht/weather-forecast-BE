@@ -42,6 +42,12 @@ namespace GloboWeather.WeatherManagement.Persistence
 
         public DbSet<Scenario> Scenarios { get; set; }
         public DbSet<WindRank> WindRanks { get; set; }
+        public DbSet<MeteorologicalStationType> MeteorologicalStationTypes { get; set; }
+        public DbSet<HydrologicalForeCast> HydrologicalForeCasts { get; set; }
+        public DbSet<RainLevel> RainLevels { get; set; }
+        public DbSet<Hydrological> Hydrologicals { get; set; }
+        public DbSet<MeteorologicalStation> MeteorologicalStations { get; set; }
+        public DbSet<District> Districts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
