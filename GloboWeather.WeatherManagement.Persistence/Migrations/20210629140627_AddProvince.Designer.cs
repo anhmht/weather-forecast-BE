@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210629140627_AddProvince")]
+    partial class AddProvince
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,9 +124,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -133,6 +132,9 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
 
                     b.Property<float?>("Rain")
                         .HasColumnType("real");
+
+                    b.Property<DateTime>("RefDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("StationId")
                         .IsRequired()
@@ -185,78 +187,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("HydrologicalForeCasts");
                 });
 
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Meteorological", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float?>("Barometric")
-                        .HasColumnType("real");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float?>("Evaporation")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Hga10")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Hgm60")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Humidity")
-                        .HasColumnType("real");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float?>("Radiation")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Rain")
-                        .HasColumnType("real");
-
-                    b.Property<string>("StationId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float?>("SunnyTime")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Tdga10")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Tdgm60")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Temperature")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("WindDirection")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("WindSpeed")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("ZluyKe")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Meteorologicals");
-                });
-
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.MeteorologicalStation", b =>
                 {
                     b.Property<string>("StationId")
@@ -295,7 +225,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProvinceId")
+                    b.Property<int?>("ProvinceId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Regime")
@@ -363,7 +293,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("Provinces");
                 });
 
-            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.RainQuantity", b =>
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.RainLevel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

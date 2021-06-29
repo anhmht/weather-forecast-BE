@@ -12,7 +12,8 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         public float? GoogleY { get; set; }
         public int MeteorologicalStationTypeId { get; set; }
         public string GoverningBody { get; set; } //CQQuanLy
-        public int? ProvinceId { get; set; }
+        [Required]
+        public int ProvinceId { get; set; }
         public string Address { get; set; }
         public int? Hong { get; set; } //Unknown column
         public int? Regime { get; set; } //Chedo

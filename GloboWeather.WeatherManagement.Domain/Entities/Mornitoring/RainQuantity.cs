@@ -4,7 +4,7 @@ using GloboWeather.WeatherManagement.Domain.Common;
 
 namespace GloboWeather.WeatherManagement.Domain.Entities
 {
-    public class RainLevel : AuditableEntity //ThuyVan
+    public class RainQuantity : AuditableEntity //LuongMua
     {
         [Key]
         public Guid Id { get; set; }

@@ -11,7 +11,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         [Required]
         public string StationId { get; set; }
         [Required]
-        public DateTime RefDate { get; set; }
+        public DateTime Date { get; set; }
         public float? Rain { get; set; }
         public float? WaterLevel { get; set; }
         public float? Accumulated { get; set; } //ZLuyKe
