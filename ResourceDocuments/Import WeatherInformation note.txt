@@ -32,7 +32,7 @@ METEOROLOGICALSTATIONS - tramkttv
 3. [Name] - TenTram
 4. [GoogleX] - latitude
 5. [GoogleY] - longitude
-6. [MeteorologicalStationTypeId] - LoaiTram
+6. [MeteorologicalStationTypeId] - LoaiTram (1: khituong; 2: Mua; 3: thuyvan)
 7. [GoverningBody] - CQQuanly
 8. [ProvinceId] - MaTinh
 9. [Address] - DiaChi
