@@ -23,4 +23,11 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Hydrologicals\Queries" />
+      <Folder Include="Features\Meteorologicals\Queries" />
+      <Folder Include="Features\NewDirectory1" />
+      <Folder Include="Features\TramKttvs\Queries" />
+    </ItemGroup>
+
 </Project>
