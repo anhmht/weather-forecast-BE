@@ -1,0 +1,6 @@
+﻿StationId,Date,Evaporation,Radiation,Humidity,WindDirection,Barometric,Hga10,Hgm60,Rain,Temperature,Tdga10,Tdgm60,WindSpeed,SunnyTime,ZluyKe
+AWS0000021,6/29/2021,0,-1,100,215,1008,0,,0,27.6,0.8,,0.7,,0
+AWS0000021,6/29/2021,0,,,,,0,,0,,,,,,0
+AWS0000021,6/29/2021,0,,,,,0,223,0,,,1.8,,,0
+AWS0000021,6/29/2021,0,,,,,0,,0,,,,,,0
+AWS0000021,6/29/2021,0,,,,,0,,0,,,,,,0
