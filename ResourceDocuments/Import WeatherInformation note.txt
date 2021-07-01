@@ -1,4 +1,65 @@
+WEATHERINFORMATION
 1. First row is field name -> put data from 2nd rows
 2. [DiaDiemId] must match with Id of Station data dictionary
 3. [NgayGio] is formated datetime type (MM/dd/yyyy HH:mm)
 4. If user doesn't input value for [DoAm], [GioGiat], [HuongGio], [TocDoGio], [LuongMua], [NhietDo], [ThoiTiet] -> these fields will not be updated
+
+
+HYDROLOGICALS - thuyvan
+1. First row is field name -> put data from 2nd rows
+2. [StationId] - DiaDiemId
+3. [Date] is formated datetime type (MM/dd/yyyy)
+4. [Rain] - mua
+5. [WaterLevel] - mucnuoc
+6. [Accumulated] - zluyke
+
+HYDROLOGICALFORECASTS - dbthuyvan
+1. First row is field name -> put data from 2nd rows
+2. [StationId] - DiaDiemId
+3. [RefDate] is formated datetime type (MM/dd/yyyy)
+4. [MinValue] - min value of day
+5. [MaxValue] - max value of day
+
+PROVINCES - tinh_hq
+1. First row is field name -> put data from 2nd rows
+2. [Id] - MaTinh
+3. [Name] - TenTinh
+4. [Code] - MaSo
+
+METEOROLOGICALSTATIONS - tramkttv
+1. First row is field name -> put data from 2nd rows
+2. [StationId] - MaTram
+3. [Name] - TenTram
+4. [GoogleX] - latitude
+5. [GoogleY] - longitude
+6. [MeteorologicalStationTypeId] - LoaiTram (1: khituong; 2: Mua; 3: thuyvan)
+7. [GoverningBody] - CQQuanly
+8. [ProvinceId] - MaTinh
+9. [Address] - DiaChi
+10. [Hong]
+11. [Regime] - CheDo
+
+RAINQUANTITIES - mua
+1. First row is field name -> put data from 2nd rows
+2. [StationId] - MaTram
+3. [RefDate] - Ngay
+4. [Value] - mua
+
+METEOROLOGICALS
+1. First row is field name -> put data from 2nd rows
+2. [StationId] - MaTram
+3. [Date] - Ngay
+4. [Evaporation] - bochoi
+5. [Radiation] - bucxa
+6. [Humidity] - doam
+7. [WindDirection] - huondgio
+8. [Barometric] - khiap
+9. [Hga10]
+10. [Hgm60]
+11. [Rain] - mua
+12. [Temperature] - nhietdo
+13. [Tdga10]
+14. [Tdgm60]
+15. [WindSpeed] - tocdogio
+16. [SunnyTime] - thoignang
+17. [ZluyKe]
