@@ -205,7 +205,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var usersResponse = new GetUserListResponse();
             usersResponse.CurrentPage = users.CurrentPage;
             usersResponse.TotalItems = users.TotalItems;
-            usersResponse.TotalItems = users.TotalItems;
+            usersResponse.TotalPages = users.TotalPages;
             usersResponse.Users = new List<UserListVm>();
             foreach (var user in users.Items)
             {
