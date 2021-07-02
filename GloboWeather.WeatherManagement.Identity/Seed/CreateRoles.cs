@@ -7,7 +7,7 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
     {
         public static async Task SeedAsync(RoleManager<IdentityRole> roleManager)
         {
-            string[] roleNames = {"Admin"};
+            string[] roleNames = {"Admin", "SuperAdmin", "NormalUser"};
             foreach (var roleName in roleNames)
             {
                 var roleExist = await roleManager.RoleExistsAsync(roleName);

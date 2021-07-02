@@ -31,6 +31,7 @@ namespace GloboWeather.WeatherManagement.Monitoring
             services.AddScoped<IHydrologicalRepository, HydrologicalRepository>();
             services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
             services.AddScoped<IHydrologicalForecastRepository, HydrologicalForecastRepository>();
+          
 
         }
     }

@@ -87,6 +87,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.UserName,
+                CreatedOn = DateTime.Now.Date,
                 EmailConfirmed = true
             };
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
@@ -110,7 +111,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             else
             {
                 registrationResponse.Success = false;
-                registrationResponse.Message = $"UserName {request.UserName} already exists.";
+                registrationResponse.Message = $"Email {request.Email} already exists.";
             }
 
             return registrationResponse;
@@ -162,6 +163,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 LastName = request.LastName,
                 UserName = request.UserName,
                 AvatarUrl = request.AvatarUrl,
+                CreatedOn =  DateTime.Now.Date,
                 EmailConfirmed = true
             };
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
@@ -190,7 +192,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             else
             {
                 createUserResponse.Success = false;
-                createUserResponse.Message = $"UserName {request.UserName} already exists.";
+                createUserResponse.Message = $"Email {request.Email} already exists.";
             }
 
             return createUserResponse;
@@ -202,11 +204,13 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var users = await _userManagement.Users.AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, new CancellationToken());
 
-            var usersResponse = new GetUserListResponse();
-            usersResponse.CurrentPage = users.CurrentPage;
-            usersResponse.TotalItems = users.TotalItems;
-            usersResponse.TotalPages = users.TotalPages;
-            usersResponse.Users = new List<UserListVm>();
+            var usersResponse = new GetUserListResponse
+            {
+                CurrentPage = users.CurrentPage,
+                TotalItems = users.TotalItems,
+                TotalPages = users.TotalPages,
+                Users = new List<UserListVm>()
+            };
             foreach (var user in users.Items)
             {
                 var userVm = new UserListVm

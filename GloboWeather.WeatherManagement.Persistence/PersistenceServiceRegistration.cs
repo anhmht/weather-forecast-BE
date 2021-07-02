@@ -1,6 +1,8 @@
 
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.QuanTracDB;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
+using GloboWeather.WeatherManagement.Persistence.Repositories.QuanTracDB;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +39,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<ITopicSubscriptionRepository, TopicSubscriptionRepository>();
             services.AddScoped<IUpDownVoteRepository, UpDownVoteRepository>();
             services.AddScoped<IWindRankRepository, WindRankRepository>();
+            services.AddScoped<IRainQuantitiesRepository, RainQuantitiesRepository>();
 
             return services;
         }
