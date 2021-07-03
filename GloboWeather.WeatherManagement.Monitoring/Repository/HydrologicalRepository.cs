@@ -49,5 +49,12 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                 throw;
             }
         }
+
+        public async Task<List<Hydrological>> GetByDateAsync(DateTime fromDate, DateTime toDate)
+        {
+            return await _dbContext.Set<Hydrological>()
+                .AsNoTracking()
+                .Where(r => r.Date >= fromDate && r.Date <= toDate).ToListAsync();
+        }
     }
 }

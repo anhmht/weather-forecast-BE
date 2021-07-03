@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
@@ -10,5 +11,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.IRepository
     public interface IMeteorologicalRepository : IAsyncRepository<Meteorological>
     {
         Task<GetMeteorologicalListResponse> GetByPagedAsync(GetMeteorologicalListQuery query);
+        Task<List<Meteorological>> GetByDateAsync(DateTime fromDate, DateTime toDate);
     }
 }
