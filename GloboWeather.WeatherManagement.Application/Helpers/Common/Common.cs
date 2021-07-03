@@ -54,4 +54,9 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         Weather,        //ThoiTiet...
         WindRank        //CapGio
     }
+
+    public enum HydrologicalForeCastType
+    {
+        Default = 1
+    }
 }

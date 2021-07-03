@@ -37,6 +37,10 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<ITopicSubscriptionRepository, TopicSubscriptionRepository>();
             services.AddScoped<IUpDownVoteRepository, UpDownVoteRepository>();
             services.AddScoped<IWindRankRepository, WindRankRepository>();
+            services.AddScoped<IHydrologicalForeCastRepository, HydrologicalForeCastRepository>();
+            services.AddScoped<IHydrologicalRepository, HydrologicalRepository>();
+            services.AddScoped<IRainQuantityRepository, RainQuantityRepository>();
+            services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
 
             return services;
         }

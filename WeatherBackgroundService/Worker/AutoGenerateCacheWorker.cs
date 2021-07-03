@@ -38,6 +38,7 @@ namespace WeatherBackgroundService.Worker
                 .Get<string[]>();
             new Timer(async state =>
             {
+                await Task.Delay(30000, cancellationToken); //Work after application start 30 seconds
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var weatherInformationService = scope.ServiceProvider.GetRequiredService<IWeatherInformationService>();

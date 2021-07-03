@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Monitoring;
@@ -50,8 +51,13 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                     ZluyKe = m.ZluyKe,
                 }).ToList()
             };
-          
-         
+        }
+
+        public async Task<List<Meteorological>> GetByDateAsync(DateTime fromDate, DateTime toDate)
+        {
+            return await _dbContext.Set<Meteorological>()
+                .AsNoTracking()
+                .Where(r => r.Date >= fromDate && r.Date <= toDate).ToListAsync();
         }
     }
 }
