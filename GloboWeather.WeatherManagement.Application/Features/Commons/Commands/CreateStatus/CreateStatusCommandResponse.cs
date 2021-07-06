@@ -1,5 +1,5 @@
 
-using GloboWeather.WeatherManegement.Application.Responses;
+using GloboWeather.WeatherManagement.Application.Responses;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus
 {

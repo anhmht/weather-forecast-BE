@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Features.RainQuantities.Import;
 using GloboWeather.WeatherManagement.Application.Requests;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
@@ -51,6 +53,50 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                         Value = value
                     };
                     _unitOfWork.RainQuantityRepository.Add(entry);
+                }
+            }
+
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<int> ImportAsync(ImportRainQuantityCommand request, List<RainQuantity> rainQuantities, CancellationToken cancellationToken)
+        {
+            var fromDate = rainQuantities.Min(x => x.RefDate);
+            var toDate = rainQuantities.Max(x => x.RefDate);
+            var listStation = rainQuantities.Select(x => x.StationId).Distinct();
+
+            var existingItems = await _unitOfWork.RainQuantityRepository
+                .GetWhereAsync(x => listStation.Contains(x.StationId)
+                                    && x.RefDate >= fromDate && x.RefDate <= toDate, cancellationToken);
+
+            foreach (var entry in rainQuantities)
+            {
+                var rainQuantity =
+                    existingItems.FirstOrDefault(x => x.StationId == entry.StationId && x.RefDate == entry.RefDate);
+                if (rainQuantity == null)
+                {
+                    rainQuantity = new RainQuantity()
+                    {
+                        RefDate = entry.RefDate,
+                        Id = Guid.NewGuid(),
+                        StationId = entry.StationId,
+                        Value = entry.Value
+                    };
+                    _unitOfWork.RainQuantityRepository.Add(rainQuantity);
+                }
+                else
+                {
+                    var isUpdate = false;
+                    if (!rainQuantity.Value.Equals(entry.Value))
+                    {
+                        rainQuantity.Value = entry.Value;
+                        isUpdate = true;
+                    }
+
+                    if (isUpdate)
+                    {
+                        _unitOfWork.RainQuantityRepository.Update(rainQuantity);
+                    }
                 }
             }
 

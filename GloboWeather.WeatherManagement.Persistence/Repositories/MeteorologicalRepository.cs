@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Features.Meteorologicals.Import;
 using GloboWeather.WeatherManagement.Application.Requests;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
@@ -175,6 +177,128 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                         ZluyKe = zluyKe
                     };
                     _unitOfWork.MeteorologicalRepository.Add(entry);
+                }
+            }
+
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<int> ImportAsync(ImportMeteorologicalCommand request, List<Meteorological> meteorologicals, CancellationToken cancellationToken)
+        {
+            var fromDate = meteorologicals.Min(x => x.Date);
+            var toDate = meteorologicals.Max(x => x.Date);
+            var listStation = meteorologicals.Select(x => x.StationId).Distinct();
+
+            var existingItems = await _unitOfWork.MeteorologicalRepository
+                .GetWhereAsync(x => listStation.Contains(x.StationId)
+                                    && x.Date >= fromDate && x.Date <= toDate, cancellationToken);
+
+            foreach (var entry in meteorologicals)
+            {
+                var meteorological =
+                    existingItems.FirstOrDefault(x => x.StationId == entry.StationId && x.Date == entry.Date);
+                if (meteorological == null)
+                {
+                    meteorological = new Meteorological()
+                    {
+                        Date = entry.Date,
+                        Id = Guid.NewGuid(),
+                        StationId = entry.StationId,
+                        WindSpeed = entry.WindSpeed,
+                        Hga10 = entry.Hga10,
+                        Humidity = entry.Humidity,
+                        Evaporation = entry.Evaporation,
+                        Radiation = entry.Radiation,
+                        Barometric = entry.Barometric,
+                        Tdga10 = entry.Tdga10,
+                        Tdgm60 = entry.Tdgm60,
+                        Temperature = entry.Temperature,
+                        WindDirection = entry.WindDirection,
+                        SunnyTime = entry.SunnyTime,
+                        Hgm60 = entry.Hgm60,
+                        ZluyKe = entry.ZluyKe,
+                        Rain = entry.Rain
+                    };
+                    _unitOfWork.MeteorologicalRepository.Add(meteorological);
+                }
+                else
+                {
+                    var isUpdate = false;
+                    if (!meteorological.WindSpeed.Equals(entry.WindSpeed))
+                    {
+                        meteorological.WindSpeed = entry.WindSpeed;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Hga10.Equals(entry.Hga10))
+                    {
+                        meteorological.Hga10 = entry.Hga10;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Humidity.Equals(entry.Humidity))
+                    {
+                        meteorological.Humidity = entry.Humidity;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Evaporation.Equals(entry.Evaporation))
+                    {
+                        meteorological.Evaporation = entry.Evaporation;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Radiation.Equals(entry.Radiation))
+                    {
+                        meteorological.Radiation = entry.Radiation;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Barometric.Equals(entry.Barometric))
+                    {
+                        meteorological.Barometric = entry.Barometric;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Tdga10.Equals(entry.Tdga10))
+                    {
+                        meteorological.Tdga10 = entry.Tdga10;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Tdgm60.Equals(entry.Tdgm60))
+                    {
+                        meteorological.Tdgm60 = entry.Tdgm60;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Temperature.Equals(entry.Temperature))
+                    {
+                        meteorological.Temperature = entry.Temperature;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.WindDirection.Equals(entry.WindDirection))
+                    {
+                        meteorological.WindDirection = entry.WindDirection;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.SunnyTime.Equals(entry.SunnyTime))
+                    {
+                        meteorological.SunnyTime = entry.SunnyTime;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Hgm60.Equals(entry.Hgm60))
+                    {
+                        meteorological.Hgm60 = entry.Hgm60;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.ZluyKe.Equals(entry.ZluyKe))
+                    {
+                        meteorological.ZluyKe = entry.ZluyKe;
+                        isUpdate = true;
+                    }
+                    if (!meteorological.Rain.Equals(entry.Rain))
+                    {
+                        meteorological.Rain = entry.Rain;
+                        isUpdate = true;
+                    }
+
+                    if (isUpdate)
+                    {
+                        _unitOfWork.MeteorologicalRepository.Update(meteorological);
+                    }
                 }
             }
 

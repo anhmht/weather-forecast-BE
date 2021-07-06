@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
-using GloboWeather.WeatherManegement.Application.Responses;
+using GloboWeather.WeatherManagement.Application.Responses;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportSingleStation
 {

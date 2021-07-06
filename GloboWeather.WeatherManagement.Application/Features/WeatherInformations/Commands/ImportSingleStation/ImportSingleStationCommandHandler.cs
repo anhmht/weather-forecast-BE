@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CsvHelper;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
-using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
+using GloboWeather.WeatherManagement.Application.Responses;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using MediatR;
 
