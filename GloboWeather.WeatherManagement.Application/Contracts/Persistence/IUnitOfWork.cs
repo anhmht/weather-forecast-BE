@@ -25,5 +25,9 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IUpDownVoteRepository UpDownVoteRepository { get; }
         IWeatherInformationRepository WeatherInformationRepository { get; }
         IWindRankRepository WindRankRepository { get; }
+        IHydrologicalForeCastRepository HydrologicalForeCastRepository { get; }
+        IHydrologicalRepository HydrologicalRepository { get; }
+        IRainQuantityRepository RainQuantityRepository { get; }
+        IMeteorologicalRepository MeteorologicalRepository { get; }
     }
 }

@@ -8,15 +8,18 @@ using GloboWeather.WeatherManagement.Application.Features.Commons.Queries;
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Commands.UpdateEvent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
+using GloboWeather.WeatherManagement.Application.Features.HydrologicalForeCasts.Import;
+using GloboWeather.WeatherManagement.Application.Features.Hydrologicals.Import;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenario;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenario;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportSingleStation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Update;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
+using GloboWeather.WeatherManagement.Application.Features.Meteorologicals.Import;
+using GloboWeather.WeatherManagement.Application.Features.RainQuantities.Import;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -31,7 +34,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Event, UpdateEventCommand>().ReverseMap();
             CreateMap<Event, EventDetailVm>();
             CreateMap<Event, EventListCateStatusVm>();
-            
+
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Category, CreateCategoryCommand>().ReverseMap();
             CreateMap<Category, CategoriesListVm>().ReverseMap();
@@ -85,6 +88,10 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
                 .ForMember(dest => dest.Weather,
                     opt => opt.MapFrom(src => src.ThoiTiet));
 
+            CreateMap<ImportHydrologicalDto, Hydrological>().ReverseMap();
+            CreateMap<ImportHydrologicalForeCastDto, HydrologicalForeCast>().ReverseMap();
+            CreateMap<ImportRainQuantityDto, RainQuantity>().ReverseMap();
+            CreateMap<ImportMeteorologicalDto, Meteorological>().ReverseMap();
         }
     }
 }

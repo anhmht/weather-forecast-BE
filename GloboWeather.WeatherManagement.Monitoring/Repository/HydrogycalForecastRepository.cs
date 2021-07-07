@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,5 +96,11 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
             return null;
         }
 
+        public async Task<List<HydrologicalForecast>> GetByDateAsync(DateTime fromDate, DateTime toDate)
+        {
+            return await _dbContext.Set<HydrologicalForecast>()
+                .AsNoTracking()
+                .Where(r => r.RefDate >= fromDate && r.RefDate <= toDate).ToListAsync();
+        }
     }
 }

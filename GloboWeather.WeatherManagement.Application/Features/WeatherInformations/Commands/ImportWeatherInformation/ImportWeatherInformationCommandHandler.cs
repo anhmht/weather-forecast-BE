@@ -7,9 +7,9 @@ using AutoMapper;
 using CsvHelper;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
+using GloboWeather.WeatherManagement.Application.Responses;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using MediatR;
-using RowError = GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation.RowError;
 
 namespace GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInfomation
 {

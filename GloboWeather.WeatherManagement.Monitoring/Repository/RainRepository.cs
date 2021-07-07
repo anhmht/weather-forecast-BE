@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,7 +8,6 @@ using GloboWeather.WeatherManagement.Application.Models.Monitoring;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
 using GloboWeather.WeatherManagement.Monitoring.MonitoringEntities;
 using Microsoft.EntityFrameworkCore;
-using GloboWeather.WeatherManegement.Application.Models;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Repository
 {
@@ -37,6 +37,13 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
                     RainQuantity = e.Quality
                 }).ToList()
             };
+        }
+
+        public async Task<List<Rain>> GetByDateAsync(DateTime fromDate, DateTime toDate)
+        {
+            return await _dbContext.Set<Rain>()
+                .AsNoTracking()
+                .Where(r => r.Date >= fromDate && r.Date <= toDate).ToListAsync();
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GloboWeather.WeatherManegement.Application.Responses
+namespace GloboWeather.WeatherManagement.Application.Responses
 {
     public class BaseResponse
     {

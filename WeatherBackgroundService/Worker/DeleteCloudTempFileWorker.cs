@@ -23,6 +23,7 @@ namespace WeatherBackgroundService.Worker
             var interval = _configuration.GetSection("BackgroundWorkerConfigs:DeleteCloudTempFileEveryHours").Get<int>();
             new Timer(async state =>
             {
+                await Task.Delay(20000, cancellationToken); //Work after application start 20 seconds
                 try
                 {
                     await _imageService.DeleteAllImagesTempContainerAsync();

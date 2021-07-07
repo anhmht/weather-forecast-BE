@@ -1,5 +1,3 @@
-using GloboWeather.WeatherManegement.Application.Responses;
-
 namespace GloboWeather.WeatherManegement.Application.Models.Authentication
 {
     public class AuthenticationResponse

@@ -1,5 +1,5 @@
 using System.Threading.Tasks.Dataflow;
-using GloboWeather.WeatherManegement.Application.Responses;
+using GloboWeather.WeatherManagement.Application.Responses;
 
 namespace GloboWeather.WeatherManegement.Application.Models.Authentication
 {

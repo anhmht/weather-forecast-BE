@@ -6,8 +6,6 @@ using GloboWeather.WeatherManagement.Persistence.Repositories;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 {
@@ -139,6 +137,18 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IWindRankRepository _windRankRepository;
         IWindRankRepository IUnitOfWork.WindRankRepository => _windRankRepository ?? new WindRankRepository(_context, this);
+
+        private IHydrologicalForeCastRepository _hydrologicalForeCastRepository;
+        IHydrologicalForeCastRepository IUnitOfWork.HydrologicalForeCastRepository => _hydrologicalForeCastRepository ?? new HydrologicalForeCastRepository(_context, this);
+
+        private IHydrologicalRepository _hydrologicalRepository;
+        IHydrologicalRepository IUnitOfWork.HydrologicalRepository => _hydrologicalRepository ?? new HydrologicalRepository(_context, this);
+
+        private IRainQuantityRepository _rainQuantityRepository;
+        IRainQuantityRepository IUnitOfWork.RainQuantityRepository => _rainQuantityRepository ?? new RainQuantityRepository(_context, this);
+
+        private IMeteorologicalRepository _meteorologicalRepository;
+        IMeteorologicalRepository IUnitOfWork.MeteorologicalRepository => _meteorologicalRepository ?? new MeteorologicalRepository(_context, this);
         #endregion
 
     }
