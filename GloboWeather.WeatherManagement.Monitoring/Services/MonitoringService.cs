@@ -26,6 +26,10 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             try
             {
                 var tmp = await _tramKttvRepository.ListAllAsync();
+                foreach (var tramKttv in tmp)
+                {
+                    tramKttv.StationType = tramKttv.StationType.ToLower();
+                }
                 return _mapper.Map<List<TramKttvResponse>>(tmp);
             }
             catch (Exception ex)
