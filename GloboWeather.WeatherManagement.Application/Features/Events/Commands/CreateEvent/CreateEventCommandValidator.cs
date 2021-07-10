@@ -13,9 +13,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
 
-            RuleFor(p => p.ImageUrl)
-                .NotEmpty().WithMessage("{PropertyName} is not null")
-                .NotNull();
         }
 
         
