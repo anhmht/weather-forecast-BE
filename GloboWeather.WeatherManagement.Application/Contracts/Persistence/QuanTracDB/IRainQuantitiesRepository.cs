@@ -6,8 +6,8 @@ using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
 namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.QuanTracDB
 {
-    public interface IRainQuantitiesRepository : IAsyncRepository<RainQuantity>
-    {
-        Task<GetRainQuantitiesListResponse> GetByPageAsync(GetRainQuantitiesListQuery query, CancellationToken token);
-    }
+    // public interface IRainQuantitiesRepository : IAsyncRepository<RainQuantity>
+    // {
+    //     Task<GetRainQuantitiesListResponse> GetByPageAsync(GetRainQuantitiesListQuery query, CancellationToken token);
+    // }
 }
