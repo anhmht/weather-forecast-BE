@@ -24,9 +24,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Hydrologicals\Queries" />
-      <Folder Include="Features\Meteorologicals\Queries" />
-      <Folder Include="Features\TramKttvs\Queries" />
+      <Folder Include="Features\WeatherStates\Commands\DeleteWeatherState\" />
+      <Folder Include="Features\WeatherStates\Commands\UpdateWeatherState\" />
+      <Folder Include="Features\WeatherStates\Queries\GetWeatherStateList\" />
+      <Folder Include="Features\WeatherStates\Queries\GetWeatherStateDetail\" />
     </ItemGroup>
 
 </Project>

@@ -149,6 +149,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IMeteorologicalRepository _meteorologicalRepository;
         IMeteorologicalRepository IUnitOfWork.MeteorologicalRepository => _meteorologicalRepository ?? new MeteorologicalRepository(_context, this);
+
+        private IWeatherStateRepository _weatherStateRepository;
+        IWeatherStateRepository IUnitOfWork.WeatherStateRepository => _weatherStateRepository ?? new WeatherStateRepository(_context, this);
         #endregion
 
     }

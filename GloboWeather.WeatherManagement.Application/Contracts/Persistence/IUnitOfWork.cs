@@ -29,5 +29,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IHydrologicalRepository HydrologicalRepository { get; }
         IRainQuantityRepository RainQuantityRepository { get; }
         IMeteorologicalRepository MeteorologicalRepository { get; }
+        IWeatherStateRepository WeatherStateRepository { get; }
     }
 }
