@@ -20,6 +20,7 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEven
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Features.Meteorologicals.Import;
 using GloboWeather.WeatherManagement.Application.Features.RainQuantities.Import;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListWithContent;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -92,6 +93,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<ImportHydrologicalForeCastDto, HydrologicalForeCast>().ReverseMap();
             CreateMap<ImportRainQuantityDto, RainQuantity>().ReverseMap();
             CreateMap<ImportMeteorologicalDto, Meteorological>().ReverseMap();
+            CreateMap<Event, EventListWithContentVm>();
         }
     }
 }
