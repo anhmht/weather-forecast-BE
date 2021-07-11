@@ -49,6 +49,7 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<MeteorologicalStation> MeteorologicalStations { get; set; }
         public DbSet<Province> Provinces { get; set; }
         public DbSet<Meteorological> Meteorologicals { get; set; }
+        public DbSet<WeatherState> WeatherStates { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

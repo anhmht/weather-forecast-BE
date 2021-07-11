@@ -41,6 +41,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IHydrologicalRepository, HydrologicalRepository>();
             services.AddScoped<IRainQuantityRepository, RainQuantityRepository>();
             services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
+            services.AddScoped<IWeatherStateRepository, WeatherStateRepository>();
 
             return services;
         }
