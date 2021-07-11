@@ -23,11 +23,4 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\WeatherStates\Commands\DeleteWeatherState\" />
-      <Folder Include="Features\WeatherStates\Commands\UpdateWeatherState\" />
-      <Folder Include="Features\WeatherStates\Queries\GetWeatherStateList\" />
-      <Folder Include="Features\WeatherStates\Queries\GetWeatherStateDetail\" />
-    </ItemGroup>
-
 </Project>
