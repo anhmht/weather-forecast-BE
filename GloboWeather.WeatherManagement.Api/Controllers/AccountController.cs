@@ -70,10 +70,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpGet("GetUserInfo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUserInfo()
+        public async Task<ActionResult> GetUserInfo([FromServices] IAuthenticationService authenticationService)
         {
-            var user = HttpContext.User?.FindFirstValue(claimType: ClaimTypes.NameIdentifier);
-            return Ok(user);
+            var email = HttpContext.User?.FindFirstValue(claimType: ClaimTypes.Email);
+            return Ok(await  authenticationService.GetUserInfoAsync(email));
         }
 
     }

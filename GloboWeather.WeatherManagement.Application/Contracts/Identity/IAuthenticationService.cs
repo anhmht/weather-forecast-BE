@@ -20,5 +20,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query);
 
+        Task<AuthenticationResponse> GetUserInfoAsync(string email);
+
     }
 }
