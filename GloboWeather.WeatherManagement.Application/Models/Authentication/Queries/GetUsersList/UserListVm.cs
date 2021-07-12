@@ -13,5 +13,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiri
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

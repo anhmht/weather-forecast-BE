@@ -56,6 +56,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 throw new Exception($"Credentials for {request.Email} aren't valid.");
             }
 
+            var userRoles = await _userManagement.GetRolesAsync(user);
+
             JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
             AuthenticationResponse response = new AuthenticationResponse()
             {
@@ -66,7 +68,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                Roles = userRoles.ToList()
             };
             return response;
         }
@@ -88,7 +91,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 LastName = request.LastName,
                 UserName = request.UserName,
                 CreatedOn = DateTime.Now.Date,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                IsActive = true
             };
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
             if (existingEmail == null)
@@ -164,7 +168,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 UserName = request.UserName,
                 AvatarUrl = request.AvatarUrl,
                 CreatedOn =  DateTime.Now.Date,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                IsActive = true
             };
             var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
             if (existingEmail == null)
@@ -222,7 +227,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     CreatedOn = user.CreatedOn,
-                    RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList())
+                    RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList()),
+                    IsActive = user.IsActive
                 };
                 usersResponse.Users.Add(userVm);
             }

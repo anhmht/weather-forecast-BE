@@ -14,7 +14,8 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
                 LastName = "Last",
                 UserName = "zigzacvy",
                 Email = "phuongle99@test.com",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                IsActive = true
             };
 
             var user = await userManager.FindByEmailAsync(applicationUser.Email);
