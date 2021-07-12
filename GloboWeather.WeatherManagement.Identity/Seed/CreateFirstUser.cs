@@ -20,6 +20,7 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
             var user = await userManager.FindByEmailAsync(applicationUser.Email);
             if (user == null)
             {
+                
                 var createPowerUser =  await userManager.CreateAsync(applicationUser, "Phu@ng123");
                 if (createPowerUser.Succeeded)
                 {

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
@@ -39,7 +40,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(await _authenticationService.UpdateUserProfileAsync(request: request));
         }
 
- 
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllRoles")]
         public async Task<ActionResult<RoleResponse>> GetAllRoles()
         {
@@ -55,10 +56,24 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
         
         
-        [HttpPost("createUser")]
+        [HttpPost("createUser")] 
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<RegistrationResponse>> CreateUserAsync(CreateUserCommand request)
         {
-            return Ok(await _authenticationService.CreateUserAsync(request: request));
+            var result = await _authenticationService.CreateUserAsync(request: request);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("GetUserInfo")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetUserInfo()
+        {
+            var user = HttpContext.User?.FindFirstValue(claimType: ClaimTypes.NameIdentifier);
+            return Ok(user);
         }
 
     }

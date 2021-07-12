@@ -19,5 +19,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
         Task<CreateUserResponse> CreateUserAsync(CreateUserCommand request);
 
         Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query);
+
     }
 }
