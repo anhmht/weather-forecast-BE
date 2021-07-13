@@ -35,15 +35,17 @@ namespace GloboWeather.WeatherManagement.Api
                     var useManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                    await Identity.Seed.UserCreator.SeedAsync(useManager);
                     await Identity.Seed.RolesCreator.SeedAsync(roleManager);
+                    await Identity.Seed.UserCreator.SeedAsync(useManager);
+
                     Log.Information("Application Starting");
                 }
                 catch (Exception e)
                 {
-                    Log.Warning(e, "An error occured while starting the appliation" );
+                    Log.Warning(e, "An error occured while starting the appliation");
                 }
             }
+
             host.Run();
         }
 

@@ -13,7 +13,7 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
                 FirstName = "Phuong",
                 LastName = "Last",
                 UserName = "zigzacvy",
-                Email = "phuongle99@test.com",
+                Email = "admin@gmail.com",
                 EmailConfirmed = true,
                 IsActive = true
             };
@@ -22,10 +22,10 @@ namespace GloboWeather.WeatherManagement.Identity.Seed
             if (user == null)
             {
                 
-                var createPowerUser =  await userManager.CreateAsync(applicationUser, "Phu@ng123");
+                var createPowerUser =  await userManager.CreateAsync(applicationUser, "Admin!23");
                 if (createPowerUser.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(applicationUser, "Admin");
+                    await userManager.AddToRoleAsync(applicationUser, "SUPERADMIN");
                 }
             }
         }

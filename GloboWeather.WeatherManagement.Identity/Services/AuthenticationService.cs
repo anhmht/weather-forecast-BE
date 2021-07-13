@@ -207,7 +207,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query)
         {
-        //    var user = await  _userManagement.SupportsUserRole
             var users = await _userManagement.Users.AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, new CancellationToken());
 
@@ -259,6 +258,19 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             };
             return response;
         }
+
+        // public async Task<bool> DeleteUserAsync(string userId)
+        // {
+        //     var user = await _userManagement.FindByIdAsync(userId);
+        //     if (user == null)
+        //     {
+        //         throw new Exception($"User with {userId} not found.");
+        //     }
+        //
+        //    var result=  await _userManagement.DeleteAsync(user);
+        //    return  result.
+        //
+        // }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {

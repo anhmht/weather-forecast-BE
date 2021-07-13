@@ -40,7 +40,6 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok(await _authenticationService.UpdateUserProfileAsync(request: request));
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllRoles")]
         public async Task<ActionResult<RoleResponse>> GetAllRoles()
         {

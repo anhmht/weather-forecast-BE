@@ -22,5 +22,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<AuthenticationResponse> GetUserInfoAsync(string email);
 
+    //    Task<bool> DeleteUserAsync(string userId);
+
     }
 }
