@@ -13,7 +13,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Astronomy
 {
     public class LocationService : ILocationService
     {
-        public  AstronomySettings _astronomySetting;
+        public AstronomySettings _astronomySetting;
         private readonly HttpClient _httpClient;
         public PositionStackSettings _positionSettings;
 
@@ -25,23 +25,36 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Astronomy
             _httpClient = httpClient;
             _positionSettings = positionSettings.Value;
         }
-        public async Task<GetAstronomyResponse> GetAstronomyData(GetLocationCommand request, CancellationToken cancellationToken)
+
+        public async Task<GetAstronomyResponse> GetAstronomyData(GetLocationCommand request,
+            CancellationToken cancellationToken)
         {
             string uri =
                 $"https://api.weatherapi.com/v1/astronomy.json?key={_astronomySetting.Key}&q={request.Lat},{request.Lon}&dt={DateTime.Today}";
             return await _httpClient.GetFromJsonAsync<GetAstronomyResponse>(uri, cancellationToken);
         }
 
-        public async Task<GetLocationResponse> GetCurrentLocation(GetPositionStackLocationCommand request, CancellationToken cancellationToken)
+        public async Task<GetLocationResponse> GetCurrentLocation(GetPositionStackLocationCommand request,
+            CancellationToken cancellationToken)
         {
-            string uriIpStack = $"http://api.ipstack.com/{request.IpAddress}?access_key={_positionSettings.AccessKeyForIp}";
+            string uriIpStack =
+                $"http://api.ipstack.com/{request.IpAddress}?access_key={_positionSettings.AccessKeyForIp}";
+            
             var httpRequestForIp = new HttpRequestMessage(HttpMethod.Get, uriIpStack);
-            using var responseForIp = await _httpClient.SendAsync(httpRequestForIp, HttpCompletionOption.ResponseContentRead);
-            if (responseForIp.IsSuccessStatusCode)
-            {
-                return await responseForIp.Content.ReadFromJsonAsync<GetLocationResponse>();
-            }
-            return null;
+            using var responseForIp = await _httpClient.SendAsync(httpRequestForIp,
+                HttpCompletionOption.ResponseContentRead, cancellationToken);
+            
+            if (!responseForIp.IsSuccessStatusCode) return null;
+
+            var result =
+                await responseForIp.Content.ReadFromJsonAsync<GetLocationResponse>(
+                    cancellationToken: cancellationToken);
+
+            if (result == null || !string.IsNullOrEmpty(result.RegionCode)) return result;
+            result.RegionCode = "SG";
+            result.RegionName = "Ho Chi Minh";
+
+            return result;
         }
     }
 }
