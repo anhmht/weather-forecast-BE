@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList
@@ -14,5 +14,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiri
         public string LastName { get; set; }
         public DateTime? CreatedOn { get; set; }
         public bool? IsActive { get; set; }
+        public string Status => IsActive == true ? "Đang sử dụng" : "Khóa";
     }
 }
