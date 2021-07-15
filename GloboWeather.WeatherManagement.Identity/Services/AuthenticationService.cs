@@ -101,6 +101,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var result = await _userManagement.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
+                    await _userManagement.AddToRoleAsync(user, "NORMALUSER");
                     return new RegistrationResponse() {UserId = user.Id};
                 }
                 else
