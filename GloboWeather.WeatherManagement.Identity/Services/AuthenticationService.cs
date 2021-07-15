@@ -11,7 +11,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
@@ -92,7 +91,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.UserName,
-                CreatedOn = DateTime.Now.Date,
+                CreatedOn = DateTime.Now,
                 EmailConfirmed = true,
                 IsActive = true
             };
@@ -169,7 +168,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 LastName = request.LastName,
                 UserName = request.UserName,
                 AvatarUrl = request.AvatarUrl,
-                CreatedOn =  DateTime.Now.Date,
+                CreatedOn =  DateTime.Now,
                 EmailConfirmed = true,
                 IsActive = true
             };
@@ -207,17 +206,31 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query)
         {
-            var users = await _userManagement.Users.AsNoTracking()
-                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+            PagedModel<ApplicationUser> userPaging;
+            if (query.RoleIds == null || query.RoleIds.All(x => x.Equals(string.Empty)))
+            {
+                userPaging = await _userManagement.Users.AsNoTracking()
+                    .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+            }
+            else
+            {
+                var userRoles = new List<ApplicationUser>();
+                foreach (var roleName in query.RoleIds)
+                {
+                    userRoles.AddRange(await _userManagement.GetUsersInRoleAsync(roleName));
+                }
+
+                userPaging = userRoles.Paginate(query.Page, query.Limit);
+            }
 
             var usersResponse = new GetUserListResponse
             {
-                CurrentPage = users.CurrentPage,
-                TotalItems = users.TotalItems,
-                TotalPages = users.TotalPages,
+                CurrentPage = userPaging.CurrentPage,
+                TotalItems = userPaging.TotalItems,
+                TotalPages = userPaging.TotalPages,
                 Users = new List<UserListVm>()
             };
-            foreach (var user in users.Items)
+            foreach (var user in userPaging.Items)
             {
                 var userVm = new UserListVm
                 {
