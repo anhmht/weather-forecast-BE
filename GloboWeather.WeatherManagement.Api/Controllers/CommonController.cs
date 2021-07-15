@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Commands.CreateStatus;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Queries;
 using GloboWeather.WeatherManagement.Application.Features.Commons.Queries.GetPositionStackLocation;
 using GloboWeather.WeatherManagement.Application.Models.Astronomy;
+using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +23,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILocationService _locationService;
+        private readonly ICommonService _commonService;
 
-        public CommonController(IMediator mediator, ILocationService locationService)
+        public CommonController(IMediator mediator, ILocationService locationService, ICommonService commonService)
         {
             _mediator = mediator;
             _locationService = locationService;
+            _commonService = commonService;
         }
         
         [HttpGet("Status/GetAllStatuses")]
@@ -61,6 +65,20 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             [FromQuery] GetPositionStackLocationCommand getLocationCommand)
         {
             return Ok(await _locationService.GetCurrentLocation(getLocationCommand, CancellationToken.None));
+        }
+
+        [HttpGet("Province/GetAll")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<Province>>> GetAllProvinceAsync()
+        {
+            return Ok(await _commonService.GetAllProvincesAsync());
+        }
+
+        [HttpGet("District/GetAll")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<District>>> GetAllDistrictAsync()
+        {
+            return Ok(await _commonService.GetAllDistrictsAsync());
         }
     }
 }

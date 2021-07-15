@@ -51,6 +51,9 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<Meteorological> Meteorologicals { get; set; }
         public DbSet<WeatherState> WeatherStates { get; set; }
         public DbSet<EventDocument> EventDocuments { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<ExtremePhenomenon> ExtremePhenomenons { get; set; }
+        public DbSet<ExtremePhenomenonDetail> ExtremePhenomenonDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
 namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
@@ -30,5 +31,9 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IRainQuantityRepository RainQuantityRepository { get; }
         IMeteorologicalRepository MeteorologicalRepository { get; }
         IWeatherStateRepository WeatherStateRepository { get; }
+        IProvinceRepository ProvinceRepository { get; }
+        IDistrictRepository DistrictRepository { get; }
+        IExtremePhenomenonRepository ExtremePhenomenonRepository { get; }
+        IExtremePhenomenonDetailRepository ExtremePhenomenonDetailRepository { get; }
     }
 }

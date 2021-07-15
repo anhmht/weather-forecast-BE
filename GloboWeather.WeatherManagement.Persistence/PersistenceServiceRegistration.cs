@@ -1,6 +1,8 @@
 
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
+using GloboWeather.WeatherManagement.Persistence.Services;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +44,11 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IRainQuantityRepository, RainQuantityRepository>();
             services.AddScoped<IMeteorologicalRepository, MeteorologicalRepository>();
             services.AddScoped<IWeatherStateRepository, WeatherStateRepository>();
+            services.AddScoped<IProvinceRepository, ProvinceRepository>();
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+            services.AddScoped<IExtremePhenomenonRepository, ExtremePhenomenonRepository>();
+            services.AddScoped<IExtremePhenomenonDetailRepository, ExtremePhenomenonDetailRepository>();
+            services.AddScoped<ICommonService, CommonService>();
 
             return services;
         }
