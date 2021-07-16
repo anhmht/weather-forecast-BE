@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
@@ -317,6 +318,16 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 signingCredentials: signinCredential);
 
             return jwtSecurityToken;
+        }
+
+        public async Task<List<ApplicationUserDto>> GetAllUserAsync()
+        {
+            var users = await _userManagement.Users.ToListAsync();
+            return users.Select(x => new ApplicationUserDto()
+            {
+                FullName = $"{x.LastName } {x.FirstName }",
+                UserName = x.UserName
+            }).ToList();
         }
     }
 }

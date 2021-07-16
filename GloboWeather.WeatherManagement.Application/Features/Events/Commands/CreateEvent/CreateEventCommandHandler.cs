@@ -29,7 +29,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
         public async Task<Guid> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreateEventCommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (validationResult.Errors.Any())
             {
@@ -39,7 +39,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             var @event = _mapper.Map<Event>(request);
             @event.EventId = Guid.NewGuid();
 
-            if (request.ImageNormalUrls.Any())
+            if (request.ImageNormalUrls?.Any() == true)
             {
                 //UpLoad to Normal Image
                 var imageUrlsListAfterUpdate = await _imageService.CopyImageToEventPost(request.ImageNormalUrls, @event.EventId.ToString(), Forder.NormalImage);
@@ -54,10 +54,31 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             }
 
             _unitOfWork.EventRepository.Add(@event);
+
+            await CreateDocumentAsync(request, @event);
+
             await _unitOfWork.CommitAsync();
             
             return  @event.EventId;
         }
 
+        private async Task CreateDocumentAsync(CreateEventCommand request, Event @event)
+        {
+            if (request.Documents?.Any() == true)
+            {
+                foreach (var document in request.Documents)
+                {
+                    var documentUrl = (await _imageService.CopyImageToEventPost(new List<string> {document.Url},
+                        @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
+                    _unitOfWork.EventDocumentRepository.Add(new EventDocument()
+                    {
+                        Name = document.Name,
+                        EventId = @event.EventId,
+                        Id = Guid.NewGuid(),
+                        Url = documentUrl
+                    });
+                }
+            }
+        }
     }
 }

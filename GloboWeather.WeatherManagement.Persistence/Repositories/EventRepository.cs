@@ -54,7 +54,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     Title = e.Title,
                     CategoryName = e.Category.Name,
                     DatePosted = e.DatePosted,
-                    ImageUrl = e.ImageUrl
+                    ImageUrl = e.ImageUrl,
+                    CreatedBy = e.CreateBy
                 }).ToList()
             };
             

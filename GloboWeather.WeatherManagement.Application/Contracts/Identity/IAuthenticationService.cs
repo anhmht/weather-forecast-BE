@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Application.Features.Events.Commands.CreateEvent;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
@@ -22,7 +21,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<AuthenticationResponse> GetUserInfoAsync(string email);
 
-    //    Task<bool> DeleteUserAsync(string userId);
+        Task<List<ApplicationUserDto>> GetAllUserAsync();
 
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail
@@ -14,5 +15,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
         public Guid CategoryId { get; set; }
         public CategoryDto Category { get; set; }
         public StatusDto Status { get; set; }
+        public List<EventDocument> Documents { get; set; }
     }
 }
