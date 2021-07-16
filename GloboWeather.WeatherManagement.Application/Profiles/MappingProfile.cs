@@ -23,6 +23,8 @@ using GloboWeather.WeatherManagement.Application.Features.RainQuantities.Import;
 using GloboWeather.WeatherManagement.Application.Features.WeatherStates.Commands.CreateWeatherState;
 using GloboWeather.WeatherManagement.Application.Features.WeatherStates.Queries.GetWeatherStateDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListWithContent;
+using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Commands.CreateExtremePhenomenon;
+using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.ExtremePhenomenonDetail;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -98,6 +100,8 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<CreateWeatherStateCommand, WeatherState>().ReverseMap();
             CreateMap<WeatherState, WeatherStateDetailVm>().ReverseMap();
             CreateMap<Event, EventListWithContentVm>();
+            CreateMap<CreateExtremePhenomenonCommand, ExtremePhenomenon>();
+            CreateMap<ExtremePhenomenon, ExtremePhenomenonDetailVm>();
         }
     }
 }
