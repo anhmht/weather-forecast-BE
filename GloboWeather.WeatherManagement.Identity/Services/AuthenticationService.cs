@@ -207,6 +207,11 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query)
         {
+            
+            // from userrole in UserRoles
+            //     join user in Users on userrole.UserId equals user.Id
+            //     where userrole.RoleId.Equals(role.Id)
+            //     select user;
             PagedModel<ApplicationUser> userPaging;
             if (query.RoleIds == null || query.RoleIds.All(x => x.Equals(string.Empty)))
             {

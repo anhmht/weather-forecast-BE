@@ -84,7 +84,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     {
                         _logger.LogInformation("Image Upload");
                         var fileName = userId + file.FileName.Replace(" ", String.Empty);
-                        imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
+                        imageUrl = await StorageHelper.UploadAvartarToStorage(stream, fileName, _storageConfig);
                     }
                 }
             }
