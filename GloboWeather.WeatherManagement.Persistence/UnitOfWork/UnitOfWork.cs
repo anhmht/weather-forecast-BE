@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Domain.Common;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
 using GloboWeather.WeatherManegement.Application.Contracts;
@@ -152,6 +153,18 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IWeatherStateRepository _weatherStateRepository;
         IWeatherStateRepository IUnitOfWork.WeatherStateRepository => _weatherStateRepository ?? new WeatherStateRepository(_context, this);
+
+        private IProvinceRepository _provinceRepository;
+        IProvinceRepository IUnitOfWork.ProvinceRepository => _provinceRepository ?? new ProvinceRepository(_context, this);
+
+        private IDistrictRepository _districtRepository;
+        IDistrictRepository IUnitOfWork.DistrictRepository => _districtRepository ?? new DistrictRepository(_context, this);
+
+        private IExtremePhenomenonRepository _extremePhenomenonRepository;
+        IExtremePhenomenonRepository IUnitOfWork.ExtremePhenomenonRepository => _extremePhenomenonRepository ?? new ExtremePhenomenonRepository(_context, this);
+
+        private IExtremePhenomenonDetailRepository _extremePhenomenonDetailRepository;
+        IExtremePhenomenonDetailRepository IUnitOfWork.ExtremePhenomenonDetailRepository => _extremePhenomenonDetailRepository ?? new ExtremePhenomenonDetailRepository(_context, this);
         #endregion
 
     }
