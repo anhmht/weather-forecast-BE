@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
@@ -11,7 +9,6 @@ using GloboWeather.WeatherManagement.Application.Models.Astronomy;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Astronomy;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -79,6 +76,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<List<District>>> GetAllDistrictAsync()
         {
             return Ok(await _commonService.GetAllDistrictsAsync());
+        }
+
+        [HttpPost("GetGeneralLookup")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Dictionary<int, object>>> GetGeneralLookupDataAsync([FromBody] List<int> lookupTypes)
+        {
+            return Ok(await _commonService.GetGeneralLookupDataAsync(lookupTypes));
         }
     }
 }

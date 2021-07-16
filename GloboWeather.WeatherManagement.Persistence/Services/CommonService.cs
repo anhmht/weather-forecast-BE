@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Caches;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
 
 namespace GloboWeather.WeatherManagement.Persistence.Services
@@ -49,6 +50,28 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _cacheStore.Add(response, districtCacheKey);
 
             return response;
+        }
+
+        public async Task<Dictionary<int, object>> GetGeneralLookupDataAsync(List<int> lookupTypes)
+        {
+            if (lookupTypes == null || !lookupTypes.Any())
+                return null;
+            var result = new Dictionary<int, object>();
+
+            foreach (var lookupType in lookupTypes.Where(lookupType => !result.ContainsKey(lookupType)))
+            {
+                var data = lookupType switch
+                {
+                    (int)LookupType.Province => (object)await GetAllProvincesAsync(),
+                    (int)LookupType.District => await GetAllDistrictsAsync(),
+                    _ => null
+                };
+
+                if (data != null)
+                    result[lookupType] = data;
+            }
+
+            return result;
         }
     }
 }

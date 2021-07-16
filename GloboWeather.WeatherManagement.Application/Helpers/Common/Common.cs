@@ -59,4 +59,10 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
     {
         Default = 1
     }
+
+    public enum LookupType
+    {
+        Province = 1,
+        District
+    }
 }
