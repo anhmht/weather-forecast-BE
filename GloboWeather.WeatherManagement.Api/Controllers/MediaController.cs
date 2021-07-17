@@ -56,5 +56,12 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             return Ok(await _imageService.GenerateQRCodeAsync(text));
         }
+
+        [HttpPost("uploadFile")]
+        public async Task<ActionResult<ImageResponse>> UploadFileAsync(IFormFile file)
+        {
+            return Ok(await _imageService.UploadFileAsync(file));
+        }
+
     }
 }

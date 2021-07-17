@@ -32,29 +32,13 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
         public async Task<ImageResponse> UploadImageAsync(IFormFile file)
         {
-            string imageUrl = string.Empty;
-            if (StorageHelper.IsImage(file))
-            {
-                if (file.Length > 0)
+            if (!StorageHelper.IsImage(file))
+                return new ImageResponse
                 {
-                    using (Stream stream = file.OpenReadStream())
-                    {
-                        _logger.LogInformation("Image Upload");
-                        var fileName = Guid.NewGuid().ToString() + file.FileName.Replace(" ", String.Empty);
-                        imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
-                    }
-                }
-            }
+                    Url = string.Empty
+                };
 
-            if (string.IsNullOrEmpty(imageUrl))
-            {
-                _logger.LogError("Image uploading failed");
-            }
-
-            return new ImageResponse
-            {
-                Url = imageUrl
-            };
+            return await UploadFileAsync(file);
         }
 
         public async Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName)
@@ -133,5 +117,31 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 Url = url
             };
         }
+
+        public async Task<ImageResponse> UploadFileAsync(IFormFile file)
+        {
+            string imageUrl = string.Empty;
+
+            if (file.Length > 0)
+            {
+                using (Stream stream = file.OpenReadStream())
+                {
+                    _logger.LogInformation("File Upload");
+                    var fileName = Guid.NewGuid().ToString() + file.FileName.Replace(" ", String.Empty);
+                    imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
+                }
+            }
+
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                _logger.LogError("File uploading failed");
+            }
+
+            return new ImageResponse
+            {
+                Url = imageUrl
+            };
+        }
+
     }
 }
