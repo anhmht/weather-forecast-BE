@@ -29,6 +29,10 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.De
             await _imageService.DeleteImagesInPostsContainerAsync(request.EventId.ToString());
 
             _unitOfWork.EventRepository.Delete(eventToDelete);
+
+            //Delete document
+            _unitOfWork.EventDocumentRepository.DeleteWhere(x=>x.EventId == eventToDelete.EventId);
+
             await _unitOfWork.CommitAsync();
 
             return  Unit.Value;

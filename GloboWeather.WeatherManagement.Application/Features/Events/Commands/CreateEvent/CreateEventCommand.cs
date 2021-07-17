@@ -13,5 +13,12 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
         public  DateTime DatePosted { get; set; }
         public  Guid CategoryId { get; set; }
         public  Guid StatusId { get; set; }
+        public List<CreateDocuments> Documents { get; set; }
+    }
+
+    public class CreateDocuments
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }

@@ -49,6 +49,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IExtremePhenomenonRepository, ExtremePhenomenonRepository>();
             services.AddScoped<IExtremePhenomenonDetailRepository, ExtremePhenomenonDetailRepository>();
             services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<IEventDocumentRepository, EventDocumentRepository>();
 
             return services;
         }

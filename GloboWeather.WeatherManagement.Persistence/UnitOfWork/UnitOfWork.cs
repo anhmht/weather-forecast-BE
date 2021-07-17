@@ -165,6 +165,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IExtremePhenomenonDetailRepository _extremePhenomenonDetailRepository;
         IExtremePhenomenonDetailRepository IUnitOfWork.ExtremePhenomenonDetailRepository => _extremePhenomenonDetailRepository ?? new ExtremePhenomenonDetailRepository(_context, this);
+
+        private IEventDocumentRepository _eventDocumentRepository;
+        IEventDocumentRepository IUnitOfWork.EventDocumentRepository => _eventDocumentRepository ?? new EventDocumentRepository(_context, this);
         #endregion
 
     }

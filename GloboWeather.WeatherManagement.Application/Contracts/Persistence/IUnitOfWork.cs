@@ -35,5 +35,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IDistrictRepository DistrictRepository { get; }
         IExtremePhenomenonRepository ExtremePhenomenonRepository { get; }
         IExtremePhenomenonDetailRepository ExtremePhenomenonDetailRepository { get; }
+        IEventDocumentRepository EventDocumentRepository { get; }
     }
 }

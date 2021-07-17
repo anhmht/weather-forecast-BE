@@ -14,6 +14,15 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
         public  Guid CategoryId { get; set; }
         public  Guid StatusId { get; set; }
         public  List<string> ImageNormalDeletes { get; set; }
-        public  List<string> ImageNormalAdds { get; set; }
+        public List<string> ImageNormalAdds { get; set; }
+        public List<UpdateDocuments> Documents { get; set; }
+    }
+
+    public class UpdateDocuments
+    {
+        public Guid Id { get; set; }
+        public Guid EventId { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }

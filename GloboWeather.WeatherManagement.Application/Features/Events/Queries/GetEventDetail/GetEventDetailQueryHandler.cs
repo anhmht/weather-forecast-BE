@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -14,16 +15,19 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
         private readonly IEventRepository _eventRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStatusRepository _statusRepository;
+        private readonly IEventDocumentRepository _eventDocumentRepository;
 
         public GetEventDetailQueryHandler(IMapper mapper,
             IEventRepository eventRepository,
             ICategoryRepository categoryRepository,
-            IStatusRepository statusRepository)
+            IStatusRepository statusRepository,
+            IEventDocumentRepository eventDocumentRepository)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;
             _categoryRepository = categoryRepository;
             _statusRepository = statusRepository;
+            _eventDocumentRepository = eventDocumentRepository;
         }
         public async Task<EventDetailVm> Handle(GetEventDetailQuery request, CancellationToken cancellationToken)
         {
@@ -46,6 +50,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
             }
 
             eventDetailDto.Status = _mapper.Map<StatusDto>(stautus);
+
+            eventDetailDto.Documents = await _eventDocumentRepository.GetByEventIdAsync(@event.EventId);
 
             return eventDetailDto;
         }

@@ -22,6 +22,10 @@ namespace WeatherBackgroundService.Worker
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+#if DEBUG
+            //Skip this service when debug
+            return;
+#endif
             var interval = _configuration.GetSection("BackgroundWorkerConfigs:DownLoadMonitoringData").Get<int>();
             new Timer(async state =>
             {
