@@ -17,6 +17,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         Task<ImageResponse> UploadAvatarForUserAsync(string userId, IFormFile file);
         Task<ImageResponse> GenerateQRCodeAsync(string text);
         Task<ImageResponse> UploadFileAsync(IFormFile file);
+        Task<long> GetFileContentLengthAsync(string fileUrl);
 
     }
 }

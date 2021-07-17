@@ -102,10 +102,13 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
                         await _imageService.DeleteImagesInPostsContainerByNameAsync(eventToUpdate.EventId.ToString(),
                             new List<string> {eventDocument.Url});
 
+
                         //Copy new file from temp to event folder
                         var documentUrl = (await _imageService.CopyImageToEventPost(new List<string> {entry.Url},
                             eventToUpdate.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
                         eventDocument.Url = documentUrl;
+                        var contentLength = await _imageService.GetFileContentLengthAsync(entry.Url);
+                        eventDocument.ContentLength = contentLength;
                         isUpdate = true;
                     }
 
@@ -124,6 +127,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
             {
                 foreach (var insertDocument in request.Documents.FindAll(x => x.Id.Equals(Guid.Empty)))
                 {
+                    var contentLength = await _imageService.GetFileContentLengthAsync(insertDocument.Url);
                     var documentUrl = (await _imageService.CopyImageToEventPost(new List<string> {insertDocument.Url},
                         eventToUpdate.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
 
@@ -132,7 +136,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Up
                         Name = insertDocument.Name,
                         EventId = eventToUpdate.EventId,
                         Id = Guid.NewGuid(),
-                        Url = documentUrl
+                        Url = documentUrl,
+                        ContentLength = contentLength
                     });
                 }
             }

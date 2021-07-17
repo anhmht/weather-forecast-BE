@@ -68,6 +68,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
             {
                 foreach (var document in request.Documents)
                 {
+                    var contentLength = await _imageService.GetFileContentLengthAsync(document.Url);
                     var documentUrl = (await _imageService.CopyImageToEventPost(new List<string> {document.Url},
                         @event.EventId.ToString(), Forder.FeatureImage)).FirstOrDefault();
                     _unitOfWork.EventDocumentRepository.Add(new EventDocument()
@@ -75,7 +76,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
                         Name = document.Name,
                         EventId = @event.EventId,
                         Id = Guid.NewGuid(),
-                        Url = documentUrl
+                        Url = documentUrl,
+                        ContentLength = contentLength
                     });
                 }
             }

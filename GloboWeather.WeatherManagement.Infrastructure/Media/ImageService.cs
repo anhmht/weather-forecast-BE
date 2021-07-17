@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -23,11 +24,13 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
     {
         public  AzureStorageConfig _storageConfig;
         private readonly ILogger<ImageService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public  ImageService(IOptions<AzureStorageConfig> azureStorageConfig, ILogger<ImageService> logger)
+        public  ImageService(IOptions<AzureStorageConfig> azureStorageConfig, ILogger<ImageService> logger, IHttpClientFactory httpClientFactory)
         {
             _storageConfig = azureStorageConfig.Value;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<ImageResponse> UploadImageAsync(IFormFile file)
@@ -143,5 +146,9 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             };
         }
 
+        public async Task<long> GetFileContentLengthAsync(string fileUrl)
+        {
+            return await StorageHelper.GetFileContentLengthAsync(fileUrl, _httpClientFactory);
+        }
     }
 }

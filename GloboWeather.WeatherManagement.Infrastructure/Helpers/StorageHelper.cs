@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using Microsoft.AspNetCore.Http;
 
@@ -260,5 +262,31 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             //  var stringUrl =  await  CopyFileToContainerImages(fileName, _storageConfig);
             return await Task.FromResult(url);
         }
+
+        public static async Task<long> GetFileContentLengthAsync(string fileUrl, IHttpClientFactory httpClient)
+        {
+            long contentLength = 0; //Unit: byte
+            try
+            {
+                var client = httpClient.CreateClient();
+                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, fileUrl);
+                var response = await client.SendAsync(httpRequestMessage);
+                if (response.Content.Headers.TryGetValues("Content-Length", out var values))
+                {
+                    if (values?.Any() == true)
+                    {
+                        contentLength = long.Parse(values.First());
+                    }
+                }
+            }
+            catch 
+            {
+                //Ignore when can't get file content length 
+            }
+
+
+            return contentLength;
+        }
+
     }
 }
