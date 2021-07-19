@@ -25,6 +25,7 @@ using GloboWeather.WeatherManagement.Application.Features.WeatherStates.Queries.
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListWithContent;
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Commands.CreateExtremePhenomenon;
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.ExtremePhenomenonDetail;
+using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.SearchExtremePhenomenonDetail;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -102,6 +103,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Event, EventListWithContentVm>();
             CreateMap<CreateExtremePhenomenonCommand, ExtremePhenomenon>();
             CreateMap<ExtremePhenomenon, ExtremePhenomenonDetailVm>();
+            CreateMap<ExtremePhenomenon, SearchExtremePhenomenonDetailVm>();
         }
     }
 }
