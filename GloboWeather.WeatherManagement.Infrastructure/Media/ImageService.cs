@@ -150,5 +150,26 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         {
             return await StorageHelper.GetFileContentLengthAsync(fileUrl, _httpClientFactory);
         }
+
+        public async Task<List<string>> CopyFileToStorageContainerAsync(List<string> files, string id, string folderName, string containerName)
+        {
+            var result = new List<string>();
+            if (files.Any() == false)
+            {
+                return null;
+            }
+
+            foreach (var file in files)
+            {
+                result.Add(await StorageHelper.CopyFileToContainerAsync(file, id, folderName, _storageConfig, containerName));
+            }
+
+            return result;
+        }
+
+        public async Task<bool> DeleteFileInStorageContainerByNameAsync(string id, List<string> files, string containerName)
+        {
+            return await StorageHelper.DeleteBlobInContainerByNameAsync(_storageConfig, files, id, containerName);
+        }
     }
 }

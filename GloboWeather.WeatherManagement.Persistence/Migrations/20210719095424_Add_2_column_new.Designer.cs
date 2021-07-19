@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210719095424_Add_2_column_new")]
+    partial class Add_2_column_new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

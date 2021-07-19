@@ -18,6 +18,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         Task<ImageResponse> GenerateQRCodeAsync(string text);
         Task<ImageResponse> UploadFileAsync(IFormFile file);
         Task<long> GetFileContentLengthAsync(string fileUrl);
-
+        Task<List<string>> CopyFileToStorageContainerAsync(List<string> files, string id, string folderName, string containerName);
+        Task<bool> DeleteFileInStorageContainerByNameAsync(string id, List<string> files, string containerName);
     }
 }

@@ -36,5 +36,8 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IExtremePhenomenonRepository ExtremePhenomenonRepository { get; }
         IExtremePhenomenonDetailRepository ExtremePhenomenonDetailRepository { get; }
         IEventDocumentRepository EventDocumentRepository { get; }
+        IScenarioActionRepository ScenarioActionRepository { get; }
+        IScenarioActionDetailRepository ScenarioActionDetailRepository { get; }
+        ICommonLookupRepository CommonLookupRepository { get; }
     }
 }

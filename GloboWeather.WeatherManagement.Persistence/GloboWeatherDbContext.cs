@@ -54,6 +54,9 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<District> Districts { get; set; }
         public DbSet<ExtremePhenomenon> ExtremePhenomenons { get; set; }
         public DbSet<ExtremePhenomenonDetail> ExtremePhenomenonDetails { get; set; }
+        public DbSet<ScenarioAction> ScenarioActions { get; set; }
+        public DbSet<ScenarioActionDetail> ScenarioActionDetails { get; set; }
+        public DbSet<CommonLookup> CommonLookups { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

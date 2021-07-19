@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210718143818_new_schenario")]
+    partial class new_schenario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -668,9 +670,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.Property<bool?>("IsDisplay")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsProvince")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -682,9 +681,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
 
                     b.Property<int?>("MethodId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PlaceId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PositionId")
                         .HasColumnType("int");

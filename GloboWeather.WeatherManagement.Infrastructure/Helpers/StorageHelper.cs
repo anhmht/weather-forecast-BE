@@ -138,43 +138,11 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
         }
         
         
-        public static async Task<bool> DeleteBlobInPostContainerByNameAsync(AzureStorageConfig _storageConfig,
+        public static async Task<bool> DeleteBlobInPostContainerByNameAsync(AzureStorageConfig storageConfig,
             List<string> eventUrls, string eventId)
         {
-            // Create a URI to the storage account
-            Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
-
-            List<string> eventNames = new List<string>();
-
-            foreach (var url in eventUrls)
-            {
-                var urls = url.Split('/');
-                var eventName = urls[urls.Length-3] +"/" + urls[urls.Length-2] + "/" +  urls[urls.Length-1];
-                eventNames.Add(eventName);
-            }
-            // Create BlobServiceClient from the account URI
-
-            StorageSharedKeyCredential storageCredentials =
-                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
-            BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
-            
-            // Get reference to the container
-            BlobContainerClient container = blobServiceClient.GetBlobContainerClient(_storageConfig.PostContainer);
-
-            //  blobClient.Delete()
-            if (container.Exists())
-            {
-                var blob = container.GetBlobs(prefix: eventId);
-                foreach (var blobItem in blob)
-                {
-                    if (eventNames.Contains(blobItem.Name))
-                    {
-                       await container.DeleteBlobIfExistsAsync(blobItem.Name);
-                    }
-                }
-            }
-
-            return await Task.FromResult(true);
+            return await DeleteBlobInContainerByNameAsync(storageConfig, eventUrls, eventId,
+                storageConfig.PostContainer);
         }
         
         public static async Task<bool> DeleteBlobsInTempContainerAsync(AzureStorageConfig _storageConfig)
@@ -209,30 +177,9 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             string fileName,
             string eventId,
             string folderName,
-            AzureStorageConfig _storageConfig)
+            AzureStorageConfig storageConfig)
         {
-            var stringUls = fileName.Split('/');
-
-            string urlImage = $"https://{_storageConfig.AccountName}.blob.core.windows.net" +
-                              $"/{_storageConfig.PostContainer}" +
-                              $"/{eventId}" +
-                              $"/{folderName}" +
-                              $"/{stringUls[stringUls.Length - 1].Replace(" ", String.Empty)}";
-
-            // Create a URI to the blob
-            Uri blobUri = new Uri(urlImage);
-            Uri blobUriTemp = new Uri(fileName);
-
-            // Create StorageSharedKeyCredentials object by reading
-            // the values from the configuration (appsettings.json)
-            StorageSharedKeyCredential storageCredentials =
-                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
-
-            // Create the blob client.
-            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
-            await blobClient.StartCopyFromUriAsync(blobUriTemp);
-
-            return await Task.FromResult(urlImage);
+            return await CopyFileToContainerAsync(fileName, eventId, folderName, storageConfig, storageConfig.PostContainer);
         }
         
         public static async Task<string>
@@ -286,6 +233,64 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
 
 
             return contentLength;
+        }
+
+        public static async Task<string> CopyFileToContainerAsync(string fileName, string id, string folderName,
+            AzureStorageConfig storageConfig, string containerName)
+        {
+            var stringUls = fileName.Split('/');
+
+            var urlImage = $"https://{storageConfig.AccountName}.blob.core.windows.net" +
+                           $"/{containerName}" +
+                           $"/{id}" +
+                           $"/{folderName}" +
+                           $"/{stringUls[^1].Replace(" ", string.Empty)}";
+
+            var blobUri = new Uri(urlImage);
+            var blobUriTemp = new Uri(fileName);
+
+            var storageCredentials =
+                new StorageSharedKeyCredential(storageConfig.AccountName, storageConfig.AccountKey);
+
+            var blobClient = new BlobClient(blobUri, storageCredentials);
+            await blobClient.StartCopyFromUriAsync(blobUriTemp);
+
+            return await Task.FromResult(urlImage);
+        }
+
+        public static async Task<bool> DeleteBlobInContainerByNameAsync(AzureStorageConfig storageConfig,
+            List<string> urlList, string id, string containerName)
+        {
+            var accountUri = new Uri("https://" + storageConfig.AccountName + ".blob.core.windows.net/");
+
+            var fileUrls = new List<string>();
+
+            foreach (var url in urlList)
+            {
+                var urls = url.Split('/');
+                var fileUrl = urls[^3] + "/" + urls[^2] + "/" + urls[^1];
+                fileUrls.Add(fileUrl);
+            }
+
+            var storageCredentials =
+                new StorageSharedKeyCredential(storageConfig.AccountName, storageConfig.AccountKey);
+            var blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
+
+            var container = blobServiceClient.GetBlobContainerClient(containerName);
+
+            if (container.Exists())
+            {
+                var blob = container.GetBlobs(prefix: id);
+                foreach (var blobItem in blob)
+                {
+                    if (fileUrls.Contains(blobItem.Name))
+                    {
+                        await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                    }
+                }
+            }
+
+            return await Task.FromResult(true);
         }
 
     }

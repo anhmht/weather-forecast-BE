@@ -168,6 +168,16 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IEventDocumentRepository _eventDocumentRepository;
         IEventDocumentRepository IUnitOfWork.EventDocumentRepository => _eventDocumentRepository ?? new EventDocumentRepository(_context, this);
+
+        private IScenarioActionRepository _scenarioActionRepository;
+        IScenarioActionRepository IUnitOfWork.ScenarioActionRepository => _scenarioActionRepository ?? new ScenarioActionRepository(_context, this);
+
+        private IScenarioActionDetailRepository _scenarioActionDetailRepository;
+        IScenarioActionDetailRepository IUnitOfWork.ScenarioActionDetailRepository => _scenarioActionDetailRepository ?? new ScenarioActionDetailRepository(_context, this);
+
+        private ICommonLookupRepository _commonLookupRepository;
+        ICommonLookupRepository IUnitOfWork.CommonLookupRepository => _commonLookupRepository ?? new CommonLookupRepository(_context, this);
+
         #endregion
 
     }
