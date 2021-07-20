@@ -5,6 +5,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 {
     public class DeleteScenarioActionCommand : IRequest
     {
-        public Guid ScenarioId { get; set; }
+        public Guid Id { get; set; }
     }
 }

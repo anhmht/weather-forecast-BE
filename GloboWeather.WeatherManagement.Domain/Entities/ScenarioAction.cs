@@ -15,5 +15,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         public int? AreaTypeId { get; set; }
         public string Data { get; set; }
         public int? Duration { get; set; }
+        public int Order { get; set; }
     }
 }

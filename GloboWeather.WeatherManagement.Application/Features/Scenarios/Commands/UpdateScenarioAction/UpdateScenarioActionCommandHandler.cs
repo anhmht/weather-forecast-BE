@@ -26,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
                 throw new Exceptions.ValidationException(validationResult);
             }
 
-            return await _scenarioService.UpdateAsync(request, cancellationToken);
+            return await _scenarioService.UpdateScenarioActionAsync(request, cancellationToken);
 
         }
     }

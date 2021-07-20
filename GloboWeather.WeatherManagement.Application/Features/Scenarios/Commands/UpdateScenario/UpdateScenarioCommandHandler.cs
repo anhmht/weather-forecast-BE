@@ -37,7 +37,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
             }
 
             _mapper.Map(request, scenarioToUpdate, typeof(UpdateScenarioCommand), typeof(Scenario));
-
+            if (scenarioToUpdate.ScenarioContent == null)
+                scenarioToUpdate.ScenarioContent = string.Empty;
             _unitOfWork.ScenarioRepository.Update(scenarioToUpdate);
             await _unitOfWork.CommitAsync();
 

@@ -5,6 +5,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.
 {
     public class GetScenarioActionDetailQuery : IRequest<ScenarioActionDetailVm>
     {
-        public Guid ScenarioId { get; set; }
+        public Guid Id { get; set; }
     }
 }

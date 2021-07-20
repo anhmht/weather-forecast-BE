@@ -16,7 +16,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.
 
         public async Task<ScenarioActionDetailVm> Handle(GetScenarioActionDetailQuery request, CancellationToken cancellationToken)
         {
-            return await _scenarioService.GetDetailAsync(request);
+            return await _scenarioService.GetScenarioActionDetailAsync(request);
         }
     }
 }

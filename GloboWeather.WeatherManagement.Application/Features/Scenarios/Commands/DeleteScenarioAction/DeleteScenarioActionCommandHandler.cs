@@ -19,7 +19,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 
         public async Task<Unit> Handle(DeleteScenarioActionCommand request, CancellationToken cancellationToken)
         {
-            await _scenarioService.DeleteAsync(request, cancellationToken);
+            await _scenarioService.DeleteScenarioActionAsync(request, cancellationToken);
             return Unit.Value;
         }
     }

@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenarioAction;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.DeleteScenario;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.DeleteScenarioAction;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateActionOrder;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenarioAction;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
@@ -21,17 +26,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICommonService _commonService;
         private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public ScenarioService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService)
+        public ScenarioService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
             _imageService = imageService;
+            _mapper = mapper;
         }
 
-        public async Task<ScenarioActionDetailVm> GetDetailAsync(GetScenarioActionDetailQuery request)
+        public async Task<ScenarioDetailVm> GetScenarioDetailAsync(GetScenarioDetailQuery request)
         {
-            var response = new ScenarioActionDetailVm();
+            var response = new ScenarioDetailVm();
 
             var query = from s in _unitOfWork.ScenarioRepository.GetAllQuery()
                         join satemp in _unitOfWork.ScenarioActionRepository.GetAllQuery()
@@ -60,6 +67,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionCreateDate = sa.CreateDate,
                             ScenarioActionLastModifiedBy = sa.LastModifiedBy,
                             ScenarioActionLastModifiedDate = sa.LastModifiedDate,
+                            ScenarioActionOrder = sa.Order,
                             ScenarioActionDetailId = sad.Id,
                             ScenarioActionDetailContent = sad.Content,
                             ScenarioActionDetailMethodId = sad.MethodId,
@@ -83,7 +91,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionDetailIsProvince = sad.IsProvince
                         };
 
-            var scenarioDetail = await query.ToListAsync();
+            var scenarioDetail = await query.OrderBy(x => x.ScenarioActionOrder).ToListAsync();
 
             var actionAreaType = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionAreaType);
             var actionMethod = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionMethod);
@@ -95,7 +103,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             response.ScenarioName = scenarioDetail.First().ScenarioName;
             response.ScenarioContent = scenarioDetail.First().ScenarioContent;
 
-            var scenarioActionDetails = scenarioDetail.Select(x => new ScenarioActionDetailDto()
+            var scenarioActionDetails = scenarioDetail.Where(x => !x.ScenarioActionDetailId.Equals(Guid.Empty)).Select(x => new ScenarioActionDetailDto()
             {
                 Action = actionType.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailActionTypeId)?.ValueText,
                 Id = x.ScenarioActionDetailId,
@@ -128,6 +136,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             foreach (var detail in scenarioDetail)
             {
+                if (detail.ScenarioActionId.Equals(Guid.Empty))
+                    continue;
                 if (response.ScenarioActions.All(x => x.Id != detail.ScenarioActionId))
                 {
                     response.ScenarioActions.Add(new ScenarioActionDto()
@@ -143,6 +153,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         Duration = detail.ScenarioActionDuration,
                         MethodId = detail.ScenarioActionMethodId,
                         ActionTypeId = detail.ScenarioActionActionTypeId,
+                        Order = detail.ScenarioActionOrder,
                         Action = actionType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionActionTypeId)?.ValueText,
                         Method = actionMethod.FirstOrDefault(t => t.ValueId == detail.ScenarioActionMethodId)?.ValueText,
                         AreaTypeName = actionAreaType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionAreaTypeId)?.ValueText,
@@ -154,206 +165,178 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             return response;
         }
 
-        public async Task<Guid> CreateAsync(CreateScenarioActionCommand request, CancellationToken cancellationToken)
+        public async Task<ScenarioActionDetailVm> GetScenarioActionDetailAsync(GetScenarioActionDetailQuery request)
         {
-            var scenario = new Scenario()
-            {
-                ScenarioId = Guid.NewGuid(),
-                ScenarioName = request.ScenarioName,
-                ScenarioContent = string.Empty
-            };
-            _unitOfWork.ScenarioRepository.Add(scenario);
+            var scenarioAction = await _unitOfWork.ScenarioActionRepository.GetByIdAsync(request.Id);
 
-            if (request.ScenarioActions?.Any() == true)
+            if (scenarioAction == null)
             {
-                foreach (var createScenarioActionDto in request.ScenarioActions)
+                throw new NotFoundException(nameof(ScenarioAction), request.Id);
+            }
+
+            var actionAreaType = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionAreaType);
+            var actionMethod = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionMethod);
+            var actionType = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionType);
+            var position = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.Position);
+            var scenarioActionType = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ScenarioActionType);
+
+
+            var response = _mapper.Map<ScenarioActionDetailVm>(scenarioAction);
+
+            response.Action = actionType.Find(x => x.ValueId == scenarioAction.ActionTypeId)?.ValueText;
+            response.AreaTypeName = actionAreaType.Find(x => x.ValueId == scenarioAction.AreaTypeId)?.ValueText;
+            response.Method = actionMethod.Find(x => x.ValueId == scenarioAction.MethodId)?.ValueText;
+
+            var scenarioActionDetails =
+                (await _unitOfWork.ScenarioActionDetailRepository.GetWhereAsync(x => x.ActionId == scenarioAction.Id))
+                .ToList();
+
+            if (scenarioActionDetails.Any())
+            {
+                response.ScenarioActionDetails = _mapper.Map<List<ScenarioActionDetailDto>>(scenarioActionDetails);
+                foreach (var scenarioActionDetailDto in response.ScenarioActionDetails)
                 {
-                    var scenarioAction = new ScenarioAction()
+                    var scenarioActionDetail = scenarioActionDetails.Find(x => x.Id == scenarioActionDetailDto.Id);
+                    if (scenarioActionDetail != null)
                     {
-                        Id = Guid.NewGuid(),
-                        ActionTypeId = createScenarioActionDto.ActionTypeId,
-                        AreaTypeId = createScenarioActionDto.AreaTypeId,
-                        Data = createScenarioActionDto.Data,
-                        Duration = createScenarioActionDto.Duration,
-                        MethodId = createScenarioActionDto.MethodId,
-                        ScenarioId = scenario.ScenarioId
-                    };
-                    _unitOfWork.ScenarioActionRepository.Add(scenarioAction);
-
-                    if (createScenarioActionDto.ScenarioActionDetails?.Any() == true)
-                    {
-                        foreach (var createScenarioActionDetailDto in createScenarioActionDto.ScenarioActionDetails)
+                        if (!string.IsNullOrEmpty(scenarioActionDetail.IconUrls))
                         {
-                            var scenarioActionDetail = new ScenarioActionDetail()
-                            {
-                                MethodId = createScenarioActionDetailDto.MethodId,
-                                Id = Guid.NewGuid(),
-                                ActionId = scenarioAction.Id,
-                                ActionTypeId = createScenarioActionDetailDto.ActionTypeId,
-                                Content = createScenarioActionDetailDto.Content,
-                                CustomPosition = createScenarioActionDetailDto.CustomPosition,
-                                Duration = createScenarioActionDetailDto.Duration,
-                                IsDisplay = createScenarioActionDetailDto.IsDisplay,
-                                IsProvince = createScenarioActionDetailDto.IsProvince,
-                                Left = createScenarioActionDetailDto.Left,
-                                PlaceId = createScenarioActionDetailDto.PlaceId,
-                                PositionId = createScenarioActionDetailDto.PositionId,
-                                ScenarioActionTypeId = createScenarioActionDetailDto.ScenarioActionTypeId,
-                                StartTime = createScenarioActionDetailDto.StartTime,
-                                Time = createScenarioActionDetailDto.Time,
-                                Top = createScenarioActionDetailDto.Top,
-                                Width = createScenarioActionDetailDto.Width
-                            };
-                            if (createScenarioActionDetailDto.IconsList?.Any() == true)
-                            {
-                                var iconsResult =
-                                    await _imageService.CopyFileToStorageContainerAsync(
-                                        createScenarioActionDetailDto.IconsList
-                                        , scenarioAction.Id.ToString(), Forder.IconImage,
-                                        StorageContainer.Scenarios);
-                                scenarioActionDetail.IconUrls = string.Join(Constants.SemiColonStringSeparator,
-                                    iconsResult);
-                            }
-                            _unitOfWork.ScenarioActionDetailRepository.Add(scenarioActionDetail);
+                            scenarioActionDetailDto.IconsList = scenarioActionDetail.IconUrls
+                                .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries)
+                                .ToList();
                         }
                     }
+                    scenarioActionDetailDto.Action = actionType.Find(x => x.ValueId == scenarioActionDetailDto.ActionTypeId)?.ValueText;
+                    scenarioActionDetailDto.ScenarioActionTypeName = scenarioActionType
+                        .Find(x => x.ValueId == scenarioActionDetailDto.ScenarioActionTypeId)?.ValueText;
+                    scenarioActionDetailDto.Posision = position.Find(x => x.ValueId == scenarioActionDetailDto.PositionId)?.ValueText;
+                    scenarioActionDetailDto.Method = actionMethod.Find(x => x.ValueId == scenarioActionDetailDto.MethodId)?.ValueText;
                 }
             }
 
-            await _unitOfWork.CommitAsync();
-
-            return scenario.ScenarioId;
+            return response;
         }
 
-        public async Task<Guid> UpdateAsync(UpdateScenarioActionCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> CreateScenarioActionAsync(CreateScenarioActionCommand request,
+            CancellationToken cancellationToken)
         {
-            //Get existing scenario
             var scenario = await _unitOfWork.ScenarioRepository.GetByIdAsync(request.ScenarioId);
             if (scenario == null)
             {
                 throw new NotFoundException(nameof(Scenario), request.ScenarioId);
             }
 
-            //Update Scenario
-            UpdateScenario(request, scenario);
+            //Add ScenarioAction
+            var scenarioAction = _mapper.Map<ScenarioAction>(request);
+            scenarioAction.Id = Guid.NewGuid();
+            _unitOfWork.ScenarioActionRepository.Add(scenarioAction);
 
-            //UpdateScenarioAction & detail
-            await UpdateScenarioAction(request, cancellationToken, scenario);
+            //Add ScenarioActionDetails
+            if (request.ScenarioActionDetails?.Any() == true)
+            {
+                //copy icons to storage
+                foreach (var createScenarioActionDetailDto in request.ScenarioActionDetails)
+                {
+                    if (createScenarioActionDetailDto.IconsList?.Any() == true)
+                    {
+                        createScenarioActionDetailDto.IconUrls =
+                            await PopulateScenarioActionDetailIconUrls(createScenarioActionDetailDto.IconsList,
+                                scenarioAction);
+                    }
+                }
+
+                //Populate for ScenarioActionDetail
+                var scenarioActionDetails = _mapper.Map<List<ScenarioActionDetail>>(request.ScenarioActionDetails);
+                PopulateScenarioActionDetailIds(scenarioActionDetails, scenarioAction);
+
+                _unitOfWork.ScenarioActionDetailRepository.AddRange(scenarioActionDetails);
+            }
 
             await _unitOfWork.CommitAsync();
 
-            return scenario.ScenarioId;
+            return scenarioAction.Id;
         }
 
-        private async Task UpdateScenarioAction(UpdateScenarioActionCommand request, CancellationToken cancellationToken,
-            Scenario scenario)
+        public async Task<Guid> UpdateScenarioActionAsync(UpdateScenarioActionCommand request, CancellationToken cancellationToken)
         {
-            //Get ScenarioAction original
-            var scenarioActionsOriginal =
-                (await _unitOfWork.ScenarioActionRepository.GetWhereAsync(x => x.ScenarioId == scenario.ScenarioId,
+            //Get existing scenario
+            var scenarioAction = await _unitOfWork.ScenarioActionRepository.GetByIdAsync(request.Id);
+            if (scenarioAction == null)
+            {
+                throw new NotFoundException(nameof(Scenario), request.Id);
+            }
+
+            #region Update ScenarioAction
+            var isUpdate = false;
+            if (request.Duration != scenarioAction.Duration)
+            {
+                scenarioAction.Duration = request.Duration;
+                isUpdate = true;
+            }
+            if (request.ActionTypeId != scenarioAction.ActionTypeId)
+            {
+                scenarioAction.ActionTypeId = request.ActionTypeId;
+                isUpdate = true;
+            }
+            if (request.MethodId != scenarioAction.MethodId)
+            {
+                scenarioAction.MethodId = request.MethodId;
+                isUpdate = true;
+            }
+            if (request.AreaTypeId != scenarioAction.AreaTypeId)
+            {
+                scenarioAction.AreaTypeId = request.AreaTypeId;
+                isUpdate = true;
+            }
+            if (request.Data != scenarioAction.Data)
+            {
+                scenarioAction.Data = request.Data;
+                isUpdate = true;
+            }
+
+            if (isUpdate)
+            {
+                _unitOfWork.ScenarioActionRepository.Update(scenarioAction);
+            }
+            #endregion
+
+            #region Update ScenarioActionDetail
+            //Get ScenarioActionDetail original
+            var scenarioActionDetailsOriginal =
+                (await _unitOfWork.ScenarioActionDetailRepository.GetWhereAsync(x => x.ActionId == scenarioAction.Id,
                     cancellationToken)).ToList();
 
-            //Get ScenarioActionDetail original
-            var scenarioActionDetailsOriginal = await (
-                from s in _unitOfWork.ScenarioRepository.GetAllQuery()
-                join sa in _unitOfWork.ScenarioActionRepository.GetAllQuery()
-                    on s.ScenarioId equals sa.ScenarioId
-                join sad in _unitOfWork.ScenarioActionDetailRepository.GetAllQuery()
-                    on sa.Id equals sad.ActionId
-                where s.ScenarioId == request.ScenarioId
-                select sad
-            ).ToListAsync(cancellationToken: cancellationToken);
-
-            //Insert new ScenarioAction & ScenarioActionDetail
-            if (request.ScenarioActions?.Any() == true)
+            if (request.ScenarioActionDetails?.Any() == true)
             {
-                foreach (var scenarioActionDto in request.ScenarioActions)
+                //Populate IconUrls
+                foreach (var scenarioActionDetailDto in request.ScenarioActionDetails)
                 {
-                    var scenarioAction = new ScenarioAction()
+                    if (scenarioActionDetailDto.IconsList?.Any() == true)
                     {
-                        Id = Guid.NewGuid(),
-                        ScenarioId = scenario.ScenarioId,
-                        ActionTypeId = scenarioActionDto.ActionTypeId,
-                        AreaTypeId = scenarioActionDto.AreaTypeId,
-                        Data = scenarioActionDto.Data,
-                        Duration = scenarioActionDto.Duration,
-                        MethodId = scenarioActionDto.MethodId
-                    };
-
-                    if (scenarioActionDto.ScenarioActionDetails?.Any() == true)
-                    {
-                        foreach (var scenarioActionDetailDto in scenarioActionDto.ScenarioActionDetails)
-                        {
-                            var scenarioActionDetail = new ScenarioActionDetail()
-                            {
-                                MethodId = scenarioActionDetailDto.MethodId,
-                                Id = Guid.NewGuid(),
-                                ActionId = scenarioAction.Id,
-                                ActionTypeId = scenarioActionDetailDto.ActionTypeId,
-                                Content = scenarioActionDetailDto.Content,
-                                CustomPosition = scenarioActionDetailDto.CustomPosition,
-                                Duration = scenarioActionDetailDto.Duration,
-                                IsDisplay = scenarioActionDetailDto.IsDisplay,
-                                IsProvince = scenarioActionDetailDto.IsProvince,
-                                Left = scenarioActionDetailDto.Left,
-                                PlaceId = scenarioActionDetailDto.PlaceId,
-                                PositionId = scenarioActionDetailDto.PositionId,
-                                ScenarioActionTypeId = scenarioActionDetailDto.ScenarioActionTypeId,
-                                StartTime = scenarioActionDetailDto.StartTime,
-                                Time = scenarioActionDetailDto.Time,
-                                Top = scenarioActionDetailDto.Top,
-                                Width = scenarioActionDetailDto.Width
-                            };
-
-                            if (scenarioActionDetailDto.IconsList?.Any() == true)
-                            {
-                                var iconsResult =
-                                    await _imageService.CopyFileToStorageContainerAsync(
-                                        scenarioActionDetailDto.IconsList
-                                        , scenarioAction.Id.ToString(), Forder.IconImage,
-                                        StorageContainer.Scenarios);
-                                scenarioActionDetail.IconUrls = string.Join(Constants.SemiColonStringSeparator,
-                                    iconsResult);
-                            }
-
-                            _unitOfWork.ScenarioActionDetailRepository.Add(scenarioActionDetail);
-                        }
+                        scenarioActionDetailDto.IconUrls =
+                            await PopulateScenarioActionDetailIconUrls(scenarioActionDetailDto.IconsList,
+                                scenarioAction);
                     }
-
-                    _unitOfWork.ScenarioActionRepository.Add(scenarioAction);
                 }
+
+                //Populate ScenarioActionDetail
+                var scenarioActionDetails = _mapper.Map<List<ScenarioActionDetail>>(request.ScenarioActionDetails);
+                PopulateScenarioActionDetailIds(scenarioActionDetails, scenarioAction);
+
+                _unitOfWork.ScenarioActionDetailRepository.AddRange(scenarioActionDetails);
             }
 
             //Delete scenarioActionDetailsOriginal
-            if (scenarioActionDetailsOriginal.Any())
-            {
-                //Delete icons
-                foreach (var scenarioActionDetail in scenarioActionDetailsOriginal.Where(x => !string.IsNullOrEmpty(x.IconUrls))
-                )
-                {
-                    var images = scenarioActionDetail.IconUrls
-                        .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    await _imageService.DeleteFileInStorageContainerByNameAsync(
-                        scenarioActionDetail.ActionId.ToString(), images, StorageContainer.Scenarios);
-                }
+            await DeleteScenarioActionDetail(scenarioActionDetailsOriginal);
 
-                _unitOfWork.ScenarioActionDetailRepository.DeleteRange(scenarioActionDetailsOriginal);
-            }
+            #endregion
 
-            //Delete scenarioActionsOriginal
-            if (scenarioActionsOriginal?.Any() == true)
-            {
-                _unitOfWork.ScenarioActionRepository.DeleteRange(scenarioActionsOriginal);
-            }
+            await _unitOfWork.CommitAsync();
+
+            return scenarioAction.Id;
         }
 
-        private void UpdateScenario(UpdateScenarioActionCommand request, Scenario scenario)
-        {
-            scenario.ScenarioName = request.ScenarioName;
-            _unitOfWork.ScenarioRepository.Update(scenario);
-        }
-
-        public async Task<bool> DeleteAsync(DeleteScenarioActionCommand request, CancellationToken cancellationToken)
+        public async Task<bool> DeleteScenarioAsync(DeleteScenarioCommand request, CancellationToken cancellationToken)
         {
             var scenario = await _unitOfWork.ScenarioRepository.GetByIdAsync(request.ScenarioId);
 
@@ -378,20 +361,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 select sad
             ).ToListAsync(cancellationToken: cancellationToken);
 
-            if (scenarioActionDetails.Any())
-            {
-                //Delete icons
-                foreach (var scenarioActionDetail in scenarioActionDetails.Where(x => !string.IsNullOrEmpty(x.IconUrls))
-                )
-                {
-                    var images = scenarioActionDetail.IconUrls
-                        .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    await _imageService.DeleteFileInStorageContainerByNameAsync(
-                        scenarioActionDetail.ActionId.ToString(), images, StorageContainer.Scenarios);
-                }
-                //Delete scenarioActionDetails
-                _unitOfWork.ScenarioActionDetailRepository.DeleteRange(scenarioActionDetails);
-            }
+            await DeleteScenarioActionDetail(scenarioActionDetails);
 
             //Delete scenarioActions
             if (scenarioActions.Any())
@@ -404,5 +374,92 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             return await _unitOfWork.CommitAsync() > 0;
         }
+
+        public async Task<bool> DeleteScenarioActionAsync(DeleteScenarioActionCommand request, CancellationToken cancellationToken)
+        {
+            var scenarioAction = await _unitOfWork.ScenarioActionRepository.GetByIdAsync(request.Id);
+            if (scenarioAction == null)
+            {
+                throw new NotFoundException(nameof(ScenarioAction), request.Id);
+            }
+
+            //Delete ScenarioActionDetail
+            var scenarioActionDetails =
+                (await _unitOfWork.ScenarioActionDetailRepository.GetWhereAsync(x => x.ActionId == scenarioAction.Id,
+                    cancellationToken)).ToList();
+            await DeleteScenarioActionDetail(scenarioActionDetails);
+
+            //Delete ScenarioAction
+            _unitOfWork.ScenarioActionRepository.Delete(scenarioAction);
+
+            return await _unitOfWork.CommitAsync() > 0;
+        }
+
+        public async Task<bool> UpdateActionOrderAsync(UpdateActionOrderCommand request, CancellationToken cancellationToken)
+        {
+            var actionIds = request.ActionOrders.Select(x => x.ActionId).ToList();
+            var scenarioActions =
+                (await _unitOfWork.ScenarioActionRepository.GetWhereAsync(x => actionIds.Contains(x.Id),
+                    cancellationToken)).ToList();
+            foreach (var action in scenarioActions)
+            {
+                var updateOrder = request.ActionOrders.Find(x => x.ActionId == action.Id);
+                if (updateOrder != null && updateOrder.Order != action.Order)
+                {
+                    action.Order = updateOrder.Order;
+                    _unitOfWork.ScenarioActionRepository.Update(action);
+                }
+            }
+
+            return await _unitOfWork.CommitAsync() > 0;
+        }
+
+        #region Private functions
+        private static void PopulateScenarioActionDetailIds(List<ScenarioActionDetail> scenarioActionDetails, ScenarioAction scenarioAction)
+        {
+            foreach (var scenarioActionDetail in scenarioActionDetails)
+            {
+                scenarioActionDetail.Id = Guid.NewGuid();
+                scenarioActionDetail.ActionId = scenarioAction.Id;
+            }
+        }
+
+        private async Task<string> PopulateScenarioActionDetailIconUrls(List<string> iconsList,
+            ScenarioAction scenarioAction)
+        {
+            var iconsResult =
+                await _imageService.CopyFileToStorageContainerAsync(
+                    iconsList
+                    , scenarioAction.Id.ToString(), Forder.IconImage,
+                    StorageContainer.Scenarios);
+            return string.Join(Constants.SemiColonStringSeparator,
+                iconsResult);
+        }
+
+        private async Task DeleteScenarioActionDetail(List<ScenarioActionDetail> scenarioActionDetails)
+        {
+            if (scenarioActionDetails.Any())
+            {
+                //Delete icons
+                foreach (var scenarioActionDetail in scenarioActionDetails.Where(x => !string.IsNullOrEmpty(x.IconUrls)))
+                {
+                    try
+                    {
+                        var images = scenarioActionDetail.IconUrls
+                            .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        await _imageService.DeleteFileInStorageContainerByNameAsync(
+                            scenarioActionDetail.ActionId.ToString(), images, StorageContainer.Scenarios);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+
+                //Delete scenarioActionDetails
+                _unitOfWork.ScenarioActionDetailRepository.DeleteRange(scenarioActionDetails);
+            }
+        }
+        #endregion
     }
 }

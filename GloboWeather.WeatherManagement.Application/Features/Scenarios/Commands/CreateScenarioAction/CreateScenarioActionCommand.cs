@@ -1,25 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenarioAction
 {
     public class CreateScenarioActionCommand : IRequest<Guid>
     {
-        public string ScenarioName { get; set; }
-        public List<CreateScenarioActionDto> ScenarioActions { get; set; }
-    }
-
-    public class CreateScenarioActionDto
-    {
+        public Guid ScenarioId { get; set; }
         public int? ActionTypeId { get; set; }
         public int? MethodId { get; set; }
         public int? AreaTypeId { get; set; }
         public string Data { get; set; }
         public int? Duration { get; set; }
+        public int Order { get; set; }
         public List<CreateScenarioActionDetailDto> ScenarioActionDetails { get; set; }
 
-        public CreateScenarioActionDto()
+        public CreateScenarioActionCommand()
         {
             ScenarioActionDetails = new List<CreateScenarioActionDetailDto>();
         }
@@ -43,6 +40,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
         public string PlaceId { get; set; }
         public bool? IsProvince { get; set; }
         public List<string> IconsList { get; set; }
+        [JsonIgnore]
+        public string IconUrls { get; set; }
 
         public CreateScenarioActionDetailDto()
         {

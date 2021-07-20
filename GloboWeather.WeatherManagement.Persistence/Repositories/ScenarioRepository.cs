@@ -21,7 +21,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<GetScenariosListResponse> GetByPagedAsync(GetScenariosListQuery query, CancellationToken token)
         {
-            var scenarios = await _unitOfWork.ScenarioRepository.GetAllQuery()
+            var scenarios = await _unitOfWork.ScenarioRepository.GetAllQuery().OrderByDescending(x=>x.CreateDate)
                 .AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, token);
 
