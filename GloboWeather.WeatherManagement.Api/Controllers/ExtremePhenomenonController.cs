@@ -5,6 +5,7 @@ using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Com
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Commands.UpdateExtremePhenomenon;
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.ExtremePhenomenonDetail;
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.ExtremePhenomenonList;
+using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.SearchExtremePhenomenonDetail;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             await _mediator.Send(new DeleteExtremePhenomenonCommand() { Id = id });
             return NoContent();
+        }
+
+        [HttpPost("searchDetail", Name = "SearchExtremePhenomenonDetailAsync")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<SearchExtremePhenomenonDetailVm>> SearchExtremePhenomenonDetailAsync(
+            [FromBody] SearchExtremePhenomenonDetailQuery request)
+        {
+            return Ok(await _mediator.Send(request));
         }
 
     }

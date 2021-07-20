@@ -1,4 +1,3 @@
-
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
@@ -50,6 +49,10 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IExtremePhenomenonDetailRepository, ExtremePhenomenonDetailRepository>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IEventDocumentRepository, EventDocumentRepository>();
+            services.AddScoped<IScenarioActionRepository, ScenarioActionRepository>();
+            services.AddScoped<IScenarioActionDetailRepository, ScenarioActionDetailRepository>();
+            services.AddScoped<ICommonLookupRepository, CommonLookupRepository>();
+            services.AddScoped<IScenarioService, ScenarioService>();
 
             return services;
         }

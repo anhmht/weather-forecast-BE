@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenariosList;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities;
@@ -20,7 +21,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<GetScenariosListResponse> GetByPagedAsync(GetScenariosListQuery query, CancellationToken token)
         {
-            var scenarios = await _unitOfWork.ScenarioRepository.GetAllQuery()
+            var scenarios = await _unitOfWork.ScenarioRepository.GetAllQuery().OrderByDescending(x=>x.CreateDate)
                 .AsNoTracking()
                 .PaginateAsync(query.Page, query.Limit, token);
 
@@ -38,5 +39,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             };
             
         }
+
     }
 }

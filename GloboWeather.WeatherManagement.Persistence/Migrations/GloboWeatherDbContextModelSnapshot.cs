@@ -62,6 +62,42 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.CommonLookup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NameSpace")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ValueId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ValueText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CommonLookups");
+                });
+
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.District", b =>
                 {
                     b.Property<Guid>("Id")
@@ -556,6 +592,124 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.HasKey("ScenarioId");
 
                     b.ToTable("Scenarios");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.ScenarioAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ActionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AreaTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ScenarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScenarioActions");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.ScenarioActionDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ActionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("CustomPosition")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IconUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDisplay")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsProvince")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Left")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlaceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PositionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScenarioActionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StartTime")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Time")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Top")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScenarioActionDetails");
                 });
 
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Station", b =>

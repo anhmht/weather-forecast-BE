@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -10,24 +11,15 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.
 {
     public class GetScenarioDetailQueryHandler : IRequestHandler<GetScenarioDetailQuery, ScenarioDetailVm>
     {
-        private readonly IScenarioRepository _scenarioRepository;
-        private readonly IMapper _mapper;
-
-        public GetScenarioDetailQueryHandler(IScenarioRepository scenarioRepository,IMapper mapper)
+        private readonly IScenarioService _scenarioService;
+        public GetScenarioDetailQueryHandler(IScenarioService scenarioService)
         {
-            _scenarioRepository = scenarioRepository;
-            _mapper = mapper;
+            _scenarioService = scenarioService;
         }
+
         public async Task<ScenarioDetailVm> Handle(GetScenarioDetailQuery request, CancellationToken cancellationToken)
         {
-            var @scenario = await _scenarioRepository.GetByIdAsync(request.ScenarioId);
-            if (@scenario == null)
-            {
-                throw new NotFoundException(nameof(Scenario), request.ScenarioId);
-            }
-
-            var scenarioDto = _mapper.Map<ScenarioDetailVm>(@scenario);
-            return scenarioDto;
+            return await _scenarioService.GetScenarioDetailAsync(request);
         }
     }
 }

@@ -1,10 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenario;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenarioAction;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.DeleteScenario;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.DeleteScenarioAction;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateActionOrder;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenario;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenarioAction;
+using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenariosList;
 using MediatR;
@@ -67,6 +70,52 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult> DeleteScenario(Guid id)
         {
             var query = new DeleteScenarioCommand() {ScenarioId = id};
+            await _mediator.Send(query);
+            return NoContent();
+        }
+
+        [HttpGet("action/{id}", Name = "GetScenarioActionDetailById")]
+        [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<ScenarioActionDetailVm>> GetScenarioActionDetailAsync(Guid id)
+        {
+            var query = new GetScenarioActionDetailQuery() { Id = id };
+            var dto = await _mediator.Send(query);
+            return Ok(dto);
+        }
+
+        [HttpPost("action", Name = "CreateScenarioActionAsync")]
+        [ProducesResponseType(statusCode: StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<Guid>> CreateScenarioActionAsync([FromBody] CreateScenarioActionCommand query)
+        {
+            var scenarioId = await _mediator.Send(query);
+            return Ok(scenarioId);
+        }
+
+        [HttpPut("action", Name = "UpdateScenarioActionAsync")]
+        [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+        [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UpdateScenarioActionAsync([FromBody] UpdateScenarioActionCommand query)
+        {
+            await _mediator.Send(query);
+            return NoContent();
+        }
+        [HttpDelete("action/{id}", Name = "DeleteScenarioActionAsync")]
+        [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+        [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeleteScenarioActionAsync(Guid id)
+        {
+            var query = new DeleteScenarioActionCommand() { Id = id };
+            await _mediator.Send(query);
+            return NoContent();
+        }
+
+        [HttpPost("updateActionOrder", Name = nameof(UpdateActionOrderAsync))]
+        [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateActionOrderAsync([FromBody] UpdateActionOrderCommand query)
+        {
             await _mediator.Send(query);
             return NoContent();
         }

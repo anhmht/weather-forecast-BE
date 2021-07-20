@@ -58,12 +58,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 return null;
             var result = new Dictionary<int, object>();
 
-            foreach (var lookupType in lookupTypes.Where(lookupType => !result.ContainsKey(lookupType)))
+            foreach (var lookupType in lookupTypes.Distinct())
             {
+                if (result.ContainsKey(lookupType))
+                    continue;
                 var data = lookupType switch
                 {
                     (int)LookupType.Province => (object)await GetAllProvincesAsync(),
                     (int)LookupType.District => await GetAllDistrictsAsync(),
+                    (int)LookupType.ActionAreaType => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionAreaType),
+                    (int)LookupType.ActionMethod => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionMethod),
+                    (int)LookupType.ActionType => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionType),
+                    (int)LookupType.Position => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.Position),
+                    (int)LookupType.ScenarioActionType => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ScenarioActionType),
                     _ => null
                 };
 
@@ -72,6 +79,27 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             }
 
             return result;
+        }
+
+        public async Task<List<CommonLookup>> GetAllCommonLookupAsync()
+        {
+            var commonLookupCacheKey = new CommonLookupCacheKey();
+            var cachedCommonLookups = _cacheStore.Get(commonLookupCacheKey);
+            if (cachedCommonLookups != null)
+                return cachedCommonLookups;
+
+            //Get from database
+            var response = (await _unitOfWork.CommonLookupRepository.GetAllAsync()).ToList();
+
+            //Save cache
+            _cacheStore.Add(response, commonLookupCacheKey);
+
+            return response;
+        }
+
+        public async Task<List<CommonLookup>> GetCommonLookupByNameSpaceAsync(string nameSpace)
+        {
+            return (await GetAllCommonLookupAsync()).Where(x => x.NameSpace == nameSpace).ToList();
         }
     }
 }

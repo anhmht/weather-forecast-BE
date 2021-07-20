@@ -9,5 +9,7 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Servi
         Task<List<Province>> GetAllProvincesAsync();
         Task<List<District>> GetAllDistrictsAsync();
         Task<Dictionary<int, object>> GetGeneralLookupDataAsync(List<int> lookupTypes);
+        Task<List<CommonLookup>> GetAllCommonLookupAsync();
+        Task<List<CommonLookup>> GetCommonLookupByNameSpaceAsync(string nameSpace);
     }
 }

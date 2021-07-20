@@ -22,6 +22,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
     {
         public static string FeatureImage = "feature-Image";
         public static string NormalImage = "normal-Image";
+        public static string IconImage = "icon-Image";
     }
 
     public static class ReplaceContent
@@ -63,6 +64,11 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
     public enum LookupType
     {
         Province = 1,
-        District
+        District = 2,
+        ActionType = 3,
+        ActionMethod = 4,
+        ActionAreaType = 5,
+        ScenarioActionType = 6,
+        Position = 7
     }
 }

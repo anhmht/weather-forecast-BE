@@ -1,35 +1,24 @@
 using System.Threading;
 using System.Threading.Tasks;
-using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
-using GloboWeather.WeatherManagement.Application.Exceptions;
-using GloboWeather.WeatherManagement.Domain.Entities;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.DeleteScenario
 {
     public class DeleteScenarioCommandHandler : IRequestHandler<DeleteScenarioCommand>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IScenarioService _scenarioService;
 
-        public DeleteScenarioCommandHandler(IUnitOfWork unitOfWork)
+        public DeleteScenarioCommandHandler(IScenarioService scenarioService)
         {
-            _unitOfWork = unitOfWork;
+            _scenarioService = scenarioService;
         }
         
         public async Task<Unit> Handle(DeleteScenarioCommand request, CancellationToken cancellationToken)
         {
-            var scenarioToDelete = await _unitOfWork.ScenarioRepository.GetByIdAsync(request.ScenarioId);
+            await _scenarioService.DeleteScenarioAsync(request, cancellationToken);
+            return Unit.Value;
 
-            if (scenarioToDelete == null)
-            {
-                throw new NotFoundException(nameof(Scenario), request.ScenarioId);
-            }
-
-            _unitOfWork.ScenarioRepository.Delete(scenarioToDelete);
-            await _unitOfWork.CommitAsync();
-
-            return  Unit.Value;
-            
         }
     }
 }

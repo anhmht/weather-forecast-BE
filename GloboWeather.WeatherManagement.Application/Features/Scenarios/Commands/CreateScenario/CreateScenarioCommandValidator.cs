@@ -6,10 +6,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
     {
         public CreateScenarioCommandValidator()
         {
-            RuleFor(s => s.ScenarioContent)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull();
-            
             RuleFor(s => s.ScenarioName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();

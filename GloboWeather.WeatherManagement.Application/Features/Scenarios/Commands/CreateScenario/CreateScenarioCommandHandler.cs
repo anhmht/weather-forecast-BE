@@ -31,7 +31,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
             }
 
             var @scenario = _mapper.Map<Scenario>(request);
-
+            if (@scenario.ScenarioContent == null)
+                @scenario.ScenarioContent = string.Empty;
             _unitOfWork.ScenarioRepository.Add(@scenario);
             await _unitOfWork.CommitAsync();
 
