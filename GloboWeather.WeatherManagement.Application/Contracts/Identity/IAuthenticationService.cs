@@ -23,5 +23,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<List<ApplicationUserDto>> GetAllUserAsync();
 
+        Task<ForgotPasswordResponse> ForgotPasswordAsync(string email);
+
     }
 }

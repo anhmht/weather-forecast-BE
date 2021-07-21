@@ -28,7 +28,6 @@ namespace GloboWeather.WeatherManagement.Identity
                 .AddEntityFrameworkStores<GloboWeatherIdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

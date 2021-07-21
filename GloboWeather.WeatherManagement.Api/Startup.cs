@@ -17,6 +17,7 @@ using GloboWeather.WeatherManagement.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +49,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddWeatherService(Configuration);
             services.AddMonitoringService(Configuration);
             services.AddWeatherBackgroundService(Configuration);
-            services.AddScoped<ILoggedInUserService, LoggedInUserService>();         
+            services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddControllers();
             services.AddScoped<WeatherContext>();
             services.AddCors(options =>
@@ -113,9 +114,6 @@ namespace GloboWeather.WeatherManagement.Api
             }
            
             app.UseHttpsRedirection();
-
-
-
             app.UseRouting();
 
             app.UseCors();

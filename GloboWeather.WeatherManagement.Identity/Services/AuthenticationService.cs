@@ -16,29 +16,31 @@ using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
-using GloboWeather.WeatherManagement.Application.Models.Mail;
 using GloboWeather.WeatherManagement.Identity.Models;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Identity.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<ApplicationUser> _userManagement;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtSettings _jwtSettings;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+       
 
         public AuthenticationService(
-            UserManager<ApplicationUser> userManagement,
+            UserManager<ApplicationUser> userManager,
             IOptions<JwtSettings> jwtSettings,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IEmailService emailService)
+            IEmailService emailService
+             )
         {
-            _userManagement = userManagement;
+            _userManager = userManager;
             _jwtSettings = jwtSettings.Value;
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -47,7 +49,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
         {
-            var user = await _userManagement.FindByEmailAsync(request.Email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
                 throw new Exception($"User with {request.Email} not found.");
@@ -61,7 +63,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 throw new Exception($"Credentials for {request.Email} aren't valid.");
             }
 
-            var userRoles = await _userManagement.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
             AuthenticationResponse response = new AuthenticationResponse()
@@ -82,7 +84,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
         {
             var registrationResponse = new RegistrationResponse();
-            var existingUser = await _userManagement.FindByNameAsync(request.UserName);
+            var existingUser = await _userManager.FindByNameAsync(request.UserName);
             if (existingUser != null)
             {
                 registrationResponse.Success = false;
@@ -101,30 +103,14 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 EmailConfirmed = true,
                 IsActive = true
             };
-            var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
+            var existingEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingEmail == null)
             {
-                var result = await _userManagement.CreateAsync(user, request.Password);
+                var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    await _userManagement.AddToRoleAsync(user, "NORMALUSER");
+                    await _userManager.AddToRoleAsync(user, "NORMALUSER");
                     
-                    var email = new Email()
-                    {
-                        To = "lethanhphuong17051989@gmail.com",
-                        Body = $"A new user was created: {request}",
-                        Subject = "Test Email "
-                    };
-                    try
-                    {
-                        await _emailService.SendEmail(email);
-
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
                     return new RegistrationResponse() {UserId = user.Id};
                 }
                 else
@@ -150,7 +136,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<string> UpdateUserProfileAsync(UpdatingRequest request)
         {
-            var user = await _userManagement.FindByNameAsync(request.UserName);
+            var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
             {
                 throw new Exception($"User with {request.UserName} not found");
@@ -162,7 +148,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             user.AvatarUrl = request.AvatarUrl;
             user.PhoneNumber = request.PhoneNumber;
 
-            return (await _userManagement.UpdateAsync(user)).ToString();
+            return (await _userManager.UpdateAsync(user)).ToString();
         }
 
         public async Task<List<RoleResponse>> GetRolesListAsync()
@@ -180,7 +166,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         public async Task<CreateUserResponse> CreateUserAsync(CreateUserCommand request)
         {
             var createUserResponse = new CreateUserResponse();
-            var existingUser = await _userManagement.FindByNameAsync(request.UserName);
+            var existingUser = await _userManager.FindByNameAsync(request.UserName);
             if (existingUser != null)
             {
                 createUserResponse.Success = false;
@@ -198,15 +184,15 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 EmailConfirmed = true,
                 IsActive = true
             };
-            var existingEmail = await _userManagement.FindByEmailAsync(request.Email);
+            var existingEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingEmail == null)
             {
-                var result = await _userManagement.CreateAsync(user, request.Password);
+                var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
                     if (request.RoleNames.Any())
                     {
-                        await _userManagement.AddToRolesAsync(user, request.RoleNames);
+                        await _userManager.AddToRolesAsync(user, request.RoleNames);
                     }
 
                     return new CreateUserResponse() {UserId = user.Id};
@@ -232,15 +218,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query)
         {
-            
-            // from userrole in UserRoles
-            //     join user in Users on userrole.UserId equals user.Id
-            //     where userrole.RoleId.Equals(role.Id)
-            //     select user;
             PagedModel<ApplicationUser> userPaging;
             if (query.RoleIds == null || query.RoleIds.All(x => x.Equals(string.Empty)))
             {
-                userPaging = await _userManagement.Users.AsNoTracking()
+                userPaging = await _userManager.Users.AsNoTracking()
                     .PaginateAsync(query.Page, query.Limit, new CancellationToken());
             }
             else
@@ -248,7 +229,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var userRoles = new List<ApplicationUser>();
                 foreach (var roleName in query.RoleIds)
                 {
-                    userRoles.AddRange(await _userManagement.GetUsersInRoleAsync(roleName));
+                    userRoles.AddRange(await _userManager.GetUsersInRoleAsync(roleName));
                 }
 
                 userPaging = userRoles.Paginate(query.Page, query.Limit);
@@ -272,7 +253,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     CreatedOn = user.CreatedOn,
-                    RoleName = string.Join(",", (await _userManagement.GetRolesAsync(user)).ToList()),
+                    RoleName = string.Join(",", (await _userManager.GetRolesAsync(user)).ToList()),
                     IsActive = user.IsActive
                 };
                 usersResponse.Users.Add(userVm);
@@ -282,13 +263,13 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<AuthenticationResponse> GetUserInfoAsync(string email)
         {
-            var user = await _userManagement.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 throw new Exception($"User with {email} not found.");
             }
             
-            var userRoles = await _userManagement.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
             AuthenticationResponse response = new AuthenticationResponse()
             {
                 Id = user.Id,
@@ -307,8 +288,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
-            var userClaims = await _userManagement.GetClaimsAsync(user);
-            var roles = await _userManagement.GetRolesAsync(user);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
 
             for (int i = 0; i < roles.Count; i++)
@@ -340,12 +321,36 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<List<ApplicationUserDto>> GetAllUserAsync()
         {
-            var users = await _userManagement.Users.ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
             return users.Select(x => new ApplicationUserDto()
             {
                 FullName = $"{x.LastName } {x.FirstName }",
                 UserName = x.UserName
             }).ToList();
         }
+
+        public async Task<ForgotPasswordResponse> ForgotPasswordAsync(string email)
+        {
+            var response = new ForgotPasswordResponse();
+            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user).ConfigureAwait(false)))
+            {
+                response.Success = false;
+                response.Message = "Please verify your email address";
+                
+                return response;
+            }
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
+            var callbackUrl = $"clientUrl";
+            
+            await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
+            response.Code = code;
+            response.UserId = user.Id;
+            
+            return response;
+        }
+
+
+       
     }
 }

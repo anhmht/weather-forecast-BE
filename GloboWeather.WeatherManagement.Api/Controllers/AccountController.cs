@@ -69,10 +69,23 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpGet("GetUserInfo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUserInfo([FromServices] IAuthenticationService authenticationService)
+        public async Task<ActionResult> GetUserInfo()
         {
             var email = HttpContext.User?.FindFirstValue(claimType: ClaimTypes.Email);
-            return Ok(await  authenticationService.GetUserInfoAsync(email));
+            return Ok(await  _authenticationService.GetUserInfoAsync(email));
+        }
+
+        [HttpPost("forgotPassword")]
+        [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var response = await _authenticationService.ForgotPasswordAsync(request.Email);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
 
     }
