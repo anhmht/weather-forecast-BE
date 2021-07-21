@@ -18,7 +18,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.Configure<EmailSettings>(configuration.GetSection("EmailSetting"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<AzureStorageConfig>(configuration.GetSection(key: "AzureStorageConfig"));
             services.Configure<AstronomySettings>(configuration.GetSection("AstronomySettings"));
             services.Configure<PositionStackSettings>(configuration.GetSection("PositionStackSettings"));

@@ -16,7 +16,9 @@ using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
+using GloboWeather.WeatherManagement.Application.Models.Mail;
 using GloboWeather.WeatherManagement.Identity.Models;
+using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Identity.Services
@@ -27,17 +29,20 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly JwtSettings _jwtSettings;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
 
         public AuthenticationService(
             UserManager<ApplicationUser> userManagement,
             IOptions<JwtSettings> jwtSettings,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService)
         {
             _userManagement = userManagement;
             _jwtSettings = jwtSettings.Value;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailService = emailService;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -103,6 +108,23 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 if (result.Succeeded)
                 {
                     await _userManagement.AddToRoleAsync(user, "NORMALUSER");
+                    
+                    var email = new Email()
+                    {
+                        To = "lethanhphuong17051989@gmail.com",
+                        Body = $"A new user was created: {request}",
+                        Subject = "Test Email "
+                    };
+                    try
+                    {
+                        await _emailService.SendEmail(email);
+
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
                     return new RegistrationResponse() {UserId = user.Id};
                 }
                 else
@@ -120,6 +142,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"Email {request.Email} already exists.";
             }
+
+           
 
             return registrationResponse;
         }
@@ -279,18 +303,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return response;
         }
 
-        // public async Task<bool> DeleteUserAsync(string userId)
-        // {
-        //     var user = await _userManagement.FindByIdAsync(userId);
-        //     if (user == null)
-        //     {
-        //         throw new Exception($"User with {userId} not found.");
-        //     }
-        //
-        //    var result=  await _userManagement.DeleteAsync(user);
-        //    return  result.
-        //
-        // }
+      
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
