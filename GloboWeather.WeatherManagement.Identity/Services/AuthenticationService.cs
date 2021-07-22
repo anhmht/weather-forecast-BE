@@ -14,8 +14,11 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEmail;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ResetPassword;
+using GloboWeather.WeatherManagement.Application.Responses;
 using GloboWeather.WeatherManagement.Identity.Models;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +33,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
-       
+
 
         public AuthenticationService(
             UserManager<ApplicationUser> userManager,
@@ -38,7 +41,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             IEmailService emailService
-             )
+        )
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings.Value;
@@ -53,6 +56,11 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             if (user == null)
             {
                 throw new Exception($"User with {request.Email} not found.");
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                throw new Exception($"User with {request.Email} didn't confirm");
             }
 
             var result =
@@ -89,7 +97,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             {
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"UserName {request.UserName} already exists.";
-                
+
                 return registrationResponse;
             }
 
@@ -100,7 +108,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 LastName = request.LastName,
                 UserName = request.UserName,
                 CreatedOn = DateTime.Now,
-                EmailConfirmed = true,
+                EmailConfirmed = false,
                 IsActive = true
             };
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
@@ -109,18 +117,15 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "NORMALUSER");
-                    
-                    return new RegistrationResponse() {UserId = user.Id};
+                    // await _userManager.AddToRoleAsync(user, "NORMALUSER");
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+
+                    return new RegistrationResponse() {UserId = user.Id, Code = code};
                 }
                 else
                 {
                     registrationResponse.Success = false;
-                    registrationResponse.ValidationErrors = new List<string>();
-                    foreach (var error in result.Errors)
-                    {
-                        registrationResponse.ValidationErrors.Add(error.Description);
-                    }
+                    registrationResponse.ValidationErrors.AddRange(result.Errors.Select(_ => _.Description));
                 }
             }
             else
@@ -129,7 +134,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 registrationResponse.Message = $"Email {request.Email} already exists.";
             }
 
-           
 
             return registrationResponse;
         }
@@ -180,7 +184,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 LastName = request.LastName,
                 UserName = request.UserName,
                 AvatarUrl = request.AvatarUrl,
-                CreatedOn =  DateTime.Now,
+                CreatedOn = DateTime.Now,
                 EmailConfirmed = true,
                 IsActive = true
             };
@@ -258,6 +262,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 };
                 usersResponse.Users.Add(userVm);
             }
+
             return usersResponse;
         }
 
@@ -268,7 +273,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             {
                 throw new Exception($"User with {email} not found.");
             }
-            
+
             var userRoles = await _userManager.GetRolesAsync(user);
             AuthenticationResponse response = new AuthenticationResponse()
             {
@@ -284,7 +289,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return response;
         }
 
-      
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
@@ -324,7 +328,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var users = await _userManager.Users.ToListAsync();
             return users.Select(x => new ApplicationUserDto()
             {
-                FullName = $"{x.LastName } {x.FirstName }",
+                FullName = $"{x.LastName} {x.FirstName}",
                 UserName = x.UserName
             }).ToList();
         }
@@ -337,20 +341,81 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             {
                 response.Success = false;
                 response.Message = "Please verify your email address";
-                
+
                 return response;
             }
+
             var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
             var callbackUrl = $"clientUrl";
-            
+
             await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
             response.Code = code;
             response.UserId = user.Id;
-            
+
             return response;
         }
 
+        public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var response = new ResetPasswordResponse();
+            var user = await _userManager.FindByIdAsync(request.UserId).ConfigureAwait(false);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Invalid credentials.";
 
-       
+                return response;
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, request.Code, request.Password)
+                .ConfigureAwait(false);
+            if (result.Errors.Any())
+            {
+                response.Success = false;
+
+                response.ValidationErrors.AddRange(result.Errors.Select(x => x.Description));
+            }
+
+            return response;
+        }
+
+        public async Task<ConfirmEmailResponse> ConfirmEmailAsync(ConfirmEmailRequest request)
+        {
+            var response = new ConfirmEmailResponse();
+            if (request.UserId == null || request.Code == null)
+            {
+                response.Success = false;
+                response.Message = "Error retrieving information!";
+            }
+
+            var user = await _userManager.FindByIdAsync(request.UserId).ConfigureAwait(false);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Could not find User";
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, request.Code).ConfigureAwait(false);
+            if (result.Errors.Any())
+            {
+                response.Success = false;
+                response.ValidationErrors.AddRange(result.Errors.Select(_ => _.Description));
+            }
+
+            if (response.Success)
+            {
+                await  _userManager.AddToRoleAsync(user, "NORMALUSER");
+            }
+
+            return response;
+        }
+
+        public async Task<(string UserId, string Code)> ResendVerificationEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            //TODO: Check user is null
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+            return (UserId: user.Id, Code: code);
+        }
     }
 }

@@ -6,5 +6,6 @@ namespace GloboWeather.WeatherManegement.Application.Models.Authentication
     public class RegistrationResponse : BaseResponse
     {
         public string UserId { get; set; }
+        public  string Code { get; set; }
     }
 }

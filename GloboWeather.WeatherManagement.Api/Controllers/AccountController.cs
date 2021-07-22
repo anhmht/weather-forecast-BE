@@ -1,8 +1,11 @@
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEmail;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ResetPassword;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Models.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -53,9 +56,9 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             return Ok(await _authenticationService.GetUserListAsync(query));
         }
-        
-        
-        [HttpPost("createUser")] 
+
+
+        [HttpPost("createUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<RegistrationResponse>> CreateUserAsync(CreateUserCommand request)
         {
@@ -64,6 +67,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             {
                 return Ok(result);
             }
+
             return BadRequest(result);
         }
 
@@ -72,10 +76,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult> GetUserInfo()
         {
             var email = HttpContext.User?.FindFirstValue(claimType: ClaimTypes.Email);
-            return Ok(await  _authenticationService.GetUserInfoAsync(email));
+            return Ok(await _authenticationService.GetUserInfoAsync(email));
         }
 
-        [HttpPost("forgotPassword")]
+        [HttpPost("forgot-password")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
@@ -85,8 +89,46 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             {
                 return Ok(response);
             }
+
             return BadRequest(response);
         }
 
+        [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.Values.Select(x => x.Errors.FirstOrDefault().ErrorMessage));
+
+            var response = await _authenticationService.ResetPasswordAsync(request);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(response);
+        }
+
+        [HttpPost("resend-verification-email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ResendVerificationEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email is not empty");
+            }
+
+            var response = await _authenticationService.ResendVerificationEmail(email);
+
+            return Ok(response);
+        }
+
+        [HttpPost("confirm-email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
+        {
+            var response = await _authenticationService.ConfirmEmailAsync(request);
+            return Ok(response);
+        }
     }
 }
