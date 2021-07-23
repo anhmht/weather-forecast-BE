@@ -32,7 +32,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.
     public class ScenarioActionDetailDto : ScenarioActionDetail
     {
         public string ScenarioActionTypeName { get; set; }
-        public string Posision { get; set; }
+        public string Position { get; set; }
         public string Action { get; set; }
         public string Method { get; set; }
         public List<string> IconsList { get; set; }

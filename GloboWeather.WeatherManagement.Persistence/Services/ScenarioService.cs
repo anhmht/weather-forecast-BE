@@ -128,7 +128,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 ActionTypeId = x.ScenarioActionDetailActionTypeId,
                 IconUrls = x.ScenarioActionDetailIconUrls,
                 Method = actionMethod.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailMethodId)?.ValueText,
-                Posision = position.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailPositionId)?.ValueText,
+                Position = position.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailPositionId)?.ValueText,
                 ScenarioActionTypeName = scenarioActionType.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailScenarioActionTypeId)?.ValueText,
                 PlaceId = x.ScenarioActionDetailPlaceId,
                 IsProvince = x.ScenarioActionDetailIsProvince
@@ -209,7 +209,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     scenarioActionDetailDto.Action = actionType.Find(x => x.ValueId == scenarioActionDetailDto.ActionTypeId)?.ValueText;
                     scenarioActionDetailDto.ScenarioActionTypeName = scenarioActionType
                         .Find(x => x.ValueId == scenarioActionDetailDto.ScenarioActionTypeId)?.ValueText;
-                    scenarioActionDetailDto.Posision = position.Find(x => x.ValueId == scenarioActionDetailDto.PositionId)?.ValueText;
+                    scenarioActionDetailDto.Position = position.Find(x => x.ValueId == scenarioActionDetailDto.PositionId)?.ValueText;
                     scenarioActionDetailDto.Method = actionMethod.Find(x => x.ValueId == scenarioActionDetailDto.MethodId)?.ValueText;
                 }
             }
