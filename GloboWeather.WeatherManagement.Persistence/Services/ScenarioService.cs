@@ -68,6 +68,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionLastModifiedBy = sa.LastModifiedBy,
                             ScenarioActionLastModifiedDate = sa.LastModifiedDate,
                             ScenarioActionOrder = sa.Order,
+                            ScenarioActionTop = sa.Top,
+                            ScenarioActionLeft = sa.Left,
+                            ScenarioActionBottom = sa.Bottom,
+                            ScenarioActionRight = sa.Right,
+                            ScenarioActionIsEnableIcon = sa.IsEnableIcon,
+                            ScenarioActionIsEnableLayer = sa.IsEnableLayer,
                             ScenarioActionDetailId = sad.Id,
                             ScenarioActionDetailContent = sad.Content,
                             ScenarioActionDetailMethodId = sad.MethodId,
@@ -88,7 +94,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionDetailLastModifiedBy = sad.LastModifiedBy,
                             ScenarioActionDetailLastModifiedDate = sad.LastModifiedDate,
                             ScenarioActionDetailPlaceId = sad.PlaceId,
-                            ScenarioActionDetailIsProvince = sad.IsProvince
+                            ScenarioActionDetailIsProvince = sad.IsProvince,
+                            ScenarioActionDetailIsIsEnableIcon = sad.IsEnableIcon
                         };
 
             var scenarioDetail = await query.OrderBy(x => x.ScenarioActionOrder).ToListAsync();
@@ -131,7 +138,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 Position = position.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailPositionId)?.ValueText,
                 ScenarioActionTypeName = scenarioActionType.FirstOrDefault(t => t.ValueId == x.ScenarioActionDetailScenarioActionTypeId)?.ValueText,
                 PlaceId = x.ScenarioActionDetailPlaceId,
-                IsProvince = x.ScenarioActionDetailIsProvince
+                IsProvince = x.ScenarioActionDetailIsProvince,
+                IsEnableIcon = x.ScenarioActionDetailIsIsEnableIcon
             }).Distinct().ToList();
 
             foreach (var detail in scenarioDetail)
@@ -154,6 +162,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         MethodId = detail.ScenarioActionMethodId,
                         ActionTypeId = detail.ScenarioActionActionTypeId,
                         Order = detail.ScenarioActionOrder,
+                        Top = detail.ScenarioActionTop,
+                        Left = detail.ScenarioActionLeft,
+                        Bottom = detail.ScenarioActionBottom,
+                        Right = detail.ScenarioActionRight,
+                        IsEnableIcon = detail.ScenarioActionIsEnableIcon,
+                        IsEnableLayer = detail.ScenarioActionIsEnableLayer,
                         Action = actionType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionActionTypeId)?.ValueText,
                         Method = actionMethod.FirstOrDefault(t => t.ValueId == detail.ScenarioActionMethodId)?.ValueText,
                         AreaTypeName = actionAreaType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionAreaTypeId)?.ValueText,
@@ -229,6 +243,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             //Add ScenarioAction
             var scenarioAction = _mapper.Map<ScenarioAction>(request);
             scenarioAction.Id = Guid.NewGuid();
+
+            if (scenarioAction.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl)
+            {
+                scenarioAction.Data = await PopulateScenarioActionImportVideo(scenarioAction.Data, scenarioAction);
+            }
+
             _unitOfWork.ScenarioActionRepository.Add(scenarioAction);
 
             //Add ScenarioActionDetails
@@ -288,9 +308,52 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 scenarioAction.AreaTypeId = request.AreaTypeId;
                 isUpdate = true;
             }
+            if (request.Order != scenarioAction.Order)
+            {
+                scenarioAction.Order = request.Order;
+                isUpdate = true;
+            }
             if (request.Data != scenarioAction.Data)
             {
-                scenarioAction.Data = request.Data;
+                if (scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl)
+                {
+                    scenarioAction.Data = await PopulateScenarioActionImportVideo(scenarioAction.Data, scenarioAction);
+                }
+                else
+                {
+                    scenarioAction.Data = request.Data;
+                }
+                
+                isUpdate = true;
+            }
+            if (!Equals(request.Top, scenarioAction.Top))
+            {
+                scenarioAction.Top = request.Top;
+                isUpdate = true;
+            }
+            if (!Equals(request.Left, scenarioAction.Left))
+            {
+                scenarioAction.Left = request.Left;
+                isUpdate = true;
+            }
+            if (!Equals(request.Bottom, scenarioAction.Bottom))
+            {
+                scenarioAction.Bottom = request.Bottom;
+                isUpdate = true;
+            }
+            if (!Equals(request.Right, scenarioAction.Right))
+            {
+                scenarioAction.Right = request.Right;
+                isUpdate = true;
+            }
+            if (!Equals(request.IsEnableIcon, scenarioAction.IsEnableIcon))
+            {
+                scenarioAction.IsEnableIcon = request.IsEnableIcon;
+                isUpdate = true;
+            }
+            if (!Equals(request.IsEnableLayer, scenarioAction.IsEnableLayer))
+            {
+                scenarioAction.IsEnableLayer = request.IsEnableLayer;
                 isUpdate = true;
             }
 
@@ -366,6 +429,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             //Delete scenarioActions
             if (scenarioActions.Any())
             {
+                //Delete import videos
+                var importVideoActions = scenarioActions.FindAll(x =>
+                    x.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl && !string.IsNullOrEmpty(x.Data));
+                if (importVideoActions.Any())
+                {
+                    foreach (var importVideoAction in importVideoActions)
+                    {
+                        var videos = new List<string>() {importVideoAction.Data};
+                        await _imageService.DeleteFileInStorageContainerByNameAsync(
+                            importVideoAction.Id.ToString(), videos, StorageContainer.Scenarios);
+                    }
+                }
+
                 _unitOfWork.ScenarioActionRepository.DeleteRange(scenarioActions);
             }
 
@@ -388,6 +464,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 (await _unitOfWork.ScenarioActionDetailRepository.GetWhereAsync(x => x.ActionId == scenarioAction.Id,
                     cancellationToken)).ToList();
             await DeleteScenarioActionDetail(scenarioActionDetails);
+
+            //Delete custom import video
+            if (scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl)
+            {
+                var videos = new List<string>() { scenarioAction.Data };
+                await _imageService.DeleteFileInStorageContainerByNameAsync(
+                    scenarioAction.Id.ToString(), videos, StorageContainer.Scenarios);
+            }
 
             //Delete ScenarioAction
             _unitOfWork.ScenarioActionRepository.Delete(scenarioAction);
@@ -460,6 +544,18 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 _unitOfWork.ScenarioActionDetailRepository.DeleteRange(scenarioActionDetails);
             }
         }
+
+        private async Task<string> PopulateScenarioActionImportVideo(string videoUrl,
+            ScenarioAction scenarioAction)
+        {
+            var listFile = new List<string>() {videoUrl};
+            var iconsResult =
+                await _imageService.CopyFileToStorageContainerAsync(
+                    listFile, scenarioAction.Id.ToString(), Forder.ImportVideo,
+                    StorageContainer.Scenarios);
+            return iconsResult?.FirstOrDefault();
+        }
+
         #endregion
     }
 }

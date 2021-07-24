@@ -30,5 +30,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         public string IconUrls { get; set; }
         public string PlaceId { get; set; }
         public bool? IsProvince { get; set; }
+        public bool? IsEnableIcon { get; set; }
     }
 }

@@ -14,6 +14,13 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
         public string Data { get; set; }
         public int? Duration { get; set; }
         public int Order { get; set; }
+        public float? Top { get; set; }
+        public float? Left { get; set; }
+        public float? Bottom { get; set; }
+        public float? Right { get; set; }
+        public bool? IsEnableIcon { get; set; }
+        public bool? IsEnableLayer { get; set; }
+
         public List<CreateScenarioActionDetailDto> ScenarioActionDetails { get; set; }
 
         public CreateScenarioActionCommand()
@@ -42,6 +49,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
         public List<string> IconsList { get; set; }
         [JsonIgnore]
         public string IconUrls { get; set; }
+        public bool? IsEnableIcon { get; set; }
 
         public CreateScenarioActionDetailDto()
         {

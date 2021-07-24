@@ -23,6 +23,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public static string FeatureImage = "feature-Image";
         public static string NormalImage = "normal-Image";
         public static string IconImage = "icon-Image";
+        public static string ImportVideo = "import-video";
     }
 
     public static class ReplaceContent
@@ -70,5 +71,15 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         ActionAreaType = 5,
         ScenarioActionType = 6,
         Position = 7
+    }
+
+    public enum ScenarioActionType
+    {
+        CustomLocationControl = 1,
+        CustomMapStatusControl = 2,
+        CustomLevelControl = 3,
+        CustomZoomControl = 4,
+        CustomWaitControl = 5,
+        CustomImportVideoControl = 6
     }
 }
