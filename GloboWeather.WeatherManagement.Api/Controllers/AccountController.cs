@@ -48,6 +48,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
 
         [HttpGet("GetAllRoles")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<RoleResponse>> GetAllRoles()
         {
             return Ok(await _authenticationService.GetRolesListAsync());
@@ -56,6 +57,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("GetAllUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<GetUserListResponse>> GetAllUserList([FromBody] GetUsersListQuery query)
         {
             return Ok(await _authenticationService.GetUserListAsync(query));
@@ -64,6 +66,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpPost("createUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<RegistrationResponse>> CreateUserAsync(CreateUserCommand request)
         {
             var result = await _authenticationService.CreateUserAsync(request: request);

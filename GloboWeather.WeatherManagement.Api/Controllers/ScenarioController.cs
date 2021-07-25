@@ -11,6 +11,7 @@ using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetS
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenariosList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("GetAllScenario", Name = nameof(GetAllScenario))]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<GetScenariosListResponse>> GetAllScenario([FromBody] GetScenariosListQuery query)
         {
             var dtos = await _mediator.Send(query);
@@ -39,6 +41,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("{id}", Name = "GetScenarioById")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<ScenarioDetailVm>> GetScenarioById(Guid id)
         {
             var query = new GetScenarioDetailQuery() {ScenarioId = id};
@@ -49,6 +52,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost(Name = "AddScenario")]
         [ProducesResponseType(statusCode: StatusCodes.Status201Created)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<Guid>> CreateScenario([FromBody] CreateScenarioCommand query)
         {
             var scenarioId = await _mediator.Send(query);
@@ -58,6 +62,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPut(Name = "UpdateScenario")]
         [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult> UpdateScenario([FromBody] UpdateScenarioCommand query)
         {
             await _mediator.Send(query);
@@ -67,6 +72,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpDelete("{id}", Name = "DeleteScenario")]
         [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult> DeleteScenario(Guid id)
         {
             var query = new DeleteScenarioCommand() {ScenarioId = id};
@@ -77,6 +83,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("action/{id}", Name = "GetScenarioActionDetailById")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<ScenarioActionDetailVm>> GetScenarioActionDetailAsync(Guid id)
         {
             var query = new GetScenarioActionDetailQuery() { Id = id };
@@ -87,6 +94,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("action", Name = "CreateScenarioActionAsync")]
         [ProducesResponseType(statusCode: StatusCodes.Status201Created)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<Guid>> CreateScenarioActionAsync([FromBody] CreateScenarioActionCommand query)
         {
             var scenarioId = await _mediator.Send(query);
@@ -96,6 +104,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPut("action", Name = "UpdateScenarioActionAsync")]
         [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult> UpdateScenarioActionAsync([FromBody] UpdateScenarioActionCommand query)
         {
             await _mediator.Send(query);
@@ -104,6 +113,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpDelete("action/{id}", Name = "DeleteScenarioActionAsync")]
         [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult> DeleteScenarioActionAsync(Guid id)
         {
             var query = new DeleteScenarioActionCommand() { Id = id };
@@ -114,6 +124,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("updateActionOrder", Name = nameof(UpdateActionOrderAsync))]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult> UpdateActionOrderAsync([FromBody] UpdateActionOrderCommand query)
         {
             await _mediator.Send(query);
