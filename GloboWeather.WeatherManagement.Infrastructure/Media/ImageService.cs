@@ -22,7 +22,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 {
     public class ImageService : IImageService
     {
-        public  AzureStorageConfig _storageConfig;
+        public AzureStorageConfig _storageConfig;
         private readonly ILogger<ImageService> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -31,6 +31,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             _storageConfig = azureStorageConfig.Value;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
+            
         }
 
         public async Task<ImageResponse> UploadImageAsync(IFormFile file)
@@ -41,7 +42,27 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                     Url = string.Empty
                 };
 
-            return await UploadFileAsync(file);
+            string imageUrl = string.Empty;
+
+            if (file.Length > 0)
+            {
+                using (Stream stream = file.OpenReadStream())
+                {
+                    _logger.LogInformation("File Upload");
+                    var fileName = Guid.NewGuid().ToString() + file.FileName.Replace(" ", String.Empty);
+                    imageUrl = await StorageHelper.UploadFileToStorage(stream, fileName, _storageConfig);
+                }
+            }
+
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                _logger.LogError("File uploading failed");
+            }
+
+            return new ImageResponse
+            {
+                Url = imageUrl
+            };
         }
 
         public async Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName)
@@ -121,7 +142,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             };
         }
 
-        public async Task<ImageResponse> UploadFileAsync(IFormFile file)
+        public async Task<DocumentResponse> UploadFileAsync(IFormFile file)
         {
             string imageUrl = string.Empty;
 
@@ -140,15 +161,12 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 _logger.LogError("File uploading failed");
             }
 
-            return new ImageResponse
+            return new DocumentResponse
             {
-                Url = imageUrl
+                Url = imageUrl,
+                ContentLength = file.Length
+                
             };
-        }
-
-        public async Task<long> GetFileContentLengthAsync(string fileUrl)
-        {
-            return await StorageHelper.GetFileContentLengthAsync(fileUrl, _httpClientFactory);
         }
 
         public async Task<List<string>> CopyFileToStorageContainerAsync(List<string> files, string id, string folderName, string containerName)

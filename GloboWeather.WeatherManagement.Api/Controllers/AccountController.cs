@@ -35,7 +35,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegistrationResponse>> RegisterAsync(RegistrationRequest request)
         {
-            return Ok(await _authenticationService.RegisterAsync(request: request));
+            var response = await _authenticationService.RegisterAsync(request);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(response);
         }
 
         [HttpPut("updateProfile")]
@@ -142,7 +145,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            
             var response = await _authenticationService.ChangePasswordAsync(request);
             if (!response.Success)
                 return BadRequest(response);

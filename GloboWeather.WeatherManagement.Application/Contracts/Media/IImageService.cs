@@ -13,11 +13,9 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         Task<bool> DeleteImagesInPostsContainerAsync(string eventId);
         Task<bool> DeleteImagesInPostsContainerByNameAsync(string eventId, List<string> imageUrls);
         Task<List<string>> CopyImageToEventPost(List<string> imageUrls, string eventId, string folderName);
-
         Task<ImageResponse> UploadAvatarForUserAsync(string userId, IFormFile file);
         Task<ImageResponse> GenerateQRCodeAsync(string text);
-        Task<ImageResponse> UploadFileAsync(IFormFile file);
-        Task<long> GetFileContentLengthAsync(string fileUrl);
+        Task<DocumentResponse> UploadFileAsync(IFormFile file);
         Task<List<string>> CopyFileToStorageContainerAsync(List<string> files, string id, string folderName, string containerName);
         Task<bool> DeleteFileInStorageContainerByNameAsync(string id, List<string> files, string containerName);
     }

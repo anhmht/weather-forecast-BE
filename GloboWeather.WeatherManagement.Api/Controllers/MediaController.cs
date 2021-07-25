@@ -58,7 +58,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
 
         [HttpPost("uploadFile")]
-        public async Task<ActionResult<ImageResponse>> UploadFileAsync(IFormFile file)
+        public async Task<ActionResult<DocumentResponse>> UploadFileAsync(IFormFile file)
         {
             return Ok(await _imageService.UploadFileAsync(file));
         }
