@@ -257,11 +257,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 //copy icons to storage
                 foreach (var createScenarioActionDetailDto in request.ScenarioActionDetails)
                 {
+                    createScenarioActionDetailDto.Id = Guid.NewGuid();
                     if (createScenarioActionDetailDto.IconsList?.Any() == true)
                     {
                         createScenarioActionDetailDto.IconUrls =
                             await PopulateScenarioActionDetailIconUrls(createScenarioActionDetailDto.IconsList,
-                                scenarioAction);
+                                createScenarioActionDetailDto.Id.Value);
                     }
                 }
 
@@ -374,11 +375,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 //Populate IconUrls
                 foreach (var scenarioActionDetailDto in request.ScenarioActionDetails)
                 {
+                    scenarioActionDetailDto.Id = Guid.NewGuid();
                     if (scenarioActionDetailDto.IconsList?.Any() == true)
                     {
                         scenarioActionDetailDto.IconUrls =
                             await PopulateScenarioActionDetailIconUrls(scenarioActionDetailDto.IconsList,
-                                scenarioAction);
+                                scenarioActionDetailDto.Id.Value);
                     }
                 }
 
@@ -503,18 +505,17 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         {
             foreach (var scenarioActionDetail in scenarioActionDetails)
             {
-                scenarioActionDetail.Id = Guid.NewGuid();
                 scenarioActionDetail.ActionId = scenarioAction.Id;
             }
         }
 
         private async Task<string> PopulateScenarioActionDetailIconUrls(List<string> iconsList,
-            ScenarioAction scenarioAction)
+            Guid scenarioActionDetailId)
         {
             var iconsResult =
                 await _imageService.CopyFileToStorageContainerAsync(
                     iconsList
-                    , scenarioAction.Id.ToString(), Forder.IconImage,
+                    , scenarioActionDetailId.ToString(), Forder.IconImage,
                     StorageContainer.Scenarios);
             return string.Join(Constants.SemiColonStringSeparator,
                 iconsResult);
@@ -532,7 +533,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         var images = scenarioActionDetail.IconUrls
                             .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
                         await _imageService.DeleteFileInStorageContainerByNameAsync(
-                            scenarioActionDetail.ActionId.ToString(), images, StorageContainer.Scenarios);
+                            scenarioActionDetail.Id.ToString(), images, StorageContainer.Scenarios);
                     }
                     catch
                     {
