@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ChangePassword;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEmail;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
@@ -346,7 +347,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             }
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
-            var callbackUrl = $"clientUrl";
+            var callbackUrl =
+                $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
             await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
             response.Code = code;
@@ -404,7 +406,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             if (response.Success)
             {
-                await  _userManager.AddToRoleAsync(user, "NORMALUSER");
+                await _userManager.AddToRoleAsync(user, "NORMALUSER");
             }
 
             return response;
@@ -416,6 +418,28 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             //TODO: Check user is null
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
             return (UserId: user.Id, Code: code);
+        }
+
+        public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            var response = new ChangePasswordResponse();
+            var user = await _userManager.FindByIdAsync(userId: request.UserId).ConfigureAwait(false);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Please verify your email address";
+
+                return response;
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, request.Token, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                response.Success = false;
+                response.ValidationErrors.AddRange(result.Errors.Select(_ => _.Description));
+            }
+
+            return response;
         }
     }
 }

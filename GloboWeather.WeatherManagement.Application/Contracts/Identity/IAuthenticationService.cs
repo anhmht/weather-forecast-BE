@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ChangePassword;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEmail;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
@@ -29,6 +30,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
         Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request);
         Task<ConfirmEmailResponse> ConfirmEmailAsync(ConfirmEmailRequest request);
         Task<(string UserId, string Code)> ResendVerificationEmail(string email);
+        Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request);
 
     }
 }
