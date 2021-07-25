@@ -7,6 +7,7 @@ using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Que
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.ExtremePhenomenonList;
 using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Queries.SearchExtremePhenomenonDetail;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("GetAllExtremePhenomenons", Name = nameof(GetAllExtremePhenomenons))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<ActionResult<GetExtremePhenomenonListResponse>> GetAllExtremePhenomenons([FromBody] GetExtremePhenomenonListQuery query)
         {
             var dtos = await _mediator.Send(query);
@@ -44,6 +46,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost(Name = "AddExtremePhenomenon")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<ActionResult<Guid>> AddExtremePhenomenon([FromBody] CreateExtremePhenomenonCommand createExtremePhenomenonCommand)
         {
             var id = await _mediator.Send(createExtremePhenomenonCommand);
@@ -54,6 +57,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<ActionResult<Guid>> UpdateExtremePhenomenon([FromBody] UpdateExtremePhenomenonCommand updateExtremePhenomenonCommand)
         {
             return await _mediator.Send(updateExtremePhenomenonCommand);
@@ -63,6 +67,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<ActionResult> DeleteExtremePhenomenon(Guid id)
         {
             await _mediator.Send(new DeleteExtremePhenomenonCommand() { Id = id });

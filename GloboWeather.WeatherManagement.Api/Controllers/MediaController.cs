@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,6 +53,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("generate-qr-code")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<ImageResponse>> GenerateQRCodeAsync([FromQuery] string text)
         {
             return Ok(await _imageService.GenerateQRCodeAsync(text));
