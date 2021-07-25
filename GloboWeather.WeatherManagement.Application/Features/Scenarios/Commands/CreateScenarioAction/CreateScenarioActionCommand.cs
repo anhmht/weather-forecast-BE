@@ -31,6 +31,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
 
     public class CreateScenarioActionDetailDto
     {
+        [JsonIgnore]
+        public Guid? Id { get; set; }
         public int ScenarioActionTypeId { get; set; }
         public int? ActionTypeId { get; set; }
         public int? MethodId { get; set; }
