@@ -2,6 +2,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
+using GloboWeather.WeatherManagement.Application.Models.Authentication.ChangePassword;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEmail;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
@@ -128,6 +129,24 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
         {
             var response = await _authenticationService.ConfirmEmailAsync(request);
+            return Ok(response);
+        }
+
+        [HttpPost("change-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _authenticationService.ChangePasswordAsync(request);
+            if (!response.Success)
+                return BadRequest(response);
+
             return Ok(response);
         }
     }
