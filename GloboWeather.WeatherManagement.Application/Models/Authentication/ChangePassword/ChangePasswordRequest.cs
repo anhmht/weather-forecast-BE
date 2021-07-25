@@ -15,6 +15,8 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Chang
         [Compare("NewPassword", ErrorMessage = "The new password ang confirmation password do not match")]
         public string ConfirmPassword { get; set; }
         
-        public  string Token { get; set; }
+        [DataType(DataType.Password)]
+        public string CurrentPassword { get; set; }
+   
     }
 }

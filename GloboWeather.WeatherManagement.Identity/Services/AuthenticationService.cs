@@ -432,7 +432,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 return response;
             }
 
-            var result = await _userManager.ChangePasswordAsync(user, request.Token, request.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(user,  request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
             {
                 response.Success = false;
