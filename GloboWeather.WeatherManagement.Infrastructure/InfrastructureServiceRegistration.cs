@@ -22,14 +22,30 @@ namespace GloboWeather.WeatherManagement.Infrastructure
             services.Configure<AzureStorageConfig>(configuration.GetSection(key: "AzureStorageConfig"));
             services.Configure<AstronomySettings>(configuration.GetSection("AstronomySettings"));
             services.Configure<PositionStackSettings>(configuration.GetSection("PositionStackSettings"));
-            
+            services.Configure<GmailSettings>(configuration.GetSection("GmailSettings"));
+
             services.AddHttpClient<LocationService>();
-            
-            services.AddTransient<IEmailService, EmailService>();
+
             services.AddTransient<IImageService, ImageService>();
             services.AddScoped<ILocationService, LocationService>();
-            
+            RegistSendMailProvider(services, configuration);
+
             return services;
+        }
+
+        public static void RegistSendMailProvider(IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var sendMailProvider = configuration.GetValue<string>("SendMailProvider");
+            switch (sendMailProvider)
+            {
+                case "gmail":
+                    services.AddTransient<IEmailService, GmailService>();
+                    break;
+                default:
+                    services.AddTransient<IEmailService, EmailService>();
+                    break;
+            }
         }
     }
 }
