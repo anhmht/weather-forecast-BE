@@ -304,6 +304,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             var dtos = await _mediator.Send(query);
             return Ok(GeneratePageList(query, dtos));
         }
+        
+        [HttpPost("get-all-events-mobile", Name = nameof(GetAllEventsForMobile))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetEventsListResponse>> GetAllEventsForMobile([FromBody] GetEventsListQuery query)
+        {
+            var dtos = await _mediator.Send(query);
+            return Ok(GeneratePageList(query, dtos));
+        }
 
     }
 }
