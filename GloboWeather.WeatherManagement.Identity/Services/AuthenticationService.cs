@@ -118,9 +118,12 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    // await _userManager.AddToRoleAsync(user, "NORMALUSER");
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+                    var callbackUrl =
+                        $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
+                    await _emailService.SendEmailConfirmationAsync(request.Email, callbackUrl).ConfigureAwait(false);
                     return new RegistrationResponse() {UserId = user.Id, Code = code};
                 }
                 else
