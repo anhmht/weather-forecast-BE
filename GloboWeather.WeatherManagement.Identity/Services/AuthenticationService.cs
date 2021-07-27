@@ -237,7 +237,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                     userRoles.AddRange(await _userManager.GetUsersInRoleAsync(roleName));
                 }
 
-                userPaging = userRoles.Paginate(query.Page, query.Limit);
+                userPaging = userRoles.Distinct().Paginate(query.Page, query.Limit);
             }
 
             var usersResponse = new GetUserListResponse
