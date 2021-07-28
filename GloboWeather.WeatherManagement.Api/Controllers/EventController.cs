@@ -147,7 +147,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         public async Task<ActionResult<GetEventsListResponse>> GetRecommendedInformationAsync([FromBody] GetEventsListQuery query)
         {
             if (!query.CategoryId.HasValue || query.CategoryId.Equals(Guid.Empty))
-                query.CategoryId = Guid.Parse("e78c78b7-80d1-4f3b-3014-08d91e5e4dfa");
+                query.CategoryId = Guid.Parse("580FFB36-2C72-4642-CB46-08D91FA2C701");
             var dtos = await _mediator.Send(query);
             return Ok(GeneratePageList(query, dtos));
         }
