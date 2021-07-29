@@ -155,5 +155,22 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
             return Ok(response);
         }
+
+
+        [HttpDelete("{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteByEmailAsync([FromRoute] string email)
+
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _authenticationService.DeleteUserByEmailAsync(email);
+            
+            return Ok();
+        }
     }
 }

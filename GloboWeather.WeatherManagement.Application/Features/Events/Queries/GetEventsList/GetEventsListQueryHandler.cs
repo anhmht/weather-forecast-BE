@@ -20,7 +20,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
         {
             var eventsListToReturn = await _eventRepository.GetByPageAsync(request, cancellationToken);
 
-            var users = await _authenticationService.GetAllUserAsync();
+            var users = await _authenticationService.GetAllUserAsync(true);
             eventsListToReturn.Events.ForEach(entry =>
                 {
                     entry.CreatedFullName = users.FirstOrDefault(x => x.UserName == entry.CreatedBy)?.FullName;
