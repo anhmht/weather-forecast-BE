@@ -2,16 +2,113 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using GloboWeather.WeatherManagement.Infrastructure.Utils;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.Identity.Client;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
 {
     public class ServiceMediaHelper
     {
+        private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
+        private const string InputMP4FileName = @"ignite.mp4";
+        private const string OutputFolderName = @"Output"; 
+
+        public async Task RunAsync(ConfigWrapper config)
+        {
+            IAzureMediaServicesClient client;
+            try
+            {
+                client = await Authentication.CreateMediaServicesClientAsync(config);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            client.LongRunningOperationRetryTimeout = 2;
+            string uniqueness = Guid.NewGuid().ToString("N");
+            string jobName = $"job-{uniqueness}";
+            string locatorName = $"locator-{uniqueness}";
+            string outputAssetName = $"output-{uniqueness}";
+            string inputAssetName = $"input-{uniqueness}";
+
+            _ = await GetOrCreateTransformAsync(client, config.ResourceGroup, config.AccountName,
+                AdaptiveStreamingTransformName);
+
+            _ = await CreateInputAssetAsync(client, config.ResourceGroup, config.AccountName, inputAssetName,
+                InputMP4FileName);
+
+            Asset outputAsset =
+                await CreateOutputAssetAsync(client, config.ResourceGroup, config.AccountName, outputAssetName);
+
+            Job job = await WaitForJobToFinishAsync(client, config.ResourceGroup, config.AccountName,
+                AdaptiveStreamingTransformName, jobName);
+
+            if (job.State == JobState.Finished)
+            {
+                if (!Directory.Exists(OutputFolderName))
+                    Directory.CreateDirectory(OutputFolderName);
+
+                await DownloadOutputAssetAsync(client, config.ResourceGroup, config.AccountName, outputAsset.Name,
+                    OutputFolderName);
+
+                StreamingLocator locator = await CreateStreamingLocatorAsync(client, config.ResourceGroup,
+                    config.AccountName, outputAsset.Name, locatorName);
+                
+            }
+        }
+        private async Task<Asset> CreateInputAssetAsync(
+            IAzureMediaServicesClient client,
+            string resourceGroupName,
+            string accountName,
+            string assetName,
+            string fileUpload)
+        {
+            Asset asset =
+                await client.Assets.CreateOrUpdateAsync(resourceGroupName, accountName, assetName, new Asset());
+
+            var response = await client.Assets.ListContainerSasAsync(
+                resourceGroupName,
+                accountName,
+                assetName,
+                permissions: AssetContainerPermission.ReadWrite,
+                expiryTime: DateTime.UtcNow.AddHours(4).ToUniversalTime());
+
+            var sasUri = new Uri(response.AssetContainerSasUrls.First());
+
+            BlobContainerClient containerClient = new BlobContainerClient(sasUri);
+            BlobClient blobClient = containerClient.GetBlobClient(Path.GetFileName(fileUpload));
+
+            await blobClient.UploadAsync(fileUpload);
+
+            return asset;
+        }
+
+        private async Task<Asset> CreateOutputAssetAsync(IAzureMediaServicesClient client,
+            string resourceGroupName, 
+            string accountName,
+            string assetName)
+        {
+            Asset outputAsset = await client.Assets.GetAsync(resourceGroupName, accountName, assetName);
+            Asset asset = new Asset();
+            string outputAssetName = assetName;
+
+            if (outputAsset != null)
+            {
+                string unitqueness = $"-{Guid.NewGuid():N}";
+                outputAssetName += unitqueness;
+            }
+
+            return await client.Assets.CreateOrUpdateAsync(resourceGroupName, accountName, outputAssetName, asset);
+        }
+        
         private async Task<Transform> GetOrCreateTransformAsync(
             IAzureMediaServicesClient client,
             string resourceGroupName,

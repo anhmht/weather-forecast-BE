@@ -18,8 +18,8 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Utils
         public string AadTenantId => _config["AadTenantId"];
         public string AadClientId => _config["AadClientId"];
         public string AadSecret => _config["AadSecret"];
-        public Uri ArmAadAudience => new Uri(_config["ArmAadAudience"]);
-        public Uri ArmEndPoint => new Uri(_config["ArmEndpoint"]);
+        public Uri ArmAadAudience => new(_config["ArmAadAudience"]);
+        public Uri ArmEndPoint => new(_config["ArmEndpoint"]);
 
     }
 }
