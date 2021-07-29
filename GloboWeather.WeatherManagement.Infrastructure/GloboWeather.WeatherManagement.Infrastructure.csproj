@@ -10,10 +10,12 @@
         <PackageReference Include="Azure.Storage.Blobs" Version="12.2.0" />
         <PackageReference Include="Azure.Storage.Common" Version="12.1.1" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.10" />
+        <PackageReference Include="Microsoft.Identity.Client" Version="4.9.0" />
         <PackageReference Include="QRCoder" Version="1.4.1" />
         <PackageReference Include="SendGrid" Version="9.21.1" />
         <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
         <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Azure.Management.Media" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>
