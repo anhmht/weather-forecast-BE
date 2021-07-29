@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -31,6 +33,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             UploadFileToStorage(Stream fileStream, string fileName,
                 AzureStorageConfig _storageConfig)
         {
+            fileName = UnitCodeToAsciiString(fileName);
             //  fileName = Guid.NewGuid().ToString() + fileName;
             string url = "https://" +
                          _storageConfig.AccountName +
@@ -58,6 +61,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             UploadAvartarToStorage(Stream fileStream, string fileName,
                 AzureStorageConfig _storageConfig)
         {
+            fileName = UnitCodeToAsciiString(fileName);
             //  fileName = Guid.NewGuid().ToString() + fileName;
             string url = "https://" +
                          _storageConfig.AccountName +
@@ -181,11 +185,12 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
         {
             return await CopyFileToContainerAsync(fileName, eventId, folderName, storageConfig, storageConfig.PostContainer);
         }
-        
+
         public static async Task<string>
             UploadAvatarToStorage(Stream fileStream, string fileName,
                 AzureStorageConfig _storageConfig)
         {
+            fileName = UnitCodeToAsciiString(fileName);
             //  fileName = Guid.NewGuid().ToString() + fileName;
             string url = "https://" +
                          _storageConfig.AccountName +
@@ -238,13 +243,14 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
         public static async Task<string> CopyFileToContainerAsync(string fileName, string id, string folderName,
             AzureStorageConfig storageConfig, string containerName)
         {
+            fileName = UnitCodeToAsciiString(fileName);
             var stringUls = fileName.Split('/');
 
             var urlImage = $"https://{storageConfig.AccountName}.blob.core.windows.net" +
                            $"/{containerName}" +
                            $"/{id}" +
                            $"/{folderName}" +
-                           $"/{stringUls[^1].Replace(" ", string.Empty)}";
+                           $"/{HttpUtility.UrlEncode(stringUls[^1].Replace(" ", string.Empty))}";
 
             var blobUri = new Uri(urlImage);
             var blobUriTemp = new Uri(fileName);
@@ -293,5 +299,24 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             return await Task.FromResult(true);
         }
 
+        /// <summary>
+        /// Use this function to convert unicode string to ascii string -> Azure blob only accept string with ascii characters
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <returns></returns>
+        public static string UnitCodeToAsciiString(string inputString)
+        {
+            return Encoding.ASCII.GetString(
+                Encoding.Convert(
+                    Encoding.UTF8,
+                    Encoding.GetEncoding(
+                        Encoding.ASCII.EncodingName,
+                        new EncoderReplacementFallback(string.Empty),
+                        new DecoderExceptionFallback()
+                    ),
+                    Encoding.UTF8.GetBytes(inputString)
+                )
+            );
+        }
     }
 }

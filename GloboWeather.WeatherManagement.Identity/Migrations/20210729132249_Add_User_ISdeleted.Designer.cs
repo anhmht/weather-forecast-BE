@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Identity.Migrations
 {
     [DbContext(typeof(GloboWeatherIdentityDbContext))]
-    partial class GloboWeatherIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210729132249_Add_User_ISdeleted")]
+    partial class Add_User_ISdeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

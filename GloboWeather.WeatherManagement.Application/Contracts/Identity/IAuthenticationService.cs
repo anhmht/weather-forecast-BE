@@ -24,13 +24,13 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<AuthenticationResponse> GetUserInfoAsync(string email);
 
-        Task<List<ApplicationUserDto>> GetAllUserAsync();
+        Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted = false);
 
         Task<ForgotPasswordResponse> ForgotPasswordAsync(string email);
         Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request);
         Task<ConfirmEmailResponse> ConfirmEmailAsync(ConfirmEmailRequest request);
         Task<(string UserId, string Code)> ResendVerificationEmail(string email);
         Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request);
-
+        Task DeleteUserByEmailAsync(string email);
     }
 }
