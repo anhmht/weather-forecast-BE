@@ -1,34 +1,41 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Identity.Client;
 using Microsoft.Rest;
+
+using Microsoft.Extensions.Options;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Utils
 {
     public class Authentication
     {
         public static readonly string TokenType = "Bearer";
-
-        public static async Task<IAzureMediaServicesClient> CreateMediaServicesClientAsync(ConfigWrapper config,
+        public MediaVideoSettings VideoSettings;
+        public Authentication(IOptions<MediaVideoSettings> mediaConfig)
+        {
+            VideoSettings = mediaConfig.Value;
+        }
+        public static async Task<IAzureMediaServicesClient> CreateMediaServicesClientAsync(MediaVideoSettings VideoSettings,
             bool interactive = false)
         {
             ServiceClientCredentials credentials;
             if (interactive)
-                credentials = await GetCredentialsInteractiveAuthAsync(config);
+                credentials = await GetCredentialsInteractiveAuthAsync(VideoSettings);
             else
-                credentials = await GetCredentialAsync(config);
+                credentials = await GetCredentialAsync(VideoSettings);
 
-            return new AzureMediaServicesClient(config.ArmEndPoint, credentials)
+            return new AzureMediaServicesClient(VideoSettings.ArmEndPoint, credentials)
             {
-                SubscriptionId = config.SubscriptionId
+                SubscriptionId = VideoSettings.SubscriptionId
             };
         }
 
     
 
-        private static async Task<ServiceClientCredentials> GetCredentialAsync(ConfigWrapper config)
+        private static async Task<ServiceClientCredentials> GetCredentialAsync(MediaVideoSettings config)
         {
             var scopes = new[] {config.ArmAadAudience + "/.default"};
             var app = ConfidentialClientApplicationBuilder.Create(config.AadClientId)
@@ -43,7 +50,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Utils
             return new TokenCredentials(authResult.AccessToken, TokenType);
         }
 
-        private static async Task<ServiceClientCredentials> GetCredentialsInteractiveAuthAsync(ConfigWrapper config)
+        private static async Task<ServiceClientCredentials> GetCredentialsInteractiveAuthAsync(MediaVideoSettings config)
         {
             var scopes = new[] {config.ArmAadAudience + "/user_impersonation"};
 

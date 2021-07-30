@@ -2,29 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Infrastructure.Utils;
+using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.Identity.Client;
+using Microsoft.Extensions.Options;
 
-namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
+namespace GloboWeather.WeatherManagement.Infrastructure.Media
 {
-    public class ServiceMediaHelper
+    public class VideoService : IVideoService
     {
         private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
         private const string InputMP4FileName = @"ignite.mp4";
-        private const string OutputFolderName = @"Output"; 
-
-        public async Task RunAsync(ConfigWrapper config)
+        private const string OutputFolderName = @"Output";
+        public MediaVideoSettings VideoSettings;
+        public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings)
+        {
+            VideoSettings = mediaVideoSettings.Value;
+        }
+        
+        public async Task RunAsync()
         {
             IAzureMediaServicesClient client;
             try
             {
-                client = await Authentication.CreateMediaServicesClientAsync(config);
+                client = await Authentication.CreateMediaServicesClientAsync(VideoSettings);
             }
             catch (Exception e)
             {
@@ -39,16 +45,16 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
             string outputAssetName = $"output-{uniqueness}";
             string inputAssetName = $"input-{uniqueness}";
 
-            _ = await GetOrCreateTransformAsync(client, config.ResourceGroup, config.AccountName,
+            _ = await GetOrCreateTransformAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName,
                 AdaptiveStreamingTransformName);
 
-            _ = await CreateInputAssetAsync(client, config.ResourceGroup, config.AccountName, inputAssetName,
+            _ = await CreateInputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, inputAssetName,
                 InputMP4FileName);
 
             Asset outputAsset =
-                await CreateOutputAssetAsync(client, config.ResourceGroup, config.AccountName, outputAssetName);
+                await CreateOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAssetName);
 
-            Job job = await WaitForJobToFinishAsync(client, config.ResourceGroup, config.AccountName,
+            Job job = await WaitForJobToFinishAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName,
                 AdaptiveStreamingTransformName, jobName);
 
             if (job.State == JobState.Finished)
@@ -56,15 +62,17 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                 if (!Directory.Exists(OutputFolderName))
                     Directory.CreateDirectory(OutputFolderName);
 
-                await DownloadOutputAssetAsync(client, config.ResourceGroup, config.AccountName, outputAsset.Name,
+                await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name,
                     OutputFolderName);
 
-                StreamingLocator locator = await CreateStreamingLocatorAsync(client, config.ResourceGroup,
-                    config.AccountName, outputAsset.Name, locatorName);
+                StreamingLocator locator = await CreateStreamingLocatorAsync(client, VideoSettings.ResourceGroup,
+                    VideoSettings.AccountName, outputAsset.Name, locatorName);
                 
             }
         }
-        private async Task<Asset> CreateInputAssetAsync(
+        
+        
+         private async Task<Asset> CreateInputAssetAsync(
             IAzureMediaServicesClient client,
             string resourceGroupName,
             string accountName,
@@ -85,7 +93,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
 
             BlobContainerClient containerClient = new BlobContainerClient(sasUri);
             BlobClient blobClient = containerClient.GetBlobClient(Path.GetFileName(fileUpload));
-
             await blobClient.UploadAsync(fileUpload);
 
             return asset;
@@ -125,7 +132,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                     {
                         Preset = new BuiltInStandardEncoderPreset()
                         {
-                            PresetName = EncoderNamedPreset.AdaptiveStreaming
+                            PresetName = EncoderNamedPreset.H265SingleBitrate1080p
                         }
                     }
                 };

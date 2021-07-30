@@ -1,5 +1,6 @@
 using GloboWeather.WeatherManagement.Application.Models.Astronomy;
 using GloboWeather.WeatherManagement.Application.Models.Mail;
+using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Application.Models.PositionStack;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using GloboWeather.WeatherManagement.Infrastructure.Astronomy;
@@ -23,10 +24,12 @@ namespace GloboWeather.WeatherManagement.Infrastructure
             services.Configure<AstronomySettings>(configuration.GetSection("AstronomySettings"));
             services.Configure<PositionStackSettings>(configuration.GetSection("PositionStackSettings"));
             services.Configure<GmailSettings>(configuration.GetSection("GmailSettings"));
+            services.Configure<MediaVideoSettings>(configuration.GetSection("MediaVideoSettings"));
 
             services.AddHttpClient<LocationService>();
 
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IVideoService, VideoService>();
             services.AddScoped<ILocationService, LocationService>();
             RegistSendMailProvider(services, configuration);
 

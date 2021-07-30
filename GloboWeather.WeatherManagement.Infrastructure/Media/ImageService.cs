@@ -16,7 +16,6 @@ using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Win32.SafeHandles;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Media
 {
