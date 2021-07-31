@@ -74,6 +74,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionRight = sa.Right,
                             ScenarioActionIsEnableIcon = sa.IsEnableIcon,
                             ScenarioActionIsEnableLayer = sa.IsEnableLayer,
+                            ScenarioActionIsDisplayHydrological = sa.IsDisplayHydrological,
                             ScenarioActionDetailId = sad.Id,
                             ScenarioActionDetailContent = sad.Content,
                             ScenarioActionDetailMethodId = sad.MethodId,
@@ -168,6 +169,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         Right = detail.ScenarioActionRight,
                         IsEnableIcon = detail.ScenarioActionIsEnableIcon,
                         IsEnableLayer = detail.ScenarioActionIsEnableLayer,
+                        IsDisplayHydrological = detail.ScenarioActionIsDisplayHydrological,
                         Action = actionType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionActionTypeId)?.ValueText,
                         Method = actionMethod.FirstOrDefault(t => t.ValueId == detail.ScenarioActionMethodId)?.ValueText,
                         AreaTypeName = actionAreaType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionAreaTypeId)?.ValueText,
@@ -355,6 +357,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             if (!Equals(request.IsEnableLayer, scenarioAction.IsEnableLayer))
             {
                 scenarioAction.IsEnableLayer = request.IsEnableLayer;
+                isUpdate = true;
+            }
+            if (!Equals(request.IsDisplayHydrological, scenarioAction.IsDisplayHydrological))
+            {
+                scenarioAction.IsDisplayHydrological = request.IsDisplayHydrological;
                 isUpdate = true;
             }
 
