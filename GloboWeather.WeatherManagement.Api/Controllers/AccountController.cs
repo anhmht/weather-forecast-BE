@@ -172,5 +172,13 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             
             return Ok();
         }
+
+        [HttpGet("GetUserInfo/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetUserInfoByEmailAsync([FromRoute]string email)
+        {
+            return Ok(await _authenticationService.GetUserInfoAsync(email));
+        }
+
     }
 }
