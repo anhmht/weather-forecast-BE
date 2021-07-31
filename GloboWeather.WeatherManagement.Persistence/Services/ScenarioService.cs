@@ -318,7 +318,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 if (scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl)
                 {
-                    scenarioAction.Data = await PopulateScenarioActionImportVideo(scenarioAction.Data, scenarioAction);
+                    scenarioAction.Data = await PopulateScenarioActionImportVideo(request.Data, scenarioAction);
                 }
                 else
                 {
@@ -549,12 +549,37 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task<string> PopulateScenarioActionImportVideo(string videoUrl,
             ScenarioAction scenarioAction)
         {
+            
             var listFile = new List<string>() {videoUrl};
             var iconsResult =
                 await _imageService.CopyFileToStorageContainerAsync(
                     listFile, scenarioAction.Id.ToString(), Forder.ImportVideo,
                     StorageContainer.Scenarios);
-            return iconsResult?.FirstOrDefault();
+
+            var urlResult = iconsResult?.FirstOrDefault();
+
+            //Delete old video
+            if (!string.IsNullOrEmpty(urlResult) &&
+                scenarioAction.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl &&
+                !string.IsNullOrEmpty(scenarioAction.Data) &&
+                urlResult != scenarioAction.Data)
+            {
+                try
+                {
+                    var images = new List<string>
+                    {
+                        scenarioAction.Data
+                    };
+                    await _imageService.DeleteFileInStorageContainerByNameAsync(
+                        scenarioAction.Id.ToString(), images, StorageContainer.Scenarios);
+                }
+                catch
+                {
+                    //Ignore
+                }
+            }
+
+            return urlResult;
         }
 
         #endregion
