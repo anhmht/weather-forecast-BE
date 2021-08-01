@@ -20,6 +20,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands
         public float? Right { get; set; }
         public bool? IsEnableIcon { get; set; }
         public bool? IsEnableLayer { get; set; }
+        public bool? IsDisplayHydrological { get; set; }
 
         public List<CreateScenarioActionDetailDto> ScenarioActionDetails { get; set; }
 

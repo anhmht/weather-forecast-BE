@@ -74,6 +74,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                             ScenarioActionRight = sa.Right,
                             ScenarioActionIsEnableIcon = sa.IsEnableIcon,
                             ScenarioActionIsEnableLayer = sa.IsEnableLayer,
+                            ScenarioActionIsDisplayHydrological = sa.IsDisplayHydrological,
                             ScenarioActionDetailId = sad.Id,
                             ScenarioActionDetailContent = sad.Content,
                             ScenarioActionDetailMethodId = sad.MethodId,
@@ -168,6 +169,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         Right = detail.ScenarioActionRight,
                         IsEnableIcon = detail.ScenarioActionIsEnableIcon,
                         IsEnableLayer = detail.ScenarioActionIsEnableLayer,
+                        IsDisplayHydrological = detail.ScenarioActionIsDisplayHydrological,
                         Action = actionType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionActionTypeId)?.ValueText,
                         Method = actionMethod.FirstOrDefault(t => t.ValueId == detail.ScenarioActionMethodId)?.ValueText,
                         AreaTypeName = actionAreaType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionAreaTypeId)?.ValueText,
@@ -318,7 +320,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 if (scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl)
                 {
-                    scenarioAction.Data = await PopulateScenarioActionImportVideo(scenarioAction.Data, scenarioAction);
+                    scenarioAction.Data = await PopulateScenarioActionImportVideo(request.Data, scenarioAction);
                 }
                 else
                 {
@@ -355,6 +357,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             if (!Equals(request.IsEnableLayer, scenarioAction.IsEnableLayer))
             {
                 scenarioAction.IsEnableLayer = request.IsEnableLayer;
+                isUpdate = true;
+            }
+            if (!Equals(request.IsDisplayHydrological, scenarioAction.IsDisplayHydrological))
+            {
+                scenarioAction.IsDisplayHydrological = request.IsDisplayHydrological;
                 isUpdate = true;
             }
 
@@ -549,12 +556,37 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task<string> PopulateScenarioActionImportVideo(string videoUrl,
             ScenarioAction scenarioAction)
         {
+            
             var listFile = new List<string>() {videoUrl};
             var iconsResult =
                 await _imageService.CopyFileToStorageContainerAsync(
                     listFile, scenarioAction.Id.ToString(), Forder.ImportVideo,
                     StorageContainer.Scenarios);
-            return iconsResult?.FirstOrDefault();
+
+            var urlResult = iconsResult?.FirstOrDefault();
+
+            //Delete old video
+            if (!string.IsNullOrEmpty(urlResult) &&
+                scenarioAction.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl &&
+                !string.IsNullOrEmpty(scenarioAction.Data) &&
+                urlResult != scenarioAction.Data)
+            {
+                try
+                {
+                    var images = new List<string>
+                    {
+                        scenarioAction.Data
+                    };
+                    await _imageService.DeleteFileInStorageContainerByNameAsync(
+                        scenarioAction.Id.ToString(), images, StorageContainer.Scenarios);
+                }
+                catch
+                {
+                    //Ignore
+                }
+            }
+
+            return urlResult;
         }
 
         #endregion

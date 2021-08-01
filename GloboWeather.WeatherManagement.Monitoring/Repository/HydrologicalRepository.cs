@@ -24,8 +24,9 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
             {
                 var entryDatas = await _dbContext.Set<Hydrological>()
                     .AsNoTracking()
-                    .Where(r => r.StationId.Equals(query.StationId)
-                                && (r.Date >= query.DateFrom.Date && r.Date <= query.DateTo.Date))
+                    .Where(r => r.StationId.Equals(query.StationId) && r.Date >= query.DateFrom.Date &&
+                                r.Date <= query.DateTo.Date)
+                    .OrderByDescending(x => x.Date)
                     .PaginateAsync(query.Page, query.Limit, new CancellationToken());
                 
                 return new GetHydrologicalListResponse()
