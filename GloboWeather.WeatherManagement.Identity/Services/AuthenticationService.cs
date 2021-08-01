@@ -461,7 +461,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var callbackUrl =
                 $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
-            await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
+            await _emailService.SendEmailConfirmationAsync(email, callbackUrl).ConfigureAwait(false);
             return (UserId: user.Id, Code: code);
         }
 
