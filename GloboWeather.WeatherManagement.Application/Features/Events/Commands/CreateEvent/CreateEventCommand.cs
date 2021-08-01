@@ -20,5 +20,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Commands.Cr
     {
         public string Name { get; set; }
         public string Url { get; set; }
+        
+        public long ContentLength { get; set; } 
     }
 }

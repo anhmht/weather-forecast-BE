@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace GloboWeather.WeatherManagement.Application.Models.Authentication
 {
     public class UpdatingRequest
@@ -7,5 +9,6 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
         public string AvatarUrl { get; set; }
+        public List<string> RoleNames { get; set; }
     }
 }

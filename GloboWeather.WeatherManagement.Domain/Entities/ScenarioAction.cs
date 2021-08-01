@@ -22,5 +22,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities
         public float? Right { get; set; }
         public bool? IsEnableIcon { get; set; }
         public bool? IsEnableLayer { get; set; }
+        public bool? IsDisplayHydrological { get; set; }
     }
 }

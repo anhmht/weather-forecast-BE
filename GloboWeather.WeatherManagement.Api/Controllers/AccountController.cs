@@ -35,7 +35,10 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegistrationResponse>> RegisterAsync(RegistrationRequest request)
         {
-            return Ok(await _authenticationService.RegisterAsync(request: request));
+            var response = await _authenticationService.RegisterAsync(request);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(response);
         }
 
         [HttpPut("updateProfile")]
@@ -45,6 +48,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         }
 
         [HttpGet("GetAllRoles")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<RoleResponse>> GetAllRoles()
         {
             return Ok(await _authenticationService.GetRolesListAsync());
@@ -53,6 +57,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("GetAllUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<GetUserListResponse>> GetAllUserList([FromBody] GetUsersListQuery query)
         {
             return Ok(await _authenticationService.GetUserListAsync(query));
@@ -61,6 +66,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
 
         [HttpPost("createUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<RegistrationResponse>> CreateUserAsync(CreateUserCommand request)
         {
             var result = await _authenticationService.CreateUserAsync(request: request);
@@ -72,7 +78,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetUserInfo")]
+        [HttpGet("get-user-info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUserInfo()
         {
@@ -142,12 +148,37 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            
             var response = await _authenticationService.ChangePasswordAsync(request);
             if (!response.Success)
                 return BadRequest(response);
 
             return Ok(response);
         }
+
+
+        [HttpDelete("{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteByEmailAsync([FromRoute] string email)
+
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _authenticationService.DeleteUserByEmailAsync(email);
+            
+            return Ok();
+        }
+
+        [HttpGet("get-user-detail/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetUserInfoByIdAsync([FromRoute]string userId)
+        {
+            return Ok(await _authenticationService.GetUserDetailAsync(userId));
+        }
+
     }
 }

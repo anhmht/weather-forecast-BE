@@ -13,6 +13,7 @@ namespace GloboWeather.WeatherManagement.Application.Models.Authentication.Quiri
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public string ShortName => $"{LastName?[0]}{FirstName?[0]}";
         public bool? IsActive { get; set; }
         public string Status => IsActive == true ? "Đang sử dụng" : "Khóa";
     }

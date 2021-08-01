@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,15 +53,25 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpGet("generate-qr-code")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,DTH")]
         public async Task<ActionResult<ImageResponse>> GenerateQRCodeAsync([FromQuery] string text)
         {
             return Ok(await _imageService.GenerateQRCodeAsync(text));
         }
 
         [HttpPost("uploadFile")]
-        public async Task<ActionResult<ImageResponse>> UploadFileAsync(IFormFile file)
+        public async Task<ActionResult<DocumentResponse>> UploadFileAsync(IFormFile file)
         {
             return Ok(await _imageService.UploadFileAsync(file));
+        }
+
+        [HttpPost("UploadVideo")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UploadVideoAsync([FromServices]IVideoService videoService, IFormFile file)
+        {
+            var result =   await videoService.RunAsync(file);
+            return Ok(result);
         }
 
     }

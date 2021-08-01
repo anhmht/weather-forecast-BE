@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Authentication;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.ChangePassword;
@@ -19,10 +20,8 @@ using GloboWeather.WeatherManagement.Application.Models.Authentication.ConfirmEm
 using GloboWeather.WeatherManagement.Application.Models.Authentication.CreateUserRequest;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.Quiries.GetUsersList;
 using GloboWeather.WeatherManagement.Application.Models.Authentication.ResetPassword;
-using GloboWeather.WeatherManagement.Application.Responses;
 using GloboWeather.WeatherManagement.Identity.Models;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Identity.Services
@@ -62,6 +61,11 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             if (!user.EmailConfirmed)
             {
                 throw new Exception($"User with {request.Email} didn't confirm");
+            }
+
+            if (user.IsDeleted == true)
+            {
+                throw new Exception($"User with email {request.Email} is deleted");
             }
 
             var result =
@@ -118,9 +122,12 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    // await _userManager.AddToRoleAsync(user, "NORMALUSER");
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+                    var callbackUrl =
+                        $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
+                    await _emailService.SendEmailConfirmationAsync(request.Email, callbackUrl).ConfigureAwait(false);
                     return new RegistrationResponse() {UserId = user.Id, Code = code};
                 }
                 else
@@ -152,6 +159,18 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             user.LastName = request.LastName;
             user.AvatarUrl = request.AvatarUrl;
             user.PhoneNumber = request.PhoneNumber;
+
+            #region Update roles
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var currentRolesString = string.Join(Constants.SemiColonStringSeparator, currentRoles.OrderBy(x => x));
+            var newRolesString = string.Join(Constants.SemiColonStringSeparator, request.RoleNames.OrderBy(x => x));
+
+            if(currentRolesString != newRolesString)
+            {
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                await _userManager.AddToRolesAsync(user, request.RoleNames);
+            }
+            #endregion
 
             return (await _userManager.UpdateAsync(user)).ToString();
         }
@@ -226,7 +245,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             PagedModel<ApplicationUser> userPaging;
             if (query.RoleIds == null || query.RoleIds.All(x => x.Equals(string.Empty)))
             {
-                userPaging = await _userManager.Users.AsNoTracking()
+                userPaging = await _userManager.Users.Where(x=>x.IsDeleted == null || x.IsDeleted == false).AsNoTracking()
                     .PaginateAsync(query.Page, query.Limit, new CancellationToken());
             }
             else
@@ -234,10 +253,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 var userRoles = new List<ApplicationUser>();
                 foreach (var roleName in query.RoleIds)
                 {
-                    userRoles.AddRange(await _userManager.GetUsersInRoleAsync(roleName));
+                    userRoles.AddRange((await _userManager.GetUsersInRoleAsync(roleName)).Where(x=>x.IsDeleted == null || x.IsDeleted == false));
                 }
 
-                userPaging = userRoles.Paginate(query.Page, query.Limit);
+                userPaging = userRoles.Distinct().Paginate(query.Page, query.Limit);
             }
 
             var usersResponse = new GetUserListResponse
@@ -267,6 +286,29 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return usersResponse;
         }
 
+        public async Task<AuthenticationResponse> GetUserDetailAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception($"User with {userId} not found.");
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            AuthenticationResponse response = new AuthenticationResponse()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                AvatarUrl = user.AvatarUrl,
+                Roles = userRoles.ToList()
+            };
+            return response;
+        }
+
         public async Task<AuthenticationResponse> GetUserInfoAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -289,8 +331,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             };
             return response;
         }
-
-
+        
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
@@ -324,9 +365,9 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return jwtSecurityToken;
         }
 
-        public async Task<List<ApplicationUserDto>> GetAllUserAsync()
+        public async Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
             return users.Select(x => new ApplicationUserDto()
             {
                 FullName = $"{x.LastName} {x.FirstName}",
@@ -348,9 +389,9 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
             var callbackUrl =
-                $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
+                $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
-            await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
+            await _emailService.SendEmailConfirmationAsync(email, callbackUrl).ConfigureAwait(false);
             response.Code = code;
             response.UserId = user.Id;
 
@@ -417,6 +458,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             //TODO: Check user is null
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+            var callbackUrl =
+                $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
+
+            await _emailService.SendPasswordResetAsync(email, callbackUrl).ConfigureAwait(false);
             return (UserId: user.Id, Code: code);
         }
 
@@ -440,6 +485,22 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             }
 
             return response;
+        }
+
+        public async Task DeleteUserByEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                user.Email = $"{user.Email}_deleted";
+                user.UserName = $"{user.UserName}_deleted";
+                user.IsDeleted = true;
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                throw new Exception($"User with email {email} not found.");
+            }
         }
     }
 }

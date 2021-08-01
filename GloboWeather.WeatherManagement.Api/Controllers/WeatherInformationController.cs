@@ -4,6 +4,7 @@ using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Co
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformation;
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Queries.GetWeatherInformationHorizontal;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [HttpPost("import-single-station", Name = nameof(ImportSingleStationAsync))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<ActionResult<ImportSingleStationResponse>> ImportSingleStationAsync([FromForm] ImportSingleStationCommand request)
         {
             var response = await _mediator.Send(request);
