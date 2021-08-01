@@ -70,8 +70,8 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult> UploadVideoAsync([FromServices]IVideoService videoService, IFormFile file)
         {
-            await videoService.RunAsync(file);
-            return Ok();
+            var result =   await videoService.RunAsync(file);
+            return Ok(result);
         }
 
     }

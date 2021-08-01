@@ -26,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             VideoSettings = mediaVideoSettings.Value;
         }
         
-        public async Task RunAsync(IFormFile file)
+        public async Task<IList<string>> RunAsync(IFormFile file)
         {
             IAzureMediaServicesClient client;
             try
@@ -73,12 +73,16 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 if (!Directory.Exists(OutputFolderName))
                     Directory.CreateDirectory(OutputFolderName);
 
-                await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name, OutputFolderName);
+              //  await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name, OutputFolderName);
 
                 StreamingLocator locator = await CreateStreamingLocatorAsync(client, VideoSettings.ResourceGroup,
                     VideoSettings.AccountName, outputAsset.Name, locatorName);
+                IList<string> urls = await GetStreamingUrlsAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, locator.Name);
                 
+                return urls; 
             }
+
+            return new List<string>();
         }
         
         
@@ -219,7 +223,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 new StreamingLocator
                 {
                     AssetName = assetName,
-                    StreamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming
+                    StreamingPolicyName = PredefinedStreamingPolicy.DownloadOnly
                 });
 
             return locator;
@@ -249,13 +253,13 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
             ListPathsResponse paths = await client.StreamingLocators.ListPathsAsync(resourceGroupName, accountName, locatorName);
 
-            foreach (var path in paths.StreamingPaths)
+            foreach (var path in paths.DownloadPaths.Where(_ => _.Contains(".mp4")))
             {
                 UriBuilder uriBuilder = new UriBuilder()
                 {
                     Scheme = "https",
                     Host = streamingEndpoint.HostName,
-                    Path = path.Paths[0]
+                    Path = path
                 };
                 streamingUrls.Add(uriBuilder.ToString());
             }
