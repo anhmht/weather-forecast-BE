@@ -8,6 +8,7 @@ using Azure.Storage.Blobs.Models;
 using GloboWeather.WeatherManagement.Application.Models.Media;
 using GloboWeather.WeatherManagement.Infrastructure.Utils;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             VideoSettings = mediaVideoSettings.Value;
         }
         
-        public async Task RunAsync()
+        public async Task RunAsync(IFormFile file)
         {
             IAzureMediaServicesClient client;
             try
@@ -48,12 +49,22 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             _ = await GetOrCreateTransformAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName,
                 AdaptiveStreamingTransformName);
 
-            _ = await CreateInputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, inputAssetName,
-                InputMP4FileName);
-
+            if (file.Length > 0)
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    _ = await CreateInputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, inputAssetName,
+                        file.FileName, stream);
+                }
+                
+            }
+         
+            _ = new JobInputAsset(assetName: inputAssetName);
             Asset outputAsset =
                 await CreateOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAssetName);
-
+            
+            _ = await SubmitJobAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, AdaptiveStreamingTransformName, jobName, inputAssetName, outputAsset.Name);
+          
             Job job = await WaitForJobToFinishAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName,
                 AdaptiveStreamingTransformName, jobName);
 
@@ -62,8 +73,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 if (!Directory.Exists(OutputFolderName))
                     Directory.CreateDirectory(OutputFolderName);
 
-                await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name,
-                    OutputFolderName);
+                await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name, OutputFolderName);
 
                 StreamingLocator locator = await CreateStreamingLocatorAsync(client, VideoSettings.ResourceGroup,
                     VideoSettings.AccountName, outputAsset.Name, locatorName);
@@ -77,7 +87,8 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             string resourceGroupName,
             string accountName,
             string assetName,
-            string fileUpload)
+            string fileUpload,
+            Stream stream)
         {
             Asset asset =
                 await client.Assets.CreateOrUpdateAsync(resourceGroupName, accountName, assetName, new Asset());
@@ -93,7 +104,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
             BlobContainerClient containerClient = new BlobContainerClient(sasUri);
             BlobClient blobClient = containerClient.GetBlobClient(Path.GetFileName(fileUpload));
-            await blobClient.UploadAsync(fileUpload);
+            await blobClient.UploadAsync(stream);
 
             return asset;
         }
@@ -261,7 +272,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         /// <param name="assetName">The output asset.</param>
         /// <param name="outputFolderName">The name of the folder into which to download the results.</param>
         // <DownloadResults>
-        private async Task DownloadOutputAssetAsync(
+        private  async Task DownloadOutputAssetAsync(
             IAzureMediaServicesClient client,
             string resourceGroup,
             string accountName,
@@ -276,36 +287,43 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             AssetContainerSas assetContainerSas = await client.Assets.ListContainerSasAsync(
                 resourceGroup,
                 accountName,
-                accountName,
+                assetName,
                 permissions: AssetContainerPermission.Read,
                 expiryTime: DateTime.UtcNow.AddHours(1).ToUniversalTime());
+
             Uri containerSasUrl = new Uri(assetContainerSas.AssetContainerSasUrls.FirstOrDefault());
-            BlobContainerClient containerClient = new BlobContainerClient(containerSasUrl);
+            BlobContainerClient container = new BlobContainerClient(containerSasUrl);
 
             string directory = Path.Combine(outputFolderName, assetName);
             Directory.CreateDirectory(directory);
+
+            Console.WriteLine($"Downloading output results to '{directory}'...");
 
             string continuationToken = null;
             IList<Task> downloadTasks = new List<Task>();
 
             do
             {
-                var resultSegment = containerClient.GetBlobs().AsPages(continuationToken);
+                var resultSegment = container.GetBlobs().AsPages(continuationToken);
+
                 foreach (Azure.Page<BlobItem> blobPage in resultSegment)
                 {
                     foreach (BlobItem blobItem in blobPage.Values)
                     {
-                        var blobClient = containerClient.GetBlobClient(blobItem.Name);
-                        string fileName = Path.Combine(directory, blobClient.Name);
+                        var blobClient = container.GetBlobClient(blobItem.Name);
+                        string filename = Path.Combine(directory, blobItem.Name);
 
-                        downloadTasks.Add(blobClient.DownloadToAsync(fileName));
+                        downloadTasks.Add(blobClient.DownloadToAsync(filename));
                     }
-
+                    // Get the continuation token and loop until it is empty.
                     continuationToken = blobPage.ContinuationToken;
                 }
+
             } while (continuationToken != "");
 
             await Task.WhenAll(downloadTasks);
+
+            Console.WriteLine("Download complete.");
         }
 
         
