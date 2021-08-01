@@ -286,12 +286,12 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return usersResponse;
         }
 
-        public async Task<AuthenticationResponse> GetUserInfoAsync(string email)
+        public async Task<AuthenticationResponse> GetUserInfoAsync(string userId)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                throw new Exception($"User with {email} not found.");
+                throw new Exception($"User with {userId} not found.");
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);

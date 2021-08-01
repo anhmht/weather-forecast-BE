@@ -173,11 +173,11 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("GetUserInfo/{email}")]
+        [HttpGet("GetUserInfo/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUserInfoByEmailAsync([FromRoute]string email)
+        public async Task<ActionResult> GetUserInfoByEmailAsync([FromRoute]string userId)
         {
-            return Ok(await _authenticationService.GetUserInfoAsync(email));
+            return Ok(await _authenticationService.GetUserInfoAsync(userId));
         }
 
     }
