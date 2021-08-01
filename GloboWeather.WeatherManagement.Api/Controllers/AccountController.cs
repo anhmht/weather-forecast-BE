@@ -78,7 +78,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetUserInfo")]
+        [HttpGet("get-user-info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUserInfo()
         {
@@ -173,9 +173,9 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("GetUserInfo/{userId}")]
+        [HttpGet("get-user-detail/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUserInfoByEmailAsync([FromRoute]string userId)
+        public async Task<ActionResult> GetUserInfoByIdAsync([FromRoute]string userId)
         {
             return Ok(await _authenticationService.GetUserInfoAsync(userId));
         }
