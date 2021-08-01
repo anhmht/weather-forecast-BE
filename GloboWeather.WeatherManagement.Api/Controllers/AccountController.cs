@@ -177,7 +177,7 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUserInfoByIdAsync([FromRoute]string userId)
         {
-            return Ok(await _authenticationService.GetUserInfoAsync(userId));
+            return Ok(await _authenticationService.GetUserDetailAsync(userId));
         }
 
     }

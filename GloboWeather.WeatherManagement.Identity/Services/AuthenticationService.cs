@@ -286,7 +286,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return usersResponse;
         }
 
-        public async Task<AuthenticationResponse> GetUserInfoAsync(string userId)
+        public async Task<AuthenticationResponse> GetUserDetailAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -309,7 +309,29 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             return response;
         }
 
+        public async Task<AuthenticationResponse> GetUserInfoAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new Exception($"User with {email} not found.");
+            }
 
+            var userRoles = await _userManager.GetRolesAsync(user);
+            AuthenticationResponse response = new AuthenticationResponse()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                AvatarUrl = user.AvatarUrl,
+                Roles = userRoles.ToList()
+            };
+            return response;
+        }
+        
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);

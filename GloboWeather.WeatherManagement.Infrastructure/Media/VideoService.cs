@@ -18,7 +18,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
     public class VideoService : IVideoService
     {
         private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
-        private const string InputMP4FileName = @"ignite.mp4";
         private const string OutputFolderName = @"Output";
         public MediaVideoSettings VideoSettings;
         public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings)
@@ -347,22 +346,22 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         // <CleanUp>
         private async Task CleanUpAsync(
             IAzureMediaServicesClient client,
-            string resouceGroupName,
+            string resourceGroupName,
             string accountName,
             string transformName,
             string jobName,
             List<string> assetNames,
             string contentKeyPolicyName = null)
         {
-            await client.Jobs.DeleteAsync(resouceGroupName, accountName, transformName, jobName);
+            await client.Jobs.DeleteAsync(resourceGroupName, accountName, transformName, jobName);
             foreach (var assetName in assetNames)
             {
-                await client.Assets.DeleteAsync(resouceGroupName, accountName, accountName);
+                await client.Assets.DeleteAsync(resourceGroupName, accountName, accountName);
             }
 
             if (contentKeyPolicyName != null)
             {
-                client.ContentKeyPolicies.Delete(resouceGroupName, accountName, contentKeyPolicyName);
+                client.ContentKeyPolicies.Delete(resourceGroupName, accountName, contentKeyPolicyName);
             }
         }
     }

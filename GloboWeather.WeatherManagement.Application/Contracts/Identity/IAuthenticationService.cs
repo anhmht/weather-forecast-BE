@@ -22,6 +22,7 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
 
         Task<GetUserListResponse> GetUserListAsync(GetUsersListQuery query);
 
+        Task<AuthenticationResponse> GetUserDetailAsync(string userId);
         Task<AuthenticationResponse> GetUserInfoAsync(string email);
 
         Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted = false);
