@@ -389,7 +389,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
             var callbackUrl =
-                $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
+                $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
             await _emailService.SendEmailConfirmationAsync(email, callbackUrl).ConfigureAwait(false);
             response.Code = code;
@@ -459,7 +459,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             //TODO: Check user is null
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
             var callbackUrl =
-                $"https://anhmht.github.io/weather-forecast-FE/#/reset-password?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
+                $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
             await _emailService.SendEmailConfirmationAsync(email, callbackUrl).ConfigureAwait(false);
             return (UserId: user.Id, Code: code);
