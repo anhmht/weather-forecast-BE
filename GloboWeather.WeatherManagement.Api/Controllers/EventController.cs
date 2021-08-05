@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEven
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListWithContent;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsMostView;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using MediatR;
@@ -312,6 +313,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         {
             var dtos = await _mediator.Send(query);
             return Ok(GeneratePageList(query, dtos));
+        }
+
+        [HttpPost("get-most-view", Name = nameof(GetMostViewEventAsync))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<EventMostViewResponse>> GetMostViewEventAsync([FromBody] EventMostViewQuery query)
+        {
+            var dtos = await _mediator.Send(query);
+            return Ok(dtos);
         }
 
     }

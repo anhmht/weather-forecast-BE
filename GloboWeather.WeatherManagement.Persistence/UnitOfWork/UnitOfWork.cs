@@ -178,6 +178,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         private ICommonLookupRepository _commonLookupRepository;
         ICommonLookupRepository IUnitOfWork.CommonLookupRepository => _commonLookupRepository ?? new CommonLookupRepository(_context, this);
 
+        private IEventViewCountRepository _eventViewCountRepository;
+        IEventViewCountRepository IUnitOfWork.EventViewCountRepository => _eventViewCountRepository ?? new EventViewCountRepository(_context, this);
+
         #endregion
 
     }

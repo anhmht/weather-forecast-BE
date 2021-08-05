@@ -57,6 +57,7 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<ScenarioAction> ScenarioActions { get; set; }
         public DbSet<ScenarioActionDetail> ScenarioActionDetails { get; set; }
         public DbSet<CommonLookup> CommonLookups { get; set; }
+        public DbSet<EventViewCount> EventViewCounts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
