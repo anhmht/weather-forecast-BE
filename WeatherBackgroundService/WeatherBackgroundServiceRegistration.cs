@@ -8,8 +8,8 @@ namespace WeatherBackgroundService
     {
         public static void AddWeatherBackgroundService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHostedService<DeleteCloudTempFileWorker>();
             services.AddHostedService<ImportDataWeatherWorker>();
+            services.AddHostedService<DeleteCloudTempFileWorker>();
             services.AddHostedService<DownloadMonitoringDataWorker>();
             services.AddHostedService<AutoGenerateCacheWorker>();
         }
