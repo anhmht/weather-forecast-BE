@@ -1,6 +1,6 @@
 using System;
 
-namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId
+namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy
 {
     public record EventListCateStatusVm
     {

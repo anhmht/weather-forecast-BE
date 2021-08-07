@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsMostView;
+using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -26,7 +27,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             return await _unitOfWork.EventRepository.GetWhereQuery(e => e.Title.Equals(name) && e.DatePosted.Date.Equals(eventDate.Date)).AnyAsync();
         }
 
-        public async Task<GetEventsListResponse> GetByPageAsync(GetEventsListQuery query,  CancellationToken token)
+        public async Task<GetEventsListResponse> GetByPageAsync(EventsListQuery query, CancellationToken token)
         {
             var events =  _unitOfWork.EventRepository.GetAllQuery();
             if (query.CategoryId.HasValue)
@@ -78,7 +79,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     .AsNoTracking()
                 join c in _unitOfWork.EventViewCountRepository.GetAllQuery().AsNoTracking()
                     on e.EventId equals c.EventId
-                where e.DatePosted >= dayLimit
+                where e.DatePosted >= dayLimit && e.StatusId == EventStatus.Publish
                 select new EventMostViewVm()
                 {
                     EventId = e.EventId,

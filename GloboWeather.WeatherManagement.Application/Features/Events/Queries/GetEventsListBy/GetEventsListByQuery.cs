@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using MediatR;
 
-namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId
+namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy
 {
-    public class GetEventsListByQuery : IRequest<List<EventListCateStatusVm>>
+    public class GetEventsListByQuery : EventsListQuery, IRequest<GetEventListByResponse>
     {
-        public Guid CategoryId { get; set; }
-        public Guid StatusId { get; set; }
+
     }
 }
