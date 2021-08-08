@@ -12,7 +12,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid? UserId { get; set; } //User comment
         public Guid PostId { get; set; }
         public string Content { get; set; }
         public string ImageUrls { get; set; }
@@ -21,5 +20,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         public DateTime? PublicDate { get; set; } //The day that status change into "Public"
         public Guid? ApprovedByUserId { get; set; } //User approve the comment
         public Guid? AnonymousUserId { get; set; } //If social user -> this field will be empty
+
+        //CreateBy: user makes action
     }
 }

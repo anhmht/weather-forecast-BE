@@ -502,5 +502,28 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 throw new Exception($"User with email {email} not found.");
             }
         }
+
+        public async Task<AuthenticationResponse> GetUserInfoByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                throw new Exception($"User name {userName} not found.");
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var response = new AuthenticationResponse()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                AvatarUrl = user.AvatarUrl,
+                Roles = userRoles.ToList()
+            };
+            return response;
+        }
     }
 }

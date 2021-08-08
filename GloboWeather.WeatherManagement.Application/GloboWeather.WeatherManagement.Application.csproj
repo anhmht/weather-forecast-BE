@@ -23,4 +23,8 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Posts\Queries\" />
+    </ItemGroup>
+
 </Project>

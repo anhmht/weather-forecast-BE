@@ -2,8 +2,10 @@
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Social;
 using GloboWeather.WeatherManagement.Domain.Common;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
+using GloboWeather.WeatherManagement.Persistence.Repositories.Social;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -180,6 +182,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IEventViewCountRepository _eventViewCountRepository;
         IEventViewCountRepository IUnitOfWork.EventViewCountRepository => _eventViewCountRepository ?? new EventViewCountRepository(_context, this);
+
+        private IPostRepository _postRepository;
+        IPostRepository IUnitOfWork.PostRepository => _postRepository ?? new PostRepository(_context, this);
 
         #endregion
 

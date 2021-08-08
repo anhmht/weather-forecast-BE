@@ -1,6 +1,8 @@
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Social;
 using GloboWeather.WeatherManagement.Persistence.Repositories;
+using GloboWeather.WeatherManagement.Persistence.Repositories.Social;
 using GloboWeather.WeatherManagement.Persistence.Services;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +55,8 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IScenarioActionDetailRepository, ScenarioActionDetailRepository>();
             services.AddScoped<ICommonLookupRepository, CommonLookupRepository>();
             services.AddScoped<IScenarioService, ScenarioService>();
+            services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IPostService, PostService>();
 
             return services;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
+using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Social;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
 namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
@@ -40,5 +41,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IScenarioActionDetailRepository ScenarioActionDetailRepository { get; }
         ICommonLookupRepository CommonLookupRepository { get; }
         IEventViewCountRepository EventViewCountRepository { get; }
+        IPostRepository PostRepository { get; }
     }
 }

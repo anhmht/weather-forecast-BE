@@ -24,6 +24,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public static string NormalImage = "normal-Image";
         public static string IconImage = "icon-Image";
         public static string ImportVideo = "import-video";
+        public static string Post = "post";
     }
 
     public static class ReplaceContent
@@ -34,10 +35,10 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
             {
                 var urls = newUrl.Split('/');
                 var nameImage = urls[urls.Length - 1];
-                var urlsNeedToReplce = oldUrls.FirstOrDefault(x => x.Contains(nameImage));
-                if (urlsNeedToReplce != null)
+                var urlsNeedToReplace = oldUrls.FirstOrDefault(x => x.Contains(nameImage));
+                if (urlsNeedToReplace != null)
                 {
-                    content = content.Replace(urlsNeedToReplce, newUrl);
+                    content = content.Replace(urlsNeedToReplace, newUrl);
                 }
             }
 
@@ -81,5 +82,14 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         CustomZoomControl = 4,
         CustomWaitControl = 5,
         CustomImportVideoControl = 6
+    }
+
+    public enum PostStatus
+    {
+        WaitingForApproval = 1,
+        Public,
+        Private,
+        Blocked,
+        Deleted
     }
 }
