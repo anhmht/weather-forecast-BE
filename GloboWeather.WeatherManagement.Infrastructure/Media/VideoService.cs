@@ -17,7 +17,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 {
     public class VideoService : IVideoService
     {
-        private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
+        private const string AdaptiveStreamingTransformName = "Custom_H264_Layer";
         private const string OutputFolderName = @"Output";
         public MediaVideoSettings VideoSettings;
         public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings)
@@ -140,19 +140,78 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             Transform transform = await client.Transforms.GetAsync(resourceGroupName, accountName, transformName);
             if (transform == null)
             {
+                Console.WriteLine("Creating a custom transform...");
+                // Create a new Transform Outputs array - this defines the set of outputs for the Transform
                 TransformOutput[] outputs = new TransformOutput[]
                 {
-                    new TransformOutput
-                    {
-                        Preset = new BuiltInStandardEncoderPreset()
-                        {
-                            PresetName = EncoderNamedPreset.H265SingleBitrate1080p
-                        }
-                    }
+                    // Create a new TransformOutput with a custom Standard Encoder Preset
+                    // This demonstrates how to create custom codec and layer output settings
+
+                  new TransformOutput(
+                        new StandardEncoderPreset(
+                            codecs: new Codec[]
+                            {
+                               // Add an AAC Audio layer for the audio encoding
+                                new AacAudio(
+                                    channels: 2,
+                                    samplingRate: 48000,
+                                    bitrate: 128000,
+                                    profile: AacAudioProfile.AacLc
+                                ),
+                                // Next, add a H264Video for the video encoding
+                               new H264Video (
+                                    // Set the GOP interval to 2 seconds for all H264Layers
+                                    keyFrameInterval:TimeSpan.FromSeconds(2),
+                                     // Add H264Layers. Assign a label that you can use for the output filename
+                                    layers:  new H264Layer[]
+                                    {
+                                        new H264Layer (
+                                            bitrate: 6670000, // Units are in bits per second and not kbps or Mbps - 3.6 Mbps or 3,600 kbps
+                                            width: "1920",
+                                            height: "1080",
+                                            label: "HD-6670kbps" // This label is used to modify the file name in the output formats
+                                         ),
+                                      
+                                    }
+                                ),
+                                // Also generate a set of PNG thumbnails
+                                new PngImage(
+                                    start: "25%",
+                                    step: "25%",
+                                    range: "80%",
+                                    layers: new PngLayer[]{
+                                        new PngLayer(
+                                            width: "50%",
+                                            height: "50%"
+                                        )
+                                    }
+                                )
+                            },
+                            // Specify the format for the output files - one for video+audio, and another for the thumbnails
+                            formats: new Format[]
+                            {
+                                // Mux the H.264 video and AAC audio into MP4 files, using basename, label, bitrate and extension macros
+                                // Note that since you have multiple H264Layers defined above, you have to use a macro that produces unique names per H264Layer
+                                // Either {Label} or {Bitrate} should suffice
+                                 
+                                new Mp4Format(
+                                    filenamePattern:"Video-{Basename}-{Label}-{Bitrate}{Extension}"
+                                ),
+                                new PngFormat(
+                                    filenamePattern:"Thumbnail-{Basename}-{Index}{Extension}"
+                                )
+                            }
+                        ),
+                        onError: OnErrorType.StopProcessingJob,
+                        relativePriority: Priority.Normal
+                    )
                 };
-                transform = await client.Transforms.CreateOrUpdateAsync(resourceGroupName, accountName, transformName,
-                    outputs);
+
+                string description = "Create custom transform";
+                // Create the custom Transform with the outputs defined above
+                transform = await client.Transforms.CreateOrUpdateAsync(resourceGroupName, accountName, transformName, outputs, description);
             }
+            
 
             return transform;
         }
