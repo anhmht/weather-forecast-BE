@@ -8,33 +8,34 @@ using GloboWeather.WeatherManagement.Domain.Entities.Social;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
 {
-    public class PostRepository : BaseRepository<Post>, IPostRepository
+    public class CommentRepository : BaseRepository<Comment>, ICommentRepository
     {
         private readonly IUnitOfWork _unitOfWork;
-        public PostRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
+        public CommentRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
         {
             _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> ChangeStatusAsync(Guid id, int postStatusId, string userName, bool isApproval)
         {
-            var post = await _unitOfWork.PostRepository.GetByIdAsync(id);
-            if (post == null)
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(id);
+            if (comment == null)
             {
-                throw new NotFoundException("Post", id);
+                throw new NotFoundException("Comment", id);
             }
 
-            post.StatusId = postStatusId;
-            if (post.StatusId == (int) PostStatus.Public)
+
+            comment.StatusId = postStatusId;
+            if (comment.StatusId == (int)PostStatus.Public)
             {
-                post.PublicDate = DateTime.Now;
+                comment.PublicDate = DateTime.Now;
             }
 
             if (isApproval)
             {
-                post.ApprovedByUserName = userName;
+                comment.ApprovedByUserName = userName;
             }
-            _unitOfWork.PostRepository.Update(post);
+            _unitOfWork.CommentRepository.Update(comment);
             return await _unitOfWork.CommitAsync() > 0;
         }
     }

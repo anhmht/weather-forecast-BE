@@ -18,7 +18,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         public string VideoUrls { get; set; }
         public int StatusId { get; set; } //CommonLookups namespace POST_STATUS
         public DateTime? PublicDate { get; set; } //The day that status change into "Public"
-        public Guid? ApprovedByUserId { get; set; } //User approve the comment
+        public string ApprovedByUserName { get; set; } //User approve the comment
         public Guid? AnonymousUserId { get; set; } //If social user -> this field will be empty
 
         //CreateBy: user makes action

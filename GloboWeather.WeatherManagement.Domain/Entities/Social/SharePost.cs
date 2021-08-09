@@ -9,7 +9,6 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         [Key]
         public Guid Id { get; set; }
         public Guid PostId { get; set; }
-        public Guid UserId { get; set; } //User share the post
         public string ShareTo { get; set; }
     }
 }

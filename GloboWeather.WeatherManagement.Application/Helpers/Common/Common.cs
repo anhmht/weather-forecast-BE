@@ -24,7 +24,8 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public static string NormalImage = "normal-Image";
         public static string IconImage = "icon-Image";
         public static string ImportVideo = "import-video";
-        public static string Post = "post";
+        public static string SocialPost = "social-post";
+        public static string SocialComment = "social-comment";
     }
 
     public static class ReplaceContent

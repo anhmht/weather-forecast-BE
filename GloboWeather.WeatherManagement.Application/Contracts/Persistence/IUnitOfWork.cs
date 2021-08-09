@@ -42,5 +42,7 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         ICommonLookupRepository CommonLookupRepository { get; }
         IEventViewCountRepository EventViewCountRepository { get; }
         IPostRepository PostRepository { get; }
+        IAnonymousUserRepository AnonymousUserRepository { get; }
+        ICommentRepository CommentRepository { get; }
     }
 }
