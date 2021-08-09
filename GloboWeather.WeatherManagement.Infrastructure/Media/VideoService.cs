@@ -18,7 +18,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
     public class VideoService : IVideoService
     {
         private const string AdaptiveStreamingTransformName = "Custom_H264_Layer";
-        private const string OutputFolderName = @"Output";
         public MediaVideoSettings VideoSettings;
         public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings)
         {
@@ -57,7 +56,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                 }
                 
             }
-         
+            
             _ = new JobInputAsset(assetName: inputAssetName);
             Asset outputAsset =
                 await CreateOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAssetName);
@@ -69,11 +68,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
             if (job.State == JobState.Finished)
             {
-                if (!Directory.Exists(OutputFolderName))
-                    Directory.CreateDirectory(OutputFolderName);
-
-              //  await DownloadOutputAssetAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, outputAsset.Name, OutputFolderName);
-
                 StreamingLocator locator = await CreateStreamingLocatorAsync(client, VideoSettings.ResourceGroup,
                     VideoSettings.AccountName, outputAsset.Name, locatorName);
                 IList<string> urls = await GetStreamingUrlsAsync(client, VideoSettings.ResourceGroup, VideoSettings.AccountName, locator.Name);
@@ -140,7 +134,6 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             Transform transform = await client.Transforms.GetAsync(resourceGroupName, accountName, transformName);
             if (transform == null)
             {
-                Console.WriteLine("Creating a custom transform...");
                 // Create a new Transform Outputs array - this defines the set of outputs for the Transform
                 TransformOutput[] outputs = new TransformOutput[]
                 {
