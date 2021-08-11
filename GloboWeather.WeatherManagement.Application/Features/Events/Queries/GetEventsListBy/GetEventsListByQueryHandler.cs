@@ -6,9 +6,9 @@ using AutoMapper;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
 
-namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId
+namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy
 {
-    public class GetEventsListByQueryHandler : IRequestHandler<GetEventsListByQuery, List<EventListCateStatusVm>>
+    public class GetEventsListByQueryHandler : IRequestHandler<GetEventsListByQuery, GetEventListByResponse>
     {
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepository;
@@ -18,21 +18,30 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
             _mapper = mapper;
             _eventRepository = eventRepository;
         }
-        public async Task<List<EventListCateStatusVm>> Handle(GetEventsListByQuery request, CancellationToken cancellationToken)
+        public async Task<GetEventListByResponse> Handle(GetEventsListByQuery request, CancellationToken cancellationToken)
         {
             var validator = new GetEventsListQueryValidator();
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (validationResult.Errors.Any())
             {
                 throw new Exceptions.ValidationException(validationResult);
             }
 
-            var eventsList =
-                (await _eventRepository.GetEventListByAsync(request.CategoryId, request.StatusId, cancellationToken))
-                .OrderByDescending(e => e.DatePosted);
+            if (request.Limit == 0)
+                request.Limit = int.MaxValue;
+            if (request.Page == 0)
+                request.Page = 1;
 
-            return _mapper.Map<List<EventListCateStatusVm>>(eventsList);
+            var eventsList = await _eventRepository.GetByPageAsync(request, cancellationToken);
+
+            return new GetEventListByResponse()
+            {
+                Events = _mapper.Map<List<EventListCateStatusVm>>(eventsList.Events),
+                CurrentPage = eventsList.CurrentPage,
+                TotalItems = eventsList.TotalItems,
+                TotalPages = eventsList.TotalPages
+            };
         }
     }
 }

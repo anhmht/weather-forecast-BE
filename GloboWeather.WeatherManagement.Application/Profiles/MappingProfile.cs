@@ -17,7 +17,6 @@ using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Co
 using GloboWeather.WeatherManagement.Application.Features.WeatherInformations.Commands.ImportWeatherInformation;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
-using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId;
 using GloboWeather.WeatherManagement.Application.Features.Meteorologicals.Import;
 using GloboWeather.WeatherManagement.Application.Features.RainQuantities.Import;
 using GloboWeather.WeatherManagement.Application.Features.WeatherStates.Commands.CreateWeatherState;
@@ -29,6 +28,7 @@ using GloboWeather.WeatherManagement.Application.Features.ExtremePhenomenons.Que
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.CreateScenarioAction;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenarioAction;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -112,6 +112,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<UpdateScenarioActionDetailDto, ScenarioActionDetail>();
             CreateMap<ScenarioAction, ScenarioActionDetailVm>();
             CreateMap<ScenarioActionDetail, ScenarioActionDetailDto>();
+            CreateMap<EventListVm, EventListCateStatusVm>();
         }
     }
 }

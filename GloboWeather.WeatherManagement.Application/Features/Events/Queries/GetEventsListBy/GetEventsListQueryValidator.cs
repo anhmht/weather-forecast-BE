@@ -1,10 +1,6 @@
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
-using GloboWeather.WeatherManagement.Domain.Entities;
-using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 
-namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListByCateIdAndStaId
+namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy
 {
     public class GetEventsListQueryValidator : AbstractValidator<GetEventsListByQuery>
     {
