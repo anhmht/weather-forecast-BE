@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
+using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListWithContent;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsMostView;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories
 {
-    public class EventRepository: BaseRepository<Event>, IEventRepository
+    public class EventRepository : BaseRepository<Event>, IEventRepository
     {
         private readonly IUnitOfWork _unitOfWork;
         public EventRepository(GloboWeatherDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext)
@@ -29,7 +29,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
 
         public async Task<GetEventsListResponse> GetByPageAsync(EventsListQuery query, CancellationToken token)
         {
-            var events =  _unitOfWork.EventRepository.GetAllQuery();
+            var events = _unitOfWork.EventRepository.GetAllQuery();
             if (query.CategoryId.HasValue)
             {
                 events = events.Where(e => e.CategoryId == query.CategoryId);
@@ -38,7 +38,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
             {
                 events = events.Where(e => e.StatusId == query.StatusId);
             }
-            var collections = await  events
+            var collections = await events
                             .Include(e => e.Category)
                             .Include(e => e.Status)
                             .AsNoTracking()
@@ -60,14 +60,33 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     CreatedBy = e.CreateBy
                 }).ToList()
             };
-            
+
         }
 
-        public async Task<List<Event>> GetEventListByAsync(Guid categoryId, Guid statusId, CancellationToken token)
+        public async Task<EventListWithContentResponse> GetEventListByAsync(GetEventsListWithContentQuery request, CancellationToken token)
         {
-            return (await _unitOfWork.EventRepository.GetWhereAsync(e => e.CategoryId == categoryId
-                                                         && e.StatusId == statusId, token)).ToList();
+            var collections = await _unitOfWork.EventRepository.GetWhereQuery(e => e.CategoryId == request.CategoryId
+                                                                                   && e.StatusId == request.StatusId)
 
+                .OrderByDescending(e => e.DatePosted)
+                .PaginateAsync(request.Page, request.Limit, token);
+
+            var response = new EventListWithContentResponse
+            {
+                CurrentPage = collections.CurrentPage,
+                TotalPages = collections.TotalPages,
+                TotalItems = collections.TotalItems,
+                Events = collections.Items.Select(x => new EventListWithContentVm
+                {
+                    EventId = x.EventId,
+                    DatePosted = x.DatePosted,
+                    ImageUrl = x.ImageUrl,
+                    Title = x.Title,
+                    Content = x.Content
+                }).ToList()
+            };
+
+            return response;
         }
 
         public async Task<EventMostViewResponse> GetMostViewAsync(EventMostViewQuery query, CancellationToken token)
@@ -77,20 +96,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories
                     .Include(e => e.Category)
                     .Include(e => e.Status)
                     .AsNoTracking()
-                join c in _unitOfWork.EventViewCountRepository.GetAllQuery().AsNoTracking()
-                    on e.EventId equals c.EventId
-                where e.DatePosted >= dayLimit && e.StatusId == EventStatus.Publish
-                select new EventMostViewVm()
-                {
-                    EventId = e.EventId,
-                    ImageUrl = e.ImageUrl,
-                    CreatedBy = e.CreateBy,
-                    CategoryName = e.Category.Name,
-                    DatePosted = e.DatePosted,
-                    StatusName = e.Status.Name,
-                    Title = e.Title,
-                    ViewCount = c.ViewCount
-                }).OrderByDescending(x => x.ViewCount);
+                               join c in _unitOfWork.EventViewCountRepository.GetAllQuery().AsNoTracking()
+                                   on e.EventId equals c.EventId
+                               where e.DatePosted >= dayLimit && e.StatusId == EventStatus.Publish
+                               select new EventMostViewVm()
+                               {
+                                   EventId = e.EventId,
+                                   ImageUrl = e.ImageUrl,
+                                   CreatedBy = e.CreateBy,
+                                   CategoryName = e.Category.Name,
+                                   DatePosted = e.DatePosted,
+                                   StatusName = e.Status.Name,
+                                   Title = e.Title,
+                                   ViewCount = c.ViewCount
+                               }).OrderByDescending(x => x.ViewCount);
 
             var collections = await eventsQuery.PaginateAsync(query.Page, query.Limit, token);
             return new EventMostViewResponse
