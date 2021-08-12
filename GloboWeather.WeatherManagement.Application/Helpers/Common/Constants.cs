@@ -27,4 +27,11 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public static Guid Draft = Guid.Parse("6313179F-7837-473A-A4D5-A5571B43E6A6");
     }
 
+    public class HistoryTrackingAction
+    {
+        public const string Create = "Create";
+        public const string Update = "Update";
+        public const string Delete = "Delete";
+        public const string ChangeStatus = "ChangeStatus";
+    }
 }

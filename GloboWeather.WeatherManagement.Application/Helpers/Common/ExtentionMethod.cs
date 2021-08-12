@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace GloboWeather.WeatherManagement.Application.Helpers.Common
 {
@@ -152,5 +153,12 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
             return default(TValue);
         }
 
+        public static T Clone<T>(this T obj)
+        {
+            if (obj == null)
+                return default;
+            var objString = JsonConvert.SerializeObject(obj);
+            return JsonConvert.DeserializeObject<T>(objString);
+        }
     }
 }

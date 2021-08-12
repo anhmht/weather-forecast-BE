@@ -201,6 +201,8 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         private IDeleteFileRepository _deleteFileRepository;
         IDeleteFileRepository IUnitOfWork.DeleteFileRepository => _deleteFileRepository ?? new DeleteFileRepository(_context, this);
 
+        private IHistoryTrackingRepository _historyTrackingRepository;
+        IHistoryTrackingRepository IUnitOfWork.HistoryTrackingRepository => _historyTrackingRepository ?? new HistoryTrackingRepository(_context, this);
         #endregion
 
     }

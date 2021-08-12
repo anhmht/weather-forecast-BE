@@ -38,11 +38,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly IAuthenticationService _authenticationService;
         private readonly AzureStorageConfig _storageConfig;
         private readonly string _loginUserName;
+        private readonly IHistoryTrackingService _historyTrackingService;
+        private readonly string _clientIpAddress;
 
         public PostService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService
             , IMapper mapper, IAuthenticationService authenticationService
             , ILoggedInUserService loggedInUserService
-            , IOptions<AzureStorageConfig> azureStorageConfig)
+            , IOptions<AzureStorageConfig> azureStorageConfig
+            , IHistoryTrackingService historyTrackingService)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
@@ -51,6 +54,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _authenticationService = authenticationService;
             _storageConfig = azureStorageConfig.Value;
             _loginUserName = loggedInUserService.UserId;
+            _historyTrackingService = historyTrackingService;
+            _clientIpAddress = loggedInUserService.IpAddress;
         }
 
         public async Task<Guid> CreateAsync(CreatePostCommand request, CancellationToken cancellationToken)
@@ -70,6 +75,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             await _unitOfWork.CommitAsync();
 
+            //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _historyTrackingService.SaveAsync(nameof(Post), post, null, HistoryTrackingAction.Create, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
             return post.Id;
         }
 
@@ -78,7 +88,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             CheckLoginSession();
 
             var post = await _unitOfWork.PostRepository.GetByIdAsync(request.Id);
-
             if (post == null)
             {
                 throw new NotFoundException("Post", request.Id);
@@ -89,13 +98,23 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 throw new Exception("Only creator can edit the post");
             }
 
+            var originalPost = post.Clone();
+
             post.Content = request.Content;
             post.StatusId = (int)PostStatus.WaitingForApproval;
 
             await PopulatePostAsync(request.ImageUrls, request.VideoUrls, post);
 
             _unitOfWork.PostRepository.Update(post);
-            return await _unitOfWork.CommitAsync() > 0;
+
+            var result = await _unitOfWork.CommitAsync() > 0;
+
+            //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _historyTrackingService.SaveAsync(nameof(Post), originalPost, post, HistoryTrackingAction.Update, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            return result;
         }
 
         public async Task<Guid> CreateCommentAsync(CreateCommentCommand request, CancellationToken cancellationToken)
@@ -126,6 +145,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             await _unitOfWork.CommitAsync();
 
+            //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _historyTrackingService.SaveAsync(nameof(Comment), comment, null, HistoryTrackingAction.Create, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
             return comment.Id;
         }
 
@@ -145,13 +169,22 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 throw new Exception("Only creator can edit the comment");
             }
 
+            var originalComment = comment.Clone();
+
             comment.Content = request.Content;
             comment.StatusId = (int)PostStatus.WaitingForApproval;
 
             await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, comment);
 
             _unitOfWork.CommentRepository.Update(comment);
-            return await _unitOfWork.CommitAsync() > 0;
+            var result = await _unitOfWork.CommitAsync() > 0;
+
+            //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _historyTrackingService.SaveAsync(nameof(Comment), originalComment, comment, HistoryTrackingAction.Update, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            return result;
         }
 
         public async Task<bool> ChangeStatusAsync(ChangeStatusCommand request, CancellationToken cancellationToken)
@@ -166,12 +199,23 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 isApproval = await HasApprovePermission();
             }
 
+
             if (request.IsChangePostStatus)
             {
+                //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                _historyTrackingService.SaveAsync(nameof(Post), request, null, HistoryTrackingAction.ChangeStatus, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
                 return await _unitOfWork.PostRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
                     _loginUserName,
                     isApproval);
             }
+
+            //Save history tracking
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _historyTrackingService.SaveAsync(nameof(Comment), request, null, HistoryTrackingAction.ChangeStatus, _clientIpAddress);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             return await _unitOfWork.CommentRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
                 _loginUserName,
@@ -386,8 +430,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task PopulatePostAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Post post)
         {
             var deleteFiles = new List<DeleteFile>();
-            var oriPostImageUrls = post.ImageUrls;
-            var oriPostVideoUrls = post.VideoUrls;
+            var oriPostImageUrls = post.ImageUrls.GetString();
+            var oriPostVideoUrls = post.VideoUrls.GetString();
 
             if (requestImageUrls?.Any() == true)
             {
@@ -472,8 +516,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task PopulateCommentAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Comment comment)
         {
             var deleteFiles = new List<DeleteFile>();
-            var oriPostImageUrls = comment.ImageUrls;
-            var oriPostVideoUrls = comment.VideoUrls;
+            var oriPostImageUrls = comment.ImageUrls.GetString();
+            var oriPostVideoUrls = comment.VideoUrls.GetString();
 
             if (requestImageUrls?.Any() == true)
             {
