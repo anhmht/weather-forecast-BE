@@ -15,6 +15,8 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public const string ActionAreaType = "ACTION_AREA_TYPE";
         public const string ScenarioActionType = "SCENARIO_ACTION_TYPE";
         public const string Position = "POSITION";
+        public const string PostStatus = "POST_STATUS";
+        public const string ActionIcon = "ACTION_ICON";
     }
 
     public class EventStatus

@@ -72,7 +72,9 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         ActionMethod = 4,
         ActionAreaType = 5,
         ScenarioActionType = 6,
-        Position = 7
+        Position = 7,
+        PostStatus,
+        ActionIcon
     }
 
     public enum ScenarioActionType

@@ -30,6 +30,8 @@ using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.Upd
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
@@ -116,6 +118,9 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<ScenarioActionDetail, ScenarioActionDetailDto>();
             CreateMap<EventListVm, EventListCateStatusVm>();
             CreateMap<CreatePostCommand, Post>();
+            CreateMap<Post, PostVm>();
+            CreateMap<Comment, CommentVm>();
+            CreateMap<Post, GetPostDetailResponse>();
         }
     }
 }

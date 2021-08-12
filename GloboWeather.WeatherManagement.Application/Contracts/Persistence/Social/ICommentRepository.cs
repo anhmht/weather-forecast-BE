@@ -8,5 +8,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Socia
     public interface ICommentRepository : IAsyncRepository<Comment>
     {
         Task<bool> ChangeStatusAsync(Guid id, int postStatusId, string userName, bool isApproval);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

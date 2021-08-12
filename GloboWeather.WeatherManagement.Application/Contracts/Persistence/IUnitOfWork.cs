@@ -44,5 +44,7 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         IPostRepository PostRepository { get; }
         IAnonymousUserRepository AnonymousUserRepository { get; }
         ICommentRepository CommentRepository { get; }
+        IPostActionIconRepository PostActionIconRepository { get; }
+        ISharePostRepository SharePostRepository { get; }
     }
 }

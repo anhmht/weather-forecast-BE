@@ -25,7 +25,6 @@
 
     <ItemGroup>
       <Folder Include="Features\Comments\Queries\" />
-      <Folder Include="Features\Posts\Queries\" />
     </ItemGroup>
 
 </Project>

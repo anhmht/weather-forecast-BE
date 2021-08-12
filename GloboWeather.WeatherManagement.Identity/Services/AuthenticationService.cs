@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Caches;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
@@ -33,6 +34,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly ICacheStore _cacheStore;
 
 
         public AuthenticationService(
@@ -40,7 +42,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             IOptions<JwtSettings> jwtSettings,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IEmailService emailService
+            IEmailService emailService,
+            ICacheStore cacheStore
         )
         {
             _userManager = userManager;
@@ -48,6 +51,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _cacheStore = cacheStore;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -367,12 +371,24 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted)
         {
+            var applicationUserCacheKey = new ApplicationUserCacheKey();
+            var cachedApplicationUser = _cacheStore.Get(applicationUserCacheKey);
+            if (cachedApplicationUser != null)
+                return cachedApplicationUser;
+
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
-            return users.Select(x => new ApplicationUserDto()
+
+            var response = users.Select(x => new ApplicationUserDto()
             {
                 FullName = $"{x.LastName} {x.FirstName}",
-                UserName = x.UserName
+                UserName = x.UserName,
+                AvatarUrl = x.AvatarUrl
             }).ToList();
+
+            //Save cache
+            _cacheStore.Add(response, applicationUserCacheKey);
+
+            return response;
         }
 
         public async Task<ForgotPasswordResponse> ForgotPasswordAsync(string email)

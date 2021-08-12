@@ -192,6 +192,12 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
         private ICommentRepository _commentRepository;
         ICommentRepository IUnitOfWork.CommentRepository => _commentRepository ?? new CommentRepository(_context, this);
 
+        private IPostActionIconRepository _postActionIconRepository;
+        IPostActionIconRepository IUnitOfWork.PostActionIconRepository => _postActionIconRepository ?? new PostActionIconRepository(_context, this);
+
+        private ISharePostRepository _sharePostRepository;
+        ISharePostRepository IUnitOfWork.SharePostRepository => _sharePostRepository ?? new SharePostRepository(_context, this);
+
         #endregion
 
     }

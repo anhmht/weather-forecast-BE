@@ -38,5 +38,18 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
             _unitOfWork.CommentRepository.Update(comment);
             return await _unitOfWork.CommitAsync() > 0;
         }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(id);
+            if (comment != null)
+            {
+                comment.StatusId = (int)PostStatus.Deleted;
+                _unitOfWork.CommentRepository.Update(comment);
+                return await _unitOfWork.CommitAsync() > 0;
+            }
+
+            return false;
+        }
     }
 }
