@@ -27,5 +27,7 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Servi
         Task<GetPostDetailResponse> GetDetailAsync(GetPostDetailQuery request,
             CancellationToken cancellationToken);
 
+        Task DeleteTempFile();
+
     }
 }

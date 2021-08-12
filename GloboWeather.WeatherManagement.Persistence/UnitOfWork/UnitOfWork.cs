@@ -197,6 +197,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private ISharePostRepository _sharePostRepository;
         ISharePostRepository IUnitOfWork.SharePostRepository => _sharePostRepository ?? new SharePostRepository(_context, this);
+        
+        private IDeleteFileRepository _deleteFileRepository;
+        IDeleteFileRepository IUnitOfWork.DeleteFileRepository => _deleteFileRepository ?? new DeleteFileRepository(_context, this);
 
         #endregion
 

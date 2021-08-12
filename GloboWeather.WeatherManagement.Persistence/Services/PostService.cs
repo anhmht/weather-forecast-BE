@@ -311,10 +311,62 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var users = await _authenticationService.GetAllUserAsync();
 
             PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares);
-            
+
             return postItem;
         }
 
+        /// <summary>
+        /// Delete old files of the post and the comment if the post/comment had been public
+        /// Old files are files that when user update the post/comment, they had changed the images or videos
+        /// </summary>
+        /// <returns></returns>
+        public async Task DeleteTempFile()
+        {
+            var dicDeleteFile = new Dictionary<Guid, List<string>>();
+
+            var deletePostFiles = await (from d in _unitOfWork.DeleteFileRepository.GetAllQuery()
+                join p in _unitOfWork.PostRepository.GetAllQuery()
+                    on d.DeleteId equals p.Id
+                where d.TableName == nameof(Post) && p.StatusId == (int) PostStatus.Public
+                select d).Distinct().ToListAsync();
+
+            foreach (var deletePostFile in deletePostFiles)
+            {
+                if (dicDeleteFile.ContainsKey(deletePostFile.DeleteId))
+                    dicDeleteFile[deletePostFile.DeleteId].Add(deletePostFile.FileUrl);
+                else
+                {
+                    dicDeleteFile[deletePostFile.DeleteId] = new List<string> {deletePostFile.FileUrl};
+                }
+            }
+
+            var deleteCommentFiles = await (from d in _unitOfWork.DeleteFileRepository.GetAllQuery()
+                join p in _unitOfWork.CommentRepository.GetAllQuery()
+                    on d.DeleteId equals p.Id
+                where d.TableName == nameof(Comment) && p.StatusId == (int)PostStatus.Public
+                select d).Distinct().ToListAsync();
+
+            foreach (var deleteCommentFile in deleteCommentFiles)
+            {
+                if (dicDeleteFile.ContainsKey(deleteCommentFile.DeleteId))
+                    dicDeleteFile[deleteCommentFile.DeleteId].Add(deleteCommentFile.FileUrl);
+                else
+                {
+                    dicDeleteFile[deleteCommentFile.DeleteId] = new List<string> { deleteCommentFile.FileUrl };
+                }
+            }
+
+            foreach (var deleteFile in dicDeleteFile)
+            {
+                await _imageService.DeleteFileInStorageContainerByNameAsync(deleteFile.Key.ToString(),
+                    deleteFile.Value, _storageConfig.SocialPostContainer);
+            }
+
+            _unitOfWork.DeleteFileRepository.DeleteRange(deletePostFiles);
+            _unitOfWork.DeleteFileRepository.DeleteRange(deleteCommentFiles);
+
+            await _unitOfWork.CommitAsync();
+        }
 
         #region Private functions
         private void CheckLoginSession()
@@ -333,13 +385,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
         private async Task PopulatePostAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Post post)
         {
+            var deleteFiles = new List<DeleteFile>();
+            var oriPostImageUrls = post.ImageUrls;
+            var oriPostVideoUrls = post.VideoUrls;
+
             if (requestImageUrls?.Any() == true)
             {
                 var tempImageUrls = string.Join(Constants.SemiColonStringSeparator, requestImageUrls.OrderBy(x => x));
                 if (tempImageUrls != post.ImageUrls)
                 {
-                    //var postImageUrls = post.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
-
                     //Copy new image
                     var imageUrls = await _imageService.CopyFileToStorageContainerAsync(requestImageUrls,
                         post.Id.ToString(),
@@ -348,26 +402,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     post.Content = ReplaceContent.ReplaceImageUrls(post.Content, requestImageUrls, imageUrls);
 
                     post.ImageUrls = string.Join(Constants.SemiColonStringSeparator, imageUrls.OrderBy(x => x));
-
-                    //Delete old image -> do not do this action, because the post has not been approved at this time -> we will create a service auto delete files not use 
-                    //if (!string.IsNullOrEmpty(post.ImageUrls))
-                    //{
-                    //    var deleteImages = new List<string>();
-                    //    foreach (var postImageUrl in postImageUrls)
-                    //    {
-                    //        if (requestImageUrls.Any(x => x == postImageUrl))
-                    //            continue;
-                    //        deleteImages.Add(postImageUrl);
-                    //    }
-
-                    //    if (deleteImages.Any())
-                    //    {
-                    //        await _imageService.DeleteFileInStorageContainerByNameAsync(post.Id.ToString(),
-                    //            deleteImages,
-                    //            _storageConfig.SocialPostContainer);
-                    //    }
-                    //}
-
                 }
             }
             else
@@ -375,14 +409,28 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 post.ImageUrls = string.Empty;
             }
 
+            //Add to temp table to wait for deleting
+            if (oriPostImageUrls != post.ImageUrls)
+            {
+                var tempOriPostImageUrls = oriPostImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostImageUrls = post.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from imageUrl in tempOriPostImageUrls
+                                     where newPostImageUrls.All(x => x != imageUrl)
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = post.Id,
+                                         FileUrl = imageUrl,
+                                         TableName = nameof(Post)
+                                     });
+            }
+
             if (requestVideoUrls?.Any() == true)
             {
                 var tempVideoUrls = string.Join(Constants.SemiColonStringSeparator, requestVideoUrls.OrderBy(x => x));
                 if (tempVideoUrls != post.VideoUrls)
                 {
-                    //var postVideoUrls = post.VideoUrls.Split(Constants.SemiColonStringSeparator).OrderBy(x => x)
-                    //    .ToList();
-
                     //Copy new video
                     var videoUrls = await _imageService.CopyFileToStorageContainerAsync(requestVideoUrls,
                         post.Id.ToString(),
@@ -391,36 +439,42 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     post.Content = ReplaceContent.ReplaceImageUrls(post.Content, requestVideoUrls, videoUrls);
 
                     post.VideoUrls = string.Join(Constants.SemiColonStringSeparator, videoUrls.OrderBy(x => x));
-
-                    //Delete old video -> do not do this action, because the post has not been approved at this time -> we will create a service auto delete files not use 
-                    //if (!string.IsNullOrEmpty(post.VideoUrls))
-                    //{
-                    //    var deleteVideos = new List<string>();
-                    //    foreach (var postVideoUrl in postVideoUrls)
-                    //    {
-                    //        if (requestVideoUrls.Any(x => x == postVideoUrl))
-                    //            continue;
-                    //        deleteVideos.Add(postVideoUrl);
-                    //    }
-
-                    //    if (deleteVideos.Any())
-                    //    {
-                    //        await _imageService.DeleteFileInStorageContainerByNameAsync(post.Id.ToString(),
-                    //            deleteVideos,
-                    //            _storageConfig.SocialPostContainer);
-                    //    }
-                    //}
-
                 }
             }
             else
             {
                 post.VideoUrls = string.Empty;
             }
+
+            //Add to temp table to wait for deleting
+            if (oriPostVideoUrls != post.VideoUrls)
+            {
+                var tempOriPostVideoUrls = oriPostVideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostVideoUrls = post.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrls
+                                     where newPostVideoUrls.All(x => x != videoUrl)
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = post.Id,
+                                         FileUrl = videoUrl,
+                                         TableName = nameof(Post)
+                                     });
+            }
+
+            if (deleteFiles.Any())
+            {
+                _unitOfWork.DeleteFileRepository.AddRange(deleteFiles);
+            }
         }
 
         private async Task PopulateCommentAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Comment comment)
         {
+            var deleteFiles = new List<DeleteFile>();
+            var oriPostImageUrls = comment.ImageUrls;
+            var oriPostVideoUrls = comment.VideoUrls;
+
             if (requestImageUrls?.Any() == true)
             {
                 var tempImageUrls = string.Join(Constants.SemiColonStringSeparator, requestImageUrls.OrderBy(x => x));
@@ -437,6 +491,23 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             else
             {
                 comment.ImageUrls = string.Empty;
+            }
+
+            //Add to temp table to wait for deleting
+            if (oriPostImageUrls != comment.ImageUrls)
+            {
+                var tempOriPostImageUrls = oriPostImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostImageUrls = comment.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from imageUrl in tempOriPostImageUrls
+                                     where newPostImageUrls.All(x => x != imageUrl)
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = comment.Id,
+                                         FileUrl = imageUrl,
+                                         TableName = nameof(Comment)
+                                     });
             }
 
             if (requestVideoUrls?.Any() == true)
@@ -456,6 +527,28 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             else
             {
                 comment.VideoUrls = string.Empty;
+            }
+
+            //Add to temp table to wait for deleting
+            if (oriPostVideoUrls != comment.VideoUrls)
+            {
+                var tempOriPostVideoUrls = oriPostVideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostVideoUrls = comment.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrls
+                                     where newPostVideoUrls.All(x => x != videoUrl)
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = comment.Id,
+                                         FileUrl = videoUrl,
+                                         TableName = nameof(Comment)
+                                     });
+            }
+
+            if (deleteFiles.Any())
+            {
+                _unitOfWork.DeleteFileRepository.AddRange(deleteFiles);
             }
         }
 

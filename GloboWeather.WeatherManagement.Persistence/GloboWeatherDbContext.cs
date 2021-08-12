@@ -65,6 +65,7 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostActionIcon> PostActionIcons { get; set; }
         public DbSet<SharePost> SharePosts { get; set; }
+        public DbSet<DeleteFile> DeleteFiles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

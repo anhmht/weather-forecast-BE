@@ -132,6 +132,9 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                         $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
                     await _emailService.SendEmailConfirmationAsync(request.Email, callbackUrl).ConfigureAwait(false);
+
+                    await RefreshUserCacheAsync();
+
                     return new RegistrationResponse() {UserId = user.Id, Code = code};
                 }
                 else
@@ -145,7 +148,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"Email {request.Email} already exists.";
             }
-
 
             return registrationResponse;
         }
@@ -176,7 +178,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             }
             #endregion
 
-            return (await _userManager.UpdateAsync(user)).ToString();
+            var result = (await _userManager.UpdateAsync(user)).ToString();
+
+            await RefreshUserCacheAsync();
+            return result;
         }
 
         public async Task<List<RoleResponse>> GetRolesListAsync()
@@ -222,6 +227,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                     {
                         await _userManager.AddToRolesAsync(user, request.RoleNames);
                     }
+
+                    await RefreshUserCacheAsync();
 
                     return new CreateUserResponse() {UserId = user.Id};
                 }
@@ -512,6 +519,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 user.UserName = $"{user.UserName}_deleted";
                 user.IsDeleted = true;
                 await _userManager.UpdateAsync(user);
+
+                await RefreshUserCacheAsync();
             }
             else
             {
@@ -541,5 +550,23 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             };
             return response;
         }
+
+        private async Task RefreshUserCacheAsync()
+        {
+            var applicationUserCacheKey = new ApplicationUserCacheKey();
+
+            var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToListAsync();
+
+            var cacheUsers = users.Select(x => new ApplicationUserDto()
+            {
+                FullName = $"{x.LastName} {x.FirstName}",
+                UserName = x.UserName,
+                AvatarUrl = x.AvatarUrl
+            }).ToList();
+
+            //Save cache
+            _cacheStore.Add(cacheUsers, applicationUserCacheKey);
+        }
+
     }
 }

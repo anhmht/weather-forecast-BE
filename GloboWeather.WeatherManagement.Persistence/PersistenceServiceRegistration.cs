@@ -59,6 +59,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IPostActionIconRepository, PostActionIconRepository>();
+            services.AddScoped<IDeleteFileRepository, DeleteFileRepository>();
 
             return services;
         }
