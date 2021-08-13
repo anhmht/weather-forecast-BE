@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreateP
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.SharePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
@@ -232,7 +233,6 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult> DeletePostAsync([FromRoute] Guid id)
         {
             var request = new ChangeStatusCommand
@@ -250,7 +250,6 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        [Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult> DeleteCommentAsync([FromRoute] Guid id)
         {
             var request = new ChangeStatusCommand
@@ -262,6 +261,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             };
             await _mediator.Send(request);
             return NoContent();
+        }
+
+        [HttpPost("get-list-comment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetCommentListResponse>> GetListCommentAsync([FromBody] GetCommentListQuery request)
+        {
+            var response = await _mediator.Send(request);
+            return response;
         }
 
     }

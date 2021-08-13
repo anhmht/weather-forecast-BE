@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication.ExtendedProtection;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -15,9 +16,11 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.ChangeS
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
+using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Social;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
@@ -130,7 +133,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 Id = Guid.NewGuid(),
                 Content = request.Content,
                 PostId = request.PostId,
-                StatusId = (int)PostStatus.WaitingForApproval
+                StatusId = (int)PostStatus.WaitingForApproval,
+                ParentCommentId = request.ParentCommentId
             };
 
             //If user didn't login -> use anonymous user
@@ -346,7 +350,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 ).ToList();
 
             var anonymousUserIds =
-                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).ToList();
+                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).Distinct().ToList();
             var anonymousUsers =
                 (await _unitOfWork.AnonymousUserRepository.GetWhereAsync(x => anonymousUserIds.Contains(x.Id),
                     cancellationToken)).ToList();
@@ -410,6 +414,54 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _unitOfWork.DeleteFileRepository.DeleteRange(deleteCommentFiles);
 
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<GetCommentListResponse> GetCommentListAsync(GetCommentListQuery request, CancellationToken cancellationToken)
+        {
+            var publicStatus = (int)PostStatus.Public;
+            var pagingModel =
+                await _unitOfWork.CommentRepository
+                    .GetWhereQuery(x => x.PostId == request.PostId && x.StatusId == publicStatus)
+                    .OrderBy(x=>x.PublicDate)
+                    .PaginateAsync(request.Page, request.Limit, cancellationToken);
+
+            var comments = _mapper.Map<List<CommentVm>>(pagingModel.Items);
+
+            var commentIds = comments.Select(x => x.Id).ToList();
+
+            var actionIconList = await (
+                from cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => commentIds.Contains(x.Id))
+                join cact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+                    on cmt.Id equals cact.CommentId
+                select new ActionIconDto
+                {
+                    PostId = cmt.Id,
+                    CommentId = cact.CommentId,
+                    CommentIcon = cact.IconId,
+                    CommentActionUserName = cact.CreateBy
+                }).Distinct().ToListAsync(cancellationToken);
+
+            var users = await _authenticationService.GetAllUserAsync();
+
+            var anonymousUserIds =
+                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).Distinct().ToList();
+            var anonymousUsers =
+                (await _unitOfWork.AnonymousUserRepository.GetWhereAsync(x => anonymousUserIds.Contains(x.Id),
+                    cancellationToken)).ToList();
+
+            foreach (var commentVm in comments)
+            {
+                PopulateCommentActionIcon(actionIconList, commentVm, users);
+                PopolateCommentVm(comments, users, anonymousUsers, commentVm);
+            }
+
+            return new GetCommentListResponse
+            {
+                CurrentPage = pagingModel.CurrentPage,
+                TotalPages = pagingModel.TotalPages,
+                Comments = comments,
+                TotalItems = pagingModel.TotalItems
+            };
         }
 
         #region Private functions
@@ -726,7 +778,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             }
         }
 
-        private void PopulatePostAsync(List<ActionIconDto> actionIconList, PostVm postItem, List<ApplicationUserDto> users, List<Comment> comments, List<AnonymousUser> anonymousUsers,
+        private void PopulatePostAsync(List<ActionIconDto> actionIconList, PostVm postItem,
+            List<ApplicationUserDto> users, List<Comment> comments, List<AnonymousUser> anonymousUsers,
             List<SharePost> postShares)
         {
             PopulatePostActionIcon(actionIconList, postItem, users);
@@ -734,33 +787,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var creator = users.Find(x => x.UserName == postItem.CreateBy);
             postItem.ApprovedByFullName = users.Find(x => x.UserName == postItem.ApprovedByUserName)?.FullName;
             postItem.CreatorFullName = creator?.FullName;
+            postItem.CreatorShortName = creator?.ShortName;
             postItem.ListImageUrl = postItem.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
             postItem.ListVideoUrl = postItem.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
             postItem.CreatorAvatarUrl = creator?.AvatarUrl;
 
             var postComments = comments.Where(x => x.PostId == postItem.Id).OrderBy(x => x.CreateDate).ToList();
             postItem.Comments = _mapper.Map<List<CommentVm>>(postComments);
+            postItem.NumberOfComment = postItem.Comments.Count;
             foreach (var postItemComment in postItem.Comments)
             {
                 PopulateCommentActionIcon(actionIconList, postItemComment, users);
 
-                postItemComment.ApprovedByFullName =
-                    users.Find(x => x.UserName == postItemComment.ApprovedByUserName)?.FullName;
-
-                if (!string.IsNullOrEmpty(postItemComment.CreateBy))
-                {
-                    var commentCreator = users.Find(x => x.UserName == postItemComment.CreateBy);
-                    postItemComment.CreatorFullName = commentCreator?.FullName;
-                    postItemComment.CreatorAvatarUrl = commentCreator?.AvatarUrl;
-                }
-                else if (postItemComment.AnonymousUserId.HasValue && postItemComment.AnonymousUserId != Guid.Empty)
-                {
-                    postItemComment.CreatorFullName = anonymousUsers
-                        .Find(x => x.Id.Equals(postItemComment.AnonymousUserId))?.FullName;
-                }
-
-                postItemComment.ListImageUrl = postItemComment.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
-                postItemComment.ListVideoUrl = postItemComment.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+                PopolateCommentVm(postItem.Comments, users, anonymousUsers, postItemComment);
             }
 
             var shares = postShares.Where(x => x.PostId == postItem.Id).ToList();
@@ -769,6 +808,38 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     shares.Select(sharePost => sharePost.CreateBy).Contains(x.UserName))
                 .Select(x => x.FullName)
                 .ToList();
+        }
+
+        private static void PopolateCommentVm(List<CommentVm> comments, List<ApplicationUserDto> users,
+            List<AnonymousUser> anonymousUsers, CommentVm commentVm)
+        {
+            commentVm.ApprovedByFullName =
+                users.Find(x => x.UserName == commentVm.ApprovedByUserName)?.FullName;
+
+            if (!string.IsNullOrEmpty(commentVm.CreateBy))
+            {
+                var commentCreator = users.Find(x => x.UserName == commentVm.CreateBy);
+                commentVm.CreatorFullName = commentCreator?.FullName;
+                commentVm.CreatorShortName = commentCreator?.ShortName;
+                commentVm.CreatorAvatarUrl = commentCreator?.AvatarUrl;
+            }
+            else if (commentVm.AnonymousUserId.HasValue && commentVm.AnonymousUserId != Guid.Empty)
+            {
+                var anonymousUser = anonymousUsers
+                    .Find(x => x.Id.Equals(commentVm.AnonymousUserId));
+                if (anonymousUser != null)
+                {
+                    commentVm.CreatorFullName = anonymousUser.FullName;
+                    commentVm.CreatorShortName =
+                        string.Join("",
+                            anonymousUser.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                .Select(x => x.First()));
+                }
+            }
+
+            commentVm.ListImageUrl = commentVm.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            commentVm.NumberOfSubComment = comments.Count(x => x.ParentCommentId == commentVm.Id);
         }
 
         #endregion

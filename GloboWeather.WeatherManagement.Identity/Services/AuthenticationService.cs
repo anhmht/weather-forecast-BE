@@ -385,12 +385,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
 
-            var response = users.Select(x => new ApplicationUserDto()
-            {
-                FullName = $"{x.LastName} {x.FirstName}",
-                UserName = x.UserName,
-                AvatarUrl = x.AvatarUrl
-            }).ToList();
+            var response = GetApplicationUserDtos(users);
 
             //Save cache
             _cacheStore.Add(response, applicationUserCacheKey);
@@ -557,16 +552,22 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToListAsync();
 
-            var cacheUsers = users.Select(x => new ApplicationUserDto()
-            {
-                FullName = $"{x.LastName} {x.FirstName}",
-                UserName = x.UserName,
-                AvatarUrl = x.AvatarUrl
-            }).ToList();
+            var cacheUsers = GetApplicationUserDtos(users);
 
             //Save cache
             _cacheStore.Add(cacheUsers, applicationUserCacheKey);
         }
 
+        private static List<ApplicationUserDto> GetApplicationUserDtos(List<ApplicationUser> users)
+        {
+            var cacheUsers = users.Select(x => new ApplicationUserDto()
+            {
+                FullName = $"{x.LastName} {x.FirstName}",
+                UserName = x.UserName,
+                AvatarUrl = x.AvatarUrl,
+                ShortName = $"{x.LastName.First()}{x.FirstName.First()}"
+            }).ToList();
+            return cacheUsers;
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public string Content { get; set; }
         public string CreateBy { get; set; }
         public string CreatorFullName { get; set; }
+        public string CreatorShortName { get; set; }
         public string CreatorAvatarUrl { get; set; }
         public DateTime CreateDate { get; set; }
         [JsonIgnore]
@@ -33,6 +34,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public List<CommentVm> Comments { get; set; }
         public List<ActionIconVm> ActionIcons { get; set; }
         public SharePostVm Shares { get; set; }
+        public int NumberOfComment { get; set; }
 
         public PostVm()
         {
@@ -51,6 +53,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public string Content { get; set; }
         public string CreateBy { get; set; }
         public string CreatorFullName { get; set; }
+        public string CreatorShortName { get; set; }
         public string CreatorAvatarUrl { get; set; }
         public DateTime CreateDate { get; set; }
         [JsonIgnore]
@@ -66,6 +69,8 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public string ApprovedByUserName { get; set; }
         public string ApprovedByFullName { get; set; }
         public List<ActionIconVm> ActionIcons { get; set; }
+        public Guid? ParentCommentId { get; set; }
+        public int NumberOfSubComment { get; set; }
 
         public CommentVm()
         {

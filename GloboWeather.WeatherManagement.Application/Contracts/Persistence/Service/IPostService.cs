@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.ChangeS
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 
@@ -28,6 +29,8 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Servi
             CancellationToken cancellationToken);
 
         Task DeleteTempFile();
+        Task<GetCommentListResponse> GetCommentListAsync(GetCommentListQuery request,
+            CancellationToken cancellationToken);
 
     }
 }

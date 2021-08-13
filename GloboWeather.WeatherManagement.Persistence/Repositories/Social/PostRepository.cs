@@ -29,7 +29,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
             }
 
             post.StatusId = postStatusId;
-            if (post.StatusId == (int) PostStatus.Public)
+            if (post.StatusId == (int)PostStatus.Public)
             {
                 post.PublicDate = DateTime.Now;
             }
@@ -48,7 +48,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
             if (request.IsUserTimeLine)
             {
                 return await _unitOfWork.PostRepository.GetWhereQuery(x =>
-                        x.CreateBy == request.UserName && x.StatusId == (int) PostStatus.Public)
+                        x.CreateBy == request.UserName
+                        && (x.StatusId == (int)PostStatus.Public
+                        || x.StatusId == (int)PostStatus.Private
+                        || x.StatusId == (int)PostStatus.WaitingForApproval))
                     .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
             }
 

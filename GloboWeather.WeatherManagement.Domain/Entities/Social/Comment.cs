@@ -20,6 +20,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         public DateTime? PublicDate { get; set; } //The day that status change into "Public"
         public string ApprovedByUserName { get; set; } //User approve the comment
         public Guid? AnonymousUserId { get; set; } //If social user -> this field will be empty
+        public Guid? ParentCommentId { get; set; }
 
         //CreateBy: user makes action
     }
