@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreateP
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 
@@ -30,6 +31,8 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Servi
 
         Task DeleteTempFile();
         Task<GetCommentListResponse> GetCommentListAsync(GetCommentListQuery request,
+            CancellationToken cancellationToken);
+        Task<GetCommentListOfUserResponse> GetCommentListOfUserAsync(GetCommentListOfUserQuery request,
             CancellationToken cancellationToken);
 
     }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Social;
@@ -39,17 +41,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
             return await _unitOfWork.CommitAsync() > 0;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<List<Comment>> GetListByPostAndUserAsync(List<Guid> postIds, string userName)
         {
-            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(id);
-            if (comment != null)
-            {
-                comment.StatusId = (int)PostStatus.Deleted;
-                _unitOfWork.CommentRepository.Update(comment);
-                return await _unitOfWork.CommitAsync() > 0;
-            }
-
-            return false;
+            return (await _unitOfWork.CommentRepository.GetWhereAsync(c => postIds.Contains(c.PostId)
+                                                                           && c.CreateBy == userName
+                                                                           && (c.StatusId == (int) PostStatus.Public
+                                                                               || c.StatusId == (int) PostStatus.Private
+                                                                               || c.StatusId ==
+                                                                               (int) PostStatus.WaitingForApproval)))
+                .ToList();
         }
     }
 }

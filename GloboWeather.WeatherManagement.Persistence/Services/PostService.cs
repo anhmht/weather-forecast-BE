@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Authentication.ExtendedProtection;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,6 +16,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreateP
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
@@ -462,6 +462,68 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 Comments = comments,
                 TotalItems = pagingModel.TotalItems
             };
+        }
+
+        public async Task<GetCommentListOfUserResponse> GetCommentListOfUserAsync(GetCommentListOfUserQuery request, CancellationToken cancellationToken)
+        {
+            CheckLoginSession();
+
+            var posts = await _unitOfWork.PostRepository.GetPostByUserCommentedAsync(request, _loginUserName, cancellationToken);
+
+            var postIds = posts.Items.Select(x => x.Id).ToList();
+
+            var comments =
+                (await _unitOfWork.CommentRepository.GetListByPostAndUserAsync(postIds, _loginUserName))
+                .OrderBy(x => x.PublicDate).ToList();
+            
+            var actionIconList = await (
+                from pst in _unitOfWork.PostRepository.GetWhereQuery(x => postIds.Contains(x.Id))
+                join cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => x.CreateBy == _loginUserName)
+                    on pst.Id equals cmt.PostId into cmtTemp
+                from comment in cmtTemp.DefaultIfEmpty()
+                join pact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+                    on pst.Id equals pact.PostId into pactTemp
+                from postAction in pactTemp.DefaultIfEmpty()
+                join cact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+                    on comment.Id equals cact.CommentId into cactTemp
+                from commentAction in cactTemp.DefaultIfEmpty()
+                select new ActionIconDto
+                {
+                    PostId = postAction.PostId,
+                    PostIcon = postAction.IconId,
+                    PostActionUserName = postAction.CreateBy,
+                    CommentId = commentAction.CommentId,
+                    CommentIcon = commentAction.IconId,
+                    CommentActionUserName = commentAction.CreateBy
+                }).Distinct().ToListAsync(cancellationToken);
+
+            var postShares =
+                (await _unitOfWork.SharePostRepository.GetWhereAsync(x => postIds.Contains(x.PostId), cancellationToken)
+                ).ToList();
+
+            var anonymousUserIds =
+                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).ToList();
+            var anonymousUsers =
+                (await _unitOfWork.AnonymousUserRepository.GetWhereAsync(x => anonymousUserIds.Contains(x.Id),
+                    cancellationToken)).ToList();
+
+            var listPostVm = _mapper.Map<List<PostVm>>(posts.Items);
+            var users = await _authenticationService.GetAllUserAsync();
+
+            foreach (var postItem in listPostVm)
+            {
+                PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares);
+            }
+
+            var response = new GetCommentListOfUserResponse
+            {
+                TotalPages = posts.TotalPages,
+                CurrentPage = posts.CurrentPage,
+                TotalItems = posts.TotalItems,
+                Items = listPostVm
+            };
+
+            return response;
         }
 
         #region Private functions

@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using System.Linq;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
+using GloboWeather.WeatherManagement.Application.Requests;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
 {
@@ -59,5 +60,20 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
                 .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
 
+        public async Task<PagedModel<Post>> GetPostByUserCommentedAsync(BasePagingRequest request, string userName,
+            CancellationToken cancellationToken)
+        {
+            var query = from p in _unitOfWork.PostRepository.GetAllQuery()
+                join c in _unitOfWork.CommentRepository.GetAllQuery() on p.Id equals c.PostId
+                where c.CreateBy == userName
+                      && (c.StatusId == (int) PostStatus.Public
+                          || c.StatusId == (int) PostStatus.Private
+                          || c.StatusId == (int) PostStatus.WaitingForApproval)
+                      && p.StatusId == (int) PostStatus.Public
+                select p;
+
+            return await query
+                .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+        }
     }
 }

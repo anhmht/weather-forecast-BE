@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
@@ -8,6 +9,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Socia
     public interface ICommentRepository : IAsyncRepository<Comment>
     {
         Task<bool> ChangeStatusAsync(Guid id, int postStatusId, string userName, bool isApproval);
-        Task<bool> DeleteAsync(Guid id);
+        Task<List<Comment>> GetListByPostAndUserAsync(List<Guid> postIds, string userName);
     }
 }

@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveA
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.SharePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
@@ -267,6 +268,15 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<GetCommentListResponse>> GetListCommentAsync([FromBody] GetCommentListQuery request)
+        {
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpPost("get-list-comment-of-user")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetCommentListOfUserResponse>> GetListCommentOfUserAsync([FromBody] GetCommentListOfUserQuery request)
         {
             var response = await _mediator.Send(request);
             return response;
