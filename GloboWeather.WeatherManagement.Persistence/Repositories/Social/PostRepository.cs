@@ -72,7 +72,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
                       && p.StatusId == (int) PostStatus.Public
                 select p;
 
-            return await query
+            return await query.Distinct()
                 .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
     }

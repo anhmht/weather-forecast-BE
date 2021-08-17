@@ -850,8 +850,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             postItem.ApprovedByFullName = users.Find(x => x.UserName == postItem.ApprovedByUserName)?.FullName;
             postItem.CreatorFullName = creator?.FullName;
             postItem.CreatorShortName = creator?.ShortName;
-            postItem.ListImageUrl = postItem.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
-            postItem.ListVideoUrl = postItem.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            postItem.ListImageUrl = postItem.ImageUrls.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            postItem.ListVideoUrl = postItem.VideoUrls.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
             postItem.CreatorAvatarUrl = creator?.AvatarUrl;
 
             var postComments = comments.Where(x => x.PostId == postItem.Id).OrderBy(x => x.CreateDate).ToList();
@@ -899,8 +901,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 }
             }
 
-            commentVm.ListImageUrl = commentVm.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
-            commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            commentVm.ListImageUrl = commentVm.ImageUrls.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
             commentVm.NumberOfSubComment = comments.Count(x => x.ParentCommentId == commentVm.Id);
         }
 
