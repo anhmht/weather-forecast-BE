@@ -15,10 +15,15 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.ChangeS
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentsForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetSubComments;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Social;
@@ -253,32 +258,45 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var postIds = posts.Items.Select(x => x.Id).ToList();
 
             var publicStatus = (int)PostStatus.Public;
-            var comments =
-                await _unitOfWork.CommentRepository.GetWhereQuery(
-                        x => postIds.Contains(x.PostId) && x.StatusId == publicStatus)
-                    .OrderByDescending(x => x.PublicDate)
-                    .Take(request.CommentLimit).ToListAsync(cancellationToken: cancellationToken);
+            var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(
+                    x => postIds.Contains(x.PostId) && x.StatusId == publicStatus);
+
+            var comments = await commentQuery.Where(x => !x.ParentCommentId.HasValue).Take(request.CommentLimit)
+                .OrderBy(x => x.PublicDate)
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            var countCommentOfPost = await (from c in commentQuery
+                                            group c by c.PostId
+                into grp
+                                            select new { PostId = grp.Key, NumberOfComment = grp.Count() }).ToDictionaryAsync(x => x.PostId,
+                y => y.NumberOfComment, cancellationToken: cancellationToken);
+
+            var countSubComment = await (from c in commentQuery.Where(x => x.ParentCommentId.HasValue)
+                                         group c by c.ParentCommentId
+                    into grp
+                                         select new { CommentId = grp.Key.Value, NumberOfSubComment = grp.Count() })
+                .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
 
             var actionIconList = await (
-                from pst in _unitOfWork.PostRepository.GetWhereQuery(x => postIds.Contains(x.Id))
-                join cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => x.StatusId == publicStatus)
-                    on pst.Id equals cmt.PostId into cmtTemp
-                from comment in cmtTemp.DefaultIfEmpty()
-                join pact in _unitOfWork.PostActionIconRepository.GetAllQuery()
-                    on pst.Id equals pact.PostId into pactTemp
-                from postAction in pactTemp.DefaultIfEmpty()
-                join cact in _unitOfWork.PostActionIconRepository.GetAllQuery()
-                    on comment.Id equals cact.CommentId into cactTemp
-                from commentAction in cactTemp.DefaultIfEmpty()
-                select new ActionIconDto
-                {
-                    PostId = postAction.PostId,
-                    PostIcon = postAction.IconId,
-                    PostActionUserName = postAction.CreateBy,
-                    CommentId = commentAction.CommentId,
-                    CommentIcon = commentAction.IconId,
-                    CommentActionUserName = commentAction.CreateBy
-                }).Distinct().ToListAsync(cancellationToken);
+ from pst in _unitOfWork.PostRepository.GetWhereQuery(x => postIds.Contains(x.Id))
+ join cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => x.StatusId == publicStatus)
+     on pst.Id equals cmt.PostId into cmtTemp
+ from comment in cmtTemp.DefaultIfEmpty()
+ join pact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+     on pst.Id equals pact.PostId into pactTemp
+ from postAction in pactTemp.DefaultIfEmpty()
+ join cact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+     on comment.Id equals cact.CommentId into cactTemp
+ from commentAction in cactTemp.DefaultIfEmpty()
+ select new ActionIconDto
+ {
+     PostId = postAction.PostId,
+     PostIcon = postAction.IconId,
+     PostActionUserName = postAction.CreateBy,
+     CommentId = commentAction.CommentId,
+     CommentIcon = commentAction.IconId,
+     CommentActionUserName = commentAction.CreateBy
+ }).Distinct().ToListAsync(cancellationToken);
 
             var postShares =
                 (await _unitOfWork.SharePostRepository.GetWhereAsync(x => postIds.Contains(x.PostId), cancellationToken)
@@ -295,7 +313,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             foreach (var postItem in listPostVm)
             {
-                PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares);
+                PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares, countCommentOfPost, countSubComment);
             }
 
             var response = new GetPostListResponse
@@ -318,11 +336,25 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             }
 
             var publicStatus = (int)PostStatus.Public;
-            var comments =
-                await _unitOfWork.CommentRepository.GetWhereQuery(
-                        x => x.PostId == post.Id && x.StatusId == publicStatus)
-                    .OrderBy(x => x.PublicDate)
-                    .ToListAsync(cancellationToken: cancellationToken);
+
+            var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(
+                    x => x.PostId == post.Id && x.StatusId == publicStatus)
+                .OrderBy(x => x.PublicDate);
+
+            var comments = await commentQuery.Where(x => !x.ParentCommentId.HasValue)
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            var countCommentOfPost = await (from c in commentQuery
+                                            group c by c.PostId
+                into grp
+                                            select new { PostId = grp.Key, NumberOfComment = grp.Count() }).ToDictionaryAsync(x => x.PostId,
+                y => y.NumberOfComment, cancellationToken: cancellationToken);
+
+            var countSubComment = await (from c in commentQuery.Where(x => x.ParentCommentId.HasValue)
+                                         group c by c.ParentCommentId
+                    into grp
+                                         select new { CommentId = grp.Key.Value, NumberOfSubComment = grp.Count() })
+                .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
 
             var actionIconList = await (
                 from pst in _unitOfWork.PostRepository.GetWhereQuery(x => x.Id == post.Id)
@@ -358,7 +390,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var postItem = _mapper.Map<GetPostDetailResponse>(post);
             var users = await _authenticationService.GetAllUserAsync();
 
-            PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares);
+            PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares, countCommentOfPost, countSubComment);
 
             return postItem;
         }
@@ -373,10 +405,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var dicDeleteFile = new Dictionary<Guid, List<string>>();
 
             var deletePostFiles = await (from d in _unitOfWork.DeleteFileRepository.GetAllQuery()
-                join p in _unitOfWork.PostRepository.GetAllQuery()
-                    on d.DeleteId equals p.Id
-                where d.TableName == nameof(Post) && p.StatusId == (int) PostStatus.Public
-                select d).Distinct().ToListAsync();
+                                         join p in _unitOfWork.PostRepository.GetAllQuery()
+                                             on d.DeleteId equals p.Id
+                                         where d.TableName == nameof(Post) && p.StatusId == (int)PostStatus.Public
+                                         select d).Distinct().ToListAsync();
 
             foreach (var deletePostFile in deletePostFiles)
             {
@@ -384,15 +416,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     dicDeleteFile[deletePostFile.DeleteId].Add(deletePostFile.FileUrl);
                 else
                 {
-                    dicDeleteFile[deletePostFile.DeleteId] = new List<string> {deletePostFile.FileUrl};
+                    dicDeleteFile[deletePostFile.DeleteId] = new List<string> { deletePostFile.FileUrl };
                 }
             }
 
             var deleteCommentFiles = await (from d in _unitOfWork.DeleteFileRepository.GetAllQuery()
-                join p in _unitOfWork.CommentRepository.GetAllQuery()
-                    on d.DeleteId equals p.Id
-                where d.TableName == nameof(Comment) && p.StatusId == (int)PostStatus.Public
-                select d).Distinct().ToListAsync();
+                                            join p in _unitOfWork.CommentRepository.GetAllQuery()
+                                                on d.DeleteId equals p.Id
+                                            where d.TableName == nameof(Comment) && p.StatusId == (int)PostStatus.Public
+                                            select d).Distinct().ToListAsync();
 
             foreach (var deleteCommentFile in deleteCommentFiles)
             {
@@ -419,13 +451,19 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         public async Task<GetCommentListResponse> GetCommentListAsync(GetCommentListQuery request, CancellationToken cancellationToken)
         {
             var publicStatus = (int)PostStatus.Public;
-            var pagingModel =
-                await _unitOfWork.CommentRepository
-                    .GetWhereQuery(x => x.PostId == request.PostId && x.StatusId == publicStatus)
-                    .OrderBy(x=>x.PublicDate)
-                    .PaginateAsync(request.Page, request.Limit, cancellationToken);
+            var commentQuery = _unitOfWork.CommentRepository
+                .GetWhereQuery(x => x.PostId == request.PostId && x.StatusId == publicStatus);
+            var pagingModel = await commentQuery.Where(x => !x.ParentCommentId.HasValue)
+                .OrderBy(x => x.PublicDate)
+                .PaginateAsync(request.Page, request.Limit, cancellationToken);
 
             var comments = _mapper.Map<List<CommentVm>>(pagingModel.Items);
+
+            var countSubComment = await (from c in commentQuery.Where(x => x.ParentCommentId.HasValue)
+                                         group c by c.ParentCommentId
+                    into grp
+                                         select new { CommentId = grp.Key.Value, NumberOfSubComment = grp.Count() })
+                .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
 
             var commentIds = comments.Select(x => x.Id).ToList();
 
@@ -452,7 +490,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             foreach (var commentVm in comments)
             {
                 PopulateCommentActionIcon(actionIconList, commentVm, users);
-                PopolateCommentVm(comments, users, anonymousUsers, commentVm);
+                PopulateCommentVm(users, anonymousUsers, commentVm, countSubComment);
             }
 
             return new GetCommentListResponse
@@ -472,10 +510,30 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             var postIds = posts.Items.Select(x => x.Id).ToList();
 
-            var comments =
-                (await _unitOfWork.CommentRepository.GetListByPostAndUserAsync(postIds, _loginUserName))
-                .OrderBy(x => x.PublicDate).ToList();
-            
+            var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(c => postIds.Contains(c.PostId)
+                                                                                && c.CreateBy == _loginUserName
+                                                                                && (c.StatusId ==
+                                                                                    (int)PostStatus.Public
+                                                                                    || c.StatusId ==
+                                                                                    (int)PostStatus.Private
+                                                                                    || c.StatusId ==
+                                                                                    (int)PostStatus
+                                                                                        .WaitingForApproval));
+            var comments = await commentQuery.OrderBy(x => x.PublicDate)
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            var countCommentOfPost = await (from c in commentQuery
+                                            group c by c.PostId
+                into grp
+                                            select new { PostId = grp.Key, NumberOfComment = grp.Count() }).ToDictionaryAsync(x => x.PostId,
+                y => y.NumberOfComment, cancellationToken: cancellationToken);
+
+            var countSubComment = await (from c in commentQuery.Where(x => x.ParentCommentId.HasValue)
+                                         group c by c.ParentCommentId
+                    into grp
+                                         select new { CommentId = grp.Key.Value, NumberOfSubComment = grp.Count() })
+                .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
+
             var actionIconList = await (
                 from pst in _unitOfWork.PostRepository.GetWhereQuery(x => postIds.Contains(x.Id))
                 join cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => x.CreateBy == _loginUserName)
@@ -512,7 +570,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             foreach (var postItem in listPostVm)
             {
-                PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares);
+                PopulatePostAsync(actionIconList, postItem, users, comments, anonymousUsers, postShares, countCommentOfPost, countSubComment);
             }
 
             var response = new GetCommentListOfUserResponse
@@ -522,6 +580,209 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 TotalItems = posts.TotalItems,
                 Items = listPostVm
             };
+
+            return response;
+        }
+
+        public async Task<GetSubCommentsResponse> GetSubCommentsAsync(GetSubCommentsQuery request, CancellationToken cancellationToken)
+        {
+            CheckLoginSession();
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(request.CommentId);
+            if (comment == null)
+            {
+                throw new NotFoundException("Comment", request.CommentId);
+            }
+
+            var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(x =>
+                x.PostId == comment.PostId && x.StatusId == (int) PostStatus.Public);
+
+            var commentsPaging = await commentQuery.Where(x => x.ParentCommentId == request.CommentId)
+                .OrderBy(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+
+            var comments = _mapper.Map<List<CommentVm>>(commentsPaging.Items);
+            var commentIds = comments.Select(x => x.Id).ToList();
+
+            var countSubComment = await (from c in commentQuery.Where(x =>
+                        x.ParentCommentId.HasValue && commentIds.Contains(x.ParentCommentId.Value))
+                    group c by c.ParentCommentId
+                    into grp
+                    select new {CommentId = grp.Key.Value, NumberOfSubComment = grp.Count()})
+                .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
+
+            var actionIconList = await (
+                from cmt in _unitOfWork.CommentRepository.GetWhereQuery(x => commentIds.Contains(x.Id))
+                join cact in _unitOfWork.PostActionIconRepository.GetAllQuery()
+                    on cmt.Id equals cact.CommentId
+                select new ActionIconDto
+                {
+                    PostId = cmt.Id,
+                    CommentId = cact.CommentId,
+                    CommentIcon = cact.IconId,
+                    CommentActionUserName = cact.CreateBy
+                }).Distinct().ToListAsync(cancellationToken);
+
+            var users = await _authenticationService.GetAllUserAsync();
+
+            var anonymousUserIds =
+                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).Distinct().ToList();
+            var anonymousUsers =
+                (await _unitOfWork.AnonymousUserRepository.GetWhereAsync(x => anonymousUserIds.Contains(x.Id),
+                    cancellationToken)).ToList();
+
+
+            foreach (var postItemComment in comments)
+            {
+                PopulateCommentActionIcon(actionIconList, postItemComment, users);
+
+                PopulateCommentVm(users, anonymousUsers, postItemComment, countSubComment);
+            }
+
+            return new GetSubCommentsResponse
+            {
+                Items = comments,
+                CurrentPage = commentsPaging.CurrentPage,
+                TotalPages = commentsPaging.TotalPages,
+                TotalItems = commentsPaging.TotalItems
+            };
+        }
+
+        public async Task<GetPostsForApprovalResponse> GetPostsForApprovalAsync(GetPostsForApprovalQuery request, CancellationToken cancellationToken)
+        {
+            var postPaging = await _unitOfWork.PostRepository.GetPostsForApprovalAsync(request, cancellationToken);
+
+            var posts = _mapper.Map<List<PostForApprovalVm>>(postPaging.Items);
+
+            var users = await _authenticationService.GetAllUserAsync();
+
+            var postStatuses = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.PostStatus);
+
+            foreach (var postForApprovalVm in posts)
+            {
+                var user = users.Find(x => x.UserName == postForApprovalVm.CreateBy);
+                var statusName = postStatuses.Find(x => x.ValueId == postForApprovalVm.StatusId)?.Description;
+                var post = postPaging.Items.FirstOrDefault(x => x.Id == postForApprovalVm.Id);
+                postForApprovalVm.CreatorAvatarUrl = user?.AvatarUrl;
+                postForApprovalVm.CreatorFullName = user?.FullName;
+                postForApprovalVm.CreatorShortName = user?.ShortName;
+                postForApprovalVm.StatusName = statusName;
+                postForApprovalVm.HasMedia =
+                    !(string.IsNullOrEmpty(post?.ImageUrls) && string.IsNullOrEmpty(post?.VideoUrls));
+            }
+
+            return new GetPostsForApprovalResponse
+            {
+                Items = posts,
+                CurrentPage = postPaging.CurrentPage,
+                TotalPages = postPaging.TotalPages,
+                TotalItems = postPaging.TotalItems
+            };
+        }
+
+        public async Task<GetCommentsForApprovalResponse> GetCommentsForApprovalAsync(GetCommentsForApprovalQuery request, CancellationToken cancellationToken)
+        {
+            var pagingList = await _unitOfWork.CommentRepository.GetCommentsForApprovalAsync(request, cancellationToken);
+
+            var comments = _mapper.Map<List<CommentForApprovalVm>>(pagingList.Items);
+
+            var users = await _authenticationService.GetAllUserAsync();
+
+            var postStatuses = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.PostStatus);
+
+            var anonymousUserIds =
+                comments.Where(x => x.AnonymousUserId.HasValue).Select(x => x.AnonymousUserId).Distinct().ToList();
+            var anonymousUsers =
+                (await _unitOfWork.AnonymousUserRepository.GetWhereAsync(x => anonymousUserIds.Contains(x.Id),
+                    cancellationToken)).ToList();
+
+            foreach (var commentForApprovalVm in comments)
+            {
+                var user = users.Find(x => x.UserName == commentForApprovalVm.CreateBy);
+                var statusName = postStatuses.Find(x => x.ValueId == commentForApprovalVm.StatusId)?.Description;
+                var comment = pagingList.Items.FirstOrDefault(x => x.Id == commentForApprovalVm.Id);
+                if (user != null)
+                {
+                    commentForApprovalVm.CreatorAvatarUrl = user.AvatarUrl;
+                    commentForApprovalVm.CreatorFullName = user.FullName;
+                    commentForApprovalVm.CreatorShortName = user.ShortName;
+                }
+                else
+                {
+                    var anonymousUser = anonymousUsers.Find(x => x.Id == commentForApprovalVm.AnonymousUserId);
+                    commentForApprovalVm.CreatorFullName = anonymousUser.FullName;
+                    commentForApprovalVm.CreatorShortName =
+                        string.Join("",
+                            anonymousUser.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                .Select(x => x.First()));
+                }
+
+                commentForApprovalVm.StatusName = statusName;
+                commentForApprovalVm.HasMedia =
+                    !(string.IsNullOrEmpty(comment?.ImageUrls) && string.IsNullOrEmpty(comment?.VideoUrls));
+            }
+
+            return new GetCommentsForApprovalResponse
+            {
+                Items = comments,
+                CurrentPage = pagingList.CurrentPage,
+                TotalPages = pagingList.TotalPages,
+                TotalItems = pagingList.TotalItems
+            };
+        }
+
+        public async Task<GetPostDetailForApprovalResponse> GetPostDetailForApprovalAsync(GetPostDetailForApprovalQuery request, CancellationToken cancellationToken)
+        {
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(request.Id);
+            var response = _mapper.Map<GetPostDetailForApprovalResponse>(post);
+
+            var user = (await _authenticationService.GetAllUserAsync()).Find(x => x.UserName == post.CreateBy);
+
+            response.CreatorAvatarUrl = user?.AvatarUrl;
+            response.CreatorFullName = user?.FullName;
+            response.CreatorShortName = user?.ShortName;
+
+            if (!string.IsNullOrEmpty(post.ImageUrls))
+            {
+                response.ListImageUrl = post.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            }
+            if (!string.IsNullOrEmpty(post.VideoUrls))
+            {
+                response.ListVideoUrl = post.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            }
+
+            return response;
+        }
+
+        public async Task<GetCommentDetailForApprovalResponse> GetCommentDetailForApprovalAsync(GetCommentDetailForApprovalQuery request, CancellationToken cancellationToken)
+        {
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(request.Id);
+            var response = _mapper.Map<GetCommentDetailForApprovalResponse>(comment);
+
+            var user = (await _authenticationService.GetAllUserAsync()).Find(x => x.UserName == comment.CreateBy);
+
+            if (user != null)
+            {
+                response.CreatorAvatarUrl = user.AvatarUrl;
+                response.CreatorFullName = user.FullName;
+                response.CreatorShortName = user.ShortName;
+            }
+            else if(comment.AnonymousUserId != null)
+            {
+                    var anonymousUser = await _unitOfWork.AnonymousUserRepository.GetByIdAsync(comment.AnonymousUserId.Value);
+                    response.CreatorFullName = anonymousUser.FullName;
+                    response.CreatorShortName =
+                        string.Join("",
+                            anonymousUser.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                .Select(x => x.First()));
+            }
+
+            if (!string.IsNullOrEmpty(comment.ImageUrls))
+            {
+                response.ListImageUrl = comment.ImageUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            }
+            if (!string.IsNullOrEmpty(comment.VideoUrls))
+            {
+                response.ListVideoUrl = comment.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
+            }
 
             return response;
         }
@@ -713,7 +974,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task<bool> AddCommentActionIconAsync(AddActionIconCommand request)
         {
             var actionIconEntry = await _unitOfWork.PostActionIconRepository.FindAsync(x =>
-                x.CommentId == request.Id && x.CreateBy == _loginUserName);
+                x.CommentId == request.Id && x.CreateBy == _loginUserName && x.IconId == request.IconId);
             if (actionIconEntry == null)
             {
                 actionIconEntry = new PostActionIcon
@@ -736,7 +997,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task<bool> AddPostActionIconAsync(AddActionIconCommand request)
         {
             var actionIconEntry = await _unitOfWork.PostActionIconRepository.FindAsync(x =>
-                x.PostId == request.Id && x.CreateBy == _loginUserName);
+                x.PostId == request.Id && x.CreateBy == _loginUserName && x.IconId == request.IconId);
             if (actionIconEntry == null)
             {
                 actionIconEntry = new PostActionIcon
@@ -842,7 +1103,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
         private void PopulatePostAsync(List<ActionIconDto> actionIconList, PostVm postItem,
             List<ApplicationUserDto> users, List<Comment> comments, List<AnonymousUser> anonymousUsers,
-            List<SharePost> postShares)
+            List<SharePost> postShares, Dictionary<Guid, int> countCommentOfPost, Dictionary<Guid, int> countSubComment)
         {
             PopulatePostActionIcon(actionIconList, postItem, users);
 
@@ -856,14 +1117,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             postItem.CreatorAvatarUrl = creator?.AvatarUrl;
 
-            var postComments = comments.Where(x => x.PostId == postItem.Id).OrderBy(x => x.CreateDate).ToList();
+            var postComments = comments.Where(x => x.PostId == postItem.Id).ToList();
             postItem.Comments = _mapper.Map<List<CommentVm>>(postComments);
-            postItem.NumberOfComment = postItem.Comments.Count;
+            postItem.NumberOfComment =
+                countCommentOfPost.TryGetValue(postItem.Id, out var numberOfComment) ? numberOfComment : 0;
             foreach (var postItemComment in postItem.Comments)
             {
                 PopulateCommentActionIcon(actionIconList, postItemComment, users);
 
-                PopolateCommentVm(postItem.Comments, users, anonymousUsers, postItemComment);
+                PopulateCommentVm(users, anonymousUsers, postItemComment, countSubComment);
             }
 
             var shares = postShares.Where(x => x.PostId == postItem.Id).ToList();
@@ -874,8 +1136,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 .ToList();
         }
 
-        private static void PopolateCommentVm(List<CommentVm> comments, List<ApplicationUserDto> users,
-            List<AnonymousUser> anonymousUsers, CommentVm commentVm)
+        private static void PopulateCommentVm(List<ApplicationUserDto> users,
+            List<AnonymousUser> anonymousUsers, CommentVm commentVm, Dictionary<Guid, int> countSubComment)
         {
             commentVm.ApprovedByFullName =
                 users.Find(x => x.UserName == commentVm.ApprovedByUserName)?.FullName;
@@ -905,7 +1167,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
-            commentVm.NumberOfSubComment = comments.Count(x => x.ParentCommentId == commentVm.Id);
+            commentVm.NumberOfSubComment = countSubComment.TryGetValue(commentVm.Id, out var numberOfSubComment) ? numberOfSubComment : 0;
         }
 
         #endregion

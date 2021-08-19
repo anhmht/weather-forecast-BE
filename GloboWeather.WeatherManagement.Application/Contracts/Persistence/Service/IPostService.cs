@@ -8,10 +8,15 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.ChangeS
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentsForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetSubComments;
 
 namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service
 {
@@ -34,6 +39,16 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Servi
             CancellationToken cancellationToken);
         Task<GetCommentListOfUserResponse> GetCommentListOfUserAsync(GetCommentListOfUserQuery request,
             CancellationToken cancellationToken);
+        Task<GetSubCommentsResponse> GetSubCommentsAsync(GetSubCommentsQuery request,
+            CancellationToken cancellationToken);
+        Task<GetPostsForApprovalResponse> GetPostsForApprovalAsync(GetPostsForApprovalQuery request,
+            CancellationToken cancellationToken);
+        Task<GetCommentsForApprovalResponse> GetCommentsForApprovalAsync(GetCommentsForApprovalQuery request,
+            CancellationToken cancellationToken);
 
+        Task<GetPostDetailForApprovalResponse> GetPostDetailForApprovalAsync(GetPostDetailForApprovalQuery request,
+            CancellationToken cancellationToken);
+        Task<GetCommentDetailForApprovalResponse> GetCommentDetailForApprovalAsync(GetCommentDetailForApprovalQuery request,
+            CancellationToken cancellationToken);
     }
 }

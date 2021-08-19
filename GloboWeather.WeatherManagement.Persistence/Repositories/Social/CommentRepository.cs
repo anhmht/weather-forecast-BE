@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Social;
 using GloboWeather.WeatherManagement.Application.Exceptions;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentsForApproval;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
+using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 
 namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
@@ -50,6 +53,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
                                                                                || c.StatusId ==
                                                                                (int) PostStatus.WaitingForApproval)))
                 .ToList();
+        }
+
+        public async Task<PagedModel<Comment>> GetCommentsForApprovalAsync(GetCommentsForApprovalQuery request, CancellationToken cancellationToken)
+        {
+            var query = request.StatusIds.Any()
+                ? _unitOfWork.CommentRepository.GetWhereQuery(x => request.StatusIds.Contains(x.StatusId))
+                : _unitOfWork.CommentRepository.GetWhereQuery(x => x.StatusId == (int)PostStatus.WaitingForApproval);
+
+            return await query
+                .OrderBy(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
     }
 }

@@ -8,10 +8,15 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreateP
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.RemoveActionIcon;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.SharePost;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.UpdatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentListOfUser;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentsForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetSubComments;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -278,6 +283,57 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<GetCommentListOfUserResponse>> GetListCommentOfUserAsync([FromBody] GetCommentListOfUserQuery request)
         {
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpPost("get-sub-comments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<GetSubCommentsResponse>> GetSubCommentsAsync([FromBody] GetSubCommentsQuery request)
+        {
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpPost("get-post-for-approval")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<ActionResult<GetPostsForApprovalResponse>> GetPostsForApprovalAsync([FromBody] GetPostsForApprovalQuery request)
+        {
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpPost("get-comment-for-approval")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<ActionResult<GetCommentsForApprovalResponse>> GetCommentsForApprovalAsync([FromBody] GetCommentsForApprovalQuery request)
+        {
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpGet("get-post-detail-for-approval/{id}", Name = "GetPostDetailForApproval")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<ActionResult<GetPostDetailForApprovalResponse>> GetPostDetailForApprovalAsync([FromRoute] Guid id)
+        {
+            var request = new GetPostDetailForApprovalQuery { Id = id };
+            var response = await _mediator.Send(request);
+            return response;
+        }
+
+        [HttpGet("get-comment-detail-for-approval/{id}", Name = "GetCommentDetailForApproval")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<ActionResult<GetCommentDetailForApprovalResponse>> GetCommentDetailForApprovalAsync([FromRoute] Guid id)
+        {
+            var request = new GetCommentDetailForApprovalQuery { Id = id };
             var response = await _mediator.Send(request);
             return response;
         }

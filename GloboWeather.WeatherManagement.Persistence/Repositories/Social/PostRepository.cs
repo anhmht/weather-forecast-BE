@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostL
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using System.Linq;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Requests;
 
@@ -74,6 +75,17 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
 
             return await query.Distinct()
                 .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+        }
+
+        public async Task<PagedModel<Post>> GetPostsForApprovalAsync(GetPostsForApprovalQuery request, 
+            CancellationToken cancellationToken)
+        {
+            var query = request.StatusIds.Any()
+                ? _unitOfWork.PostRepository.GetWhereQuery(x => request.StatusIds.Contains(x.StatusId))
+                : _unitOfWork.PostRepository.GetWhereQuery(x => x.StatusId == (int) PostStatus.WaitingForApproval);
+
+            return await query
+                .OrderBy(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
     }
 }

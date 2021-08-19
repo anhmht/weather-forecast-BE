@@ -378,11 +378,13 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted)
         {
+            //Check to get from cache
             var applicationUserCacheKey = new ApplicationUserCacheKey();
             var cachedApplicationUser = _cacheStore.Get(applicationUserCacheKey);
             if (cachedApplicationUser != null)
                 return cachedApplicationUser;
 
+            //Get from database
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
 
             var response = GetApplicationUserDtos(users);

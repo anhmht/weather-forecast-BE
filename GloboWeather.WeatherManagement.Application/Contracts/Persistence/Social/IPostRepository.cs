@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Requests;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
@@ -16,6 +17,9 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence.Socia
             CancellationToken cancellationToken);
 
         Task<PagedModel<Post>> GetPostByUserCommentedAsync(BasePagingRequest request, string userName,
+            CancellationToken cancellationToken);
+
+        Task<PagedModel<Post>> GetPostsForApprovalAsync(GetPostsForApprovalQuery request,
             CancellationToken cancellationToken);
     }
 }
