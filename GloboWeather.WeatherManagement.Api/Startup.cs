@@ -1,29 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Api.Context;
 using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
 using GloboWeather.WeatherManagement.Api.SignalR;
 using GloboWeather.WeatherManagement.Application;
-using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
 using GloboWeather.WeatherManagement.Monitoring;
 using GloboWeather.WeatherManagement.Persistence;
-using GloboWeather.WeatherManagement.Persistence.UnitOfWork;
 using GloboWeather.WeatherManagement.Weather;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using WeatherBackgroundService;
 
@@ -59,8 +53,23 @@ namespace GloboWeather.WeatherManagement.Api
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials().WithOrigins("http://localhost:53353", "https://localhost:8000", "http://localhost:8000"));
-            }); 
+            });
 
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = int.MaxValue;
+            });
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 256 MB
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MultipartHeadersCountLimit = int.MaxValue;
+            });
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
+            });
             services.AddSignalR().AddAzureSignalR();
 
         }
