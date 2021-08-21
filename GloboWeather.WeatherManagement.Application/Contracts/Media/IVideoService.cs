@@ -6,6 +6,8 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
 {
     public interface IVideoService
     {
-        Task<IList<string>> RunAsync(IFormFile file);
+        Task<IList<string>> UploadVideoAsync(IFormFile file);
+
+        Task<IList<string>> UploadVideoSocialAsync(IFormFile file);
     }
 }

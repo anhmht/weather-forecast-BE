@@ -753,6 +753,242 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
                     b.ToTable("ScenarioActionDetails");
                 });
 
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.AnonymousUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AnonymousUsers");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AnonymousUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApprovedByUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ParentCommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("PublicDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.DeleteFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContainerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DeleteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeleteFiles");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.HistoryTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ObjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HistoryTrackings");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApprovedByUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublicDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.PostActionIcon", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IconId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostActionIcons");
+                });
+
+            modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Social.SharePost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ShareTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SharePosts");
+                });
+
             modelBuilder.Entity("GloboWeather.WeatherManagement.Domain.Entities.Station", b =>
                 {
                     b.Property<string>("ID")

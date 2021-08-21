@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GloboWeather.WeatherManagement.Application.Caches;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
@@ -33,6 +34,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly ICacheStore _cacheStore;
 
 
         public AuthenticationService(
@@ -40,7 +42,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             IOptions<JwtSettings> jwtSettings,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IEmailService emailService
+            IEmailService emailService,
+            ICacheStore cacheStore
         )
         {
             _userManager = userManager;
@@ -48,6 +51,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _cacheStore = cacheStore;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
@@ -128,6 +132,9 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                         $"https://anhmht.github.io/weather-forecast-FE/#/confirm-email?uid={user.Id}&code={System.Net.WebUtility.UrlEncode(code)}";
 
                     await _emailService.SendEmailConfirmationAsync(request.Email, callbackUrl).ConfigureAwait(false);
+
+                    await RefreshUserCacheAsync();
+
                     return new RegistrationResponse() {UserId = user.Id, Code = code};
                 }
                 else
@@ -141,7 +148,6 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 registrationResponse.Success = false;
                 registrationResponse.Message = $"Email {request.Email} already exists.";
             }
-
 
             return registrationResponse;
         }
@@ -172,7 +178,10 @@ namespace GloboWeather.WeatherManagement.Identity.Services
             }
             #endregion
 
-            return (await _userManager.UpdateAsync(user)).ToString();
+            var result = (await _userManager.UpdateAsync(user)).ToString();
+
+            await RefreshUserCacheAsync();
+            return result;
         }
 
         public async Task<List<RoleResponse>> GetRolesListAsync()
@@ -218,6 +227,8 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                     {
                         await _userManager.AddToRolesAsync(user, request.RoleNames);
                     }
+
+                    await RefreshUserCacheAsync();
 
                     return new CreateUserResponse() {UserId = user.Id};
                 }
@@ -367,12 +378,21 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
         public async Task<List<ApplicationUserDto>> GetAllUserAsync(bool isGetDeleted)
         {
+            //Check to get from cache
+            var applicationUserCacheKey = new ApplicationUserCacheKey();
+            var cachedApplicationUser = _cacheStore.Get(applicationUserCacheKey);
+            if (cachedApplicationUser != null)
+                return cachedApplicationUser;
+
+            //Get from database
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
-            return users.Select(x => new ApplicationUserDto()
-            {
-                FullName = $"{x.LastName} {x.FirstName}",
-                UserName = x.UserName
-            }).ToList();
+
+            var response = GetApplicationUserDtos(users);
+
+            //Save cache
+            _cacheStore.Add(response, applicationUserCacheKey);
+
+            return response;
         }
 
         public async Task<ForgotPasswordResponse> ForgotPasswordAsync(string email)
@@ -496,11 +516,60 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 user.UserName = $"{user.UserName}_deleted";
                 user.IsDeleted = true;
                 await _userManager.UpdateAsync(user);
+
+                await RefreshUserCacheAsync();
             }
             else
             {
                 throw new Exception($"User with email {email} not found.");
             }
+        }
+
+        public async Task<AuthenticationResponse> GetUserInfoByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                throw new Exception($"User name {userName} not found.");
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var response = new AuthenticationResponse()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                AvatarUrl = user.AvatarUrl,
+                Roles = userRoles.ToList()
+            };
+            return response;
+        }
+
+        private async Task RefreshUserCacheAsync()
+        {
+            var applicationUserCacheKey = new ApplicationUserCacheKey();
+
+            var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToListAsync();
+
+            var cacheUsers = GetApplicationUserDtos(users);
+
+            //Save cache
+            _cacheStore.Add(cacheUsers, applicationUserCacheKey);
+        }
+
+        private static List<ApplicationUserDto> GetApplicationUserDtos(List<ApplicationUser> users)
+        {
+            var cacheUsers = users.Select(x => new ApplicationUserDto()
+            {
+                FullName = $"{x.LastName} {x.FirstName}",
+                UserName = x.UserName,
+                AvatarUrl = x.AvatarUrl,
+                ShortName = $"{x.LastName.First()}{x.FirstName.First()}"
+            }).ToList();
+            return cacheUsers;
         }
     }
 }

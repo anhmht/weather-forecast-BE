@@ -15,12 +15,17 @@
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
         <!--<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />-->
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="System.Text.Json" Version="4.7.2" />
         
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Domain\GloboWeather.WeatherManagement.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\Comments\Queries\" />
     </ItemGroup>
 
 </Project>

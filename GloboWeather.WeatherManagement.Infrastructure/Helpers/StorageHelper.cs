@@ -291,7 +291,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                 {
                     if (fileUrls.Contains(blobItem.Name))
                     {
-                        await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                        await container.DeleteBlobIfExistsAsync(blobItem.Name); 
                     }
                 }
             }

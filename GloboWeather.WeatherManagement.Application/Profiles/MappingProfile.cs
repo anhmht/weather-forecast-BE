@@ -29,6 +29,14 @@ using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.Cre
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.UpdateScenarioAction;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
 using GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsListBy;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Commands.CreatePost;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentDetailForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetCommentsForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetail;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetailForApproval;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
+using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
+using GloboWeather.WeatherManagement.Domain.Entities.Social;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
 {
@@ -113,6 +121,14 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<ScenarioAction, ScenarioActionDetailVm>();
             CreateMap<ScenarioActionDetail, ScenarioActionDetailDto>();
             CreateMap<EventListVm, EventListCateStatusVm>();
+            CreateMap<CreatePostCommand, Post>();
+            CreateMap<Post, PostVm>();
+            CreateMap<Comment, CommentVm>();
+            CreateMap<Post, GetPostDetailResponse>();
+            CreateMap<Post, PostForApprovalVm>();
+            CreateMap<Comment, CommentForApprovalVm>();
+            CreateMap<Post, GetPostDetailForApprovalResponse>();
+            CreateMap<Comment, GetCommentDetailForApprovalResponse>();
         }
     }
 }

@@ -109,11 +109,11 @@ namespace GloboWeather.WeatherManagement.Api.Controllers
             return response;
         }
 
-        [HttpGet("GetEventsWithContent")]
+        [HttpPost("GetEventsWithContent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<List<EventListWithContentVm>>> GetEventsListWithContentAsync(
-            [FromQuery] GetEventsListWithContentQuery request)
+        public async Task<ActionResult<List<EventListWithContentResponse>>> GetEventsListWithContentAsync(
+            [FromBody] GetEventsListWithContentQuery request)
         {
             var dtos = await _mediator.Send(request);
             return Ok(dtos);

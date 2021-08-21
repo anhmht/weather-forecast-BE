@@ -15,9 +15,11 @@ using GloboWeather.WeatherManagement.Application.Features.Scenarios.Commands.Upd
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioActionDetail;
 using GloboWeather.WeatherManagement.Application.Features.Scenarios.Queries.GetScenarioDetail;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
+using GloboWeather.WeatherManagement.Application.Models.Storage;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace GloboWeather.WeatherManagement.Persistence.Services
 {
@@ -27,13 +29,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly ICommonService _commonService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
+        private readonly AzureStorageConfig _storageConfig;
 
-        public ScenarioService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService, IMapper mapper)
+        public ScenarioService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService, IMapper mapper
+            , IOptions<AzureStorageConfig> azureStorageConfig)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
             _imageService = imageService;
             _mapper = mapper;
+            _storageConfig = azureStorageConfig.Value;
         }
 
         public async Task<ScenarioDetailVm> GetScenarioDetailAsync(GetScenarioDetailQuery request)
@@ -447,7 +452,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     {
                         var videos = new List<string>() {importVideoAction.Data};
                         await _imageService.DeleteFileInStorageContainerByNameAsync(
-                            importVideoAction.Id.ToString(), videos, StorageContainer.Scenarios);
+                            importVideoAction.Id.ToString(), videos, _storageConfig.ScenarioContainer);
                     }
                 }
 
@@ -479,7 +484,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 var videos = new List<string>() { scenarioAction.Data };
                 await _imageService.DeleteFileInStorageContainerByNameAsync(
-                    scenarioAction.Id.ToString(), videos, StorageContainer.Scenarios);
+                    scenarioAction.Id.ToString(), videos, _storageConfig.ScenarioContainer);
             }
 
             //Delete ScenarioAction
@@ -523,7 +528,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 await _imageService.CopyFileToStorageContainerAsync(
                     iconsList
                     , scenarioActionDetailId.ToString(), Forder.IconImage,
-                    StorageContainer.Scenarios);
+                    _storageConfig.ScenarioContainer);
             return string.Join(Constants.SemiColonStringSeparator,
                 iconsResult);
         }
@@ -540,7 +545,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         var images = scenarioActionDetail.IconUrls
                             .Split(Constants.SemiColonStringSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
                         await _imageService.DeleteFileInStorageContainerByNameAsync(
-                            scenarioActionDetail.Id.ToString(), images, StorageContainer.Scenarios);
+                            scenarioActionDetail.Id.ToString(), images, _storageConfig.ScenarioContainer);
                     }
                     catch
                     {
@@ -561,7 +566,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var iconsResult =
                 await _imageService.CopyFileToStorageContainerAsync(
                     listFile, scenarioAction.Id.ToString(), Forder.ImportVideo,
-                    StorageContainer.Scenarios);
+                    _storageConfig.ScenarioContainer);
 
             var urlResult = iconsResult?.FirstOrDefault();
 
@@ -578,7 +583,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         scenarioAction.Data
                     };
                     await _imageService.DeleteFileInStorageContainerByNameAsync(
-                        scenarioAction.Id.ToString(), images, StorageContainer.Scenarios);
+                        scenarioAction.Id.ToString(), images, _storageConfig.ScenarioContainer);
                 }
                 catch
                 {

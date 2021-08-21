@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Domain.Common;
 using GloboWeather.WeatherManagement.Domain.Entities;
+using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,6 +59,13 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<ScenarioActionDetail> ScenarioActionDetails { get; set; }
         public DbSet<CommonLookup> CommonLookups { get; set; }
         public DbSet<EventViewCount> EventViewCounts { get; set; }
+        public DbSet<AnonymousUser> AnonymousUsers { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<HistoryTracking> HistoryTrackings { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostActionIcon> PostActionIcons { get; set; }
+        public DbSet<SharePost> SharePosts { get; set; }
+        public DbSet<DeleteFile> DeleteFiles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
