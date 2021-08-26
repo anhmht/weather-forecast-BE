@@ -54,7 +54,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
                         && (x.StatusId == (int)PostStatus.Public
                         || x.StatusId == (int)PostStatus.Private
                         || x.StatusId == (int)PostStatus.WaitingForApproval))
-                    .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+                    .OrderByDescending(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
             }
 
             return await _unitOfWork.PostRepository.GetWhereQuery(x => x.StatusId == (int)PostStatus.Public)

@@ -178,7 +178,15 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
 
             foreach (var file in files)
             {
-                result.Add(await StorageHelper.CopyFileToContainerAsync(file, id, folderName, _storageConfig, containerName));
+                if (file.Contains($"/{_storageConfig.TempContainer}/"))
+                {
+                    result.Add(await StorageHelper.CopyFileToContainerAsync(file, id, folderName, _storageConfig,
+                        containerName));
+                }
+                else
+                {
+                    result.Add(file);
+                }
             }
 
             return result;
