@@ -51,12 +51,6 @@ namespace GloboWeather.WeatherManagement.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>()
-                    .UseKestrel(options =>
-                    {
-                        options.Limits.MaxRequestBodySize = long.MaxValue;
-                    })
-                    .UseIISIntegration();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
