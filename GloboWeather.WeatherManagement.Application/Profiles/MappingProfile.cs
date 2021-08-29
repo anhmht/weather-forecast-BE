@@ -36,6 +36,7 @@ using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostD
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostDetailForApproval;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostList;
 using GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetPostsForApproval;
+using GloboWeather.WeatherManagement.Application.Features.SocialNotifications.Queries.GetListSocialNotification;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 
 namespace GloboWeather.WeatherManagement.Application.Profiles
@@ -129,6 +130,7 @@ namespace GloboWeather.WeatherManagement.Application.Profiles
             CreateMap<Comment, CommentForApprovalVm>();
             CreateMap<Post, GetPostDetailForApprovalResponse>();
             CreateMap<Comment, GetCommentDetailForApprovalResponse>();
+            CreateMap<SocialNotification, SocialNotificationVm>();
         }
     }
 }

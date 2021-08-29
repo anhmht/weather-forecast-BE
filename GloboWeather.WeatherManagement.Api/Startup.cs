@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SignalRClient;
 using WeatherBackgroundService;
 
 namespace GloboWeather.WeatherManagement.Api
@@ -43,6 +44,7 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddWeatherService(Configuration);
             services.AddMonitoringService(Configuration);
             services.AddWeatherBackgroundService(Configuration);
+            services.AddSignalRServices(Configuration);
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddControllers();
             services.AddScoped<WeatherContext>();

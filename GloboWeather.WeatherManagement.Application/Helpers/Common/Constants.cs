@@ -34,4 +34,23 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public const string Delete = "Delete";
         public const string ChangeStatus = "ChangeStatus";
     }
+
+    public class NotificationAction
+    {
+        public const string CreatePost = nameof(CreatePost);
+        public const string EditPost = nameof(EditPost);
+        public const string ChangePostStatus = nameof(ChangePostStatus);
+        public const string CreateComment = nameof(CreateComment);
+        public const string EditComment = nameof(EditComment);
+        public const string ChangeCommentStatus = nameof(ChangeCommentStatus);
+    }
+
+    public class ApplicationUserRole
+    {
+        public const string SuperAdmin = nameof(SuperAdmin);
+        public const string Admin = nameof(Admin);
+        public const string Kttv = "KTTV";
+        public const string NormalUser = nameof(NormalUser);
+        public const string Dth = "DTH";
+    }
 }

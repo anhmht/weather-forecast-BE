@@ -4,14 +4,16 @@ using GloboWeather.WeatherManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GloboWeather.WeatherManagement.Persistence.Migrations
 {
     [DbContext(typeof(GloboWeatherDbContext))]
-    partial class GloboWeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210828113306_AddSocialNotification")]
+    partial class AddSocialNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -997,9 +999,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Migrations
 
                     b.Property<string>("Action")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("AnonymousUserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CommentId")
                         .HasColumnType("uniqueidentifier");

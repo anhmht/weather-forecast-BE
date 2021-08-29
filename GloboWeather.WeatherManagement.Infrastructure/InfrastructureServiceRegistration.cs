@@ -25,6 +25,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure
             services.Configure<PositionStackSettings>(configuration.GetSection("PositionStackSettings"));
             services.Configure<GmailSettings>(configuration.GetSection("GmailSettings"));
             services.Configure<MediaVideoSettings>(configuration.GetSection("MediaVideoSettings"));
+            services.Configure<SignalRSetting>(configuration.GetSection("SignalRSetting"));
 
             services.AddHttpClient<LocationService>();
 

@@ -67,6 +67,8 @@ namespace GloboWeather.WeatherManagement.Persistence
         public DbSet<SharePost> SharePosts { get; set; }
         public DbSet<DeleteFile> DeleteFiles { get; set; }
 
+        public DbSet<SocialNotification> SocialNotifications { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

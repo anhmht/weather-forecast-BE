@@ -28,12 +28,14 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Social;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
+using GloboWeather.WeatherManagement.Application.SignalRClient;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace GloboWeather.WeatherManagement.Persistence.Services
 {
@@ -48,12 +50,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly string _loginUserName;
         private readonly IHistoryTrackingService _historyTrackingService;
         private readonly string _clientIpAddress;
+        private readonly ISignalRClient _signalRClient;
+        private bool _isOpenningSignalRConnect;
 
         public PostService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService
             , IMapper mapper, IAuthenticationService authenticationService
             , ILoggedInUserService loggedInUserService
             , IOptions<AzureStorageConfig> azureStorageConfig
-            , IHistoryTrackingService historyTrackingService)
+            , IHistoryTrackingService historyTrackingService
+            , ISignalRClient signalRClient)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
@@ -64,6 +69,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _loginUserName = loggedInUserService.UserId;
             _historyTrackingService = historyTrackingService;
             _clientIpAddress = loggedInUserService.IpAddress;
+            _signalRClient = signalRClient;
         }
 
         public async Task<Guid> CreateAsync(CreatePostCommand request, CancellationToken cancellationToken)
@@ -80,6 +86,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             await PopulatePostAsync(request.ImageUrls, request.VideoUrls, post);
 
             _unitOfWork.PostRepository.Add(post);
+
+            //Push notification to all SuperAdmin
+            var receivers =
+                (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
+                    x.UserName);
+            await PushNotification(receivers, post.Id, null, NotificationAction.CreatePost);
 
             await _unitOfWork.CommitAsync();
 
@@ -114,6 +126,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             await PopulatePostAsync(request.ImageUrls, request.VideoUrls, post);
 
             _unitOfWork.PostRepository.Update(post);
+
+            //Push notification to all SuperAdmin
+            var receivers =
+                (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
+                    x.UserName);
+            await PushNotification(receivers, post.Id, null, NotificationAction.EditPost);
+
+            await _unitOfWork.CommitAsync();
 
             var result = await _unitOfWork.CommitAsync() > 0;
 
@@ -152,6 +172,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             _unitOfWork.CommentRepository.Add(comment);
 
+            //Push notification to all SuperAdmin
+            var receivers =
+                (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
+                    x.UserName);
+            await PushNotification(receivers, null, comment.Id, NotificationAction.CreateComment, comment.AnonymousUserId);
+
             await _unitOfWork.CommitAsync();
 
             //Save history tracking
@@ -186,6 +212,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, comment);
 
             _unitOfWork.CommentRepository.Update(comment);
+
+            //Push notification to all SuperAdmin
+            var receivers =
+                (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
+                    x.UserName);
+            await PushNotification(receivers, null, comment.Id, NotificationAction.EditComment);
+
             var result = await _unitOfWork.CommitAsync() > 0;
 
             //Save history tracking
@@ -208,13 +241,22 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 isApproval = await HasApprovePermission();
             }
 
-
             if (request.IsChangePostStatus)
             {
                 //Save history tracking
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 _historyTrackingService.SaveAsync(nameof(Post), request, null, HistoryTrackingAction.ChangeStatus, _clientIpAddress);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                var post = await _unitOfWork.PostRepository.GetByIdAsync(request.Id);
+                if (post == null)
+                    return false;
+                if (_loginUserName != post.CreateBy && request.PostStatusId != (int)PostStatus.Private)
+                {
+                    //Push notification
+                    await PushNotification(post.CreateBy, post.Id, null,
+                        NotificationAction.ChangePostStatus);
+                }
 
                 return await _unitOfWork.PostRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
                     _loginUserName,
@@ -225,6 +267,30 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             _historyTrackingService.SaveAsync(nameof(Comment), request, null, HistoryTrackingAction.ChangeStatus, _clientIpAddress);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(request.Id);
+            if (comment == null)
+                return false;
+            if (_loginUserName != comment.CreateBy && request.PostStatusId != (int)PostStatus.Private)
+            {
+                var receivers = new List<string> { comment.CreateBy };
+                var post = await _unitOfWork.PostRepository.GetByIdAsync(comment.PostId);
+                if (!string.IsNullOrEmpty(post?.CreateBy))
+                {
+                    receivers.Add(post.CreateBy);
+                }
+
+                if (comment.ParentCommentId.HasValue && !comment.ParentCommentId.Equals(Guid.Empty))
+                {
+                    var parentComment = await _unitOfWork.CommentRepository.GetByIdAsync(comment.ParentCommentId.Value);
+                    if (!string.IsNullOrEmpty(parentComment?.CreateBy))
+                        receivers.Add(parentComment.CreateBy);
+                }
+
+                //Push notification
+                await PushNotification(receivers, comment.Id, null,
+                    NotificationAction.ChangeCommentStatus);
+            }
 
             return await _unitOfWork.CommentRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
                 _loginUserName,
@@ -594,7 +660,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             }
 
             var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(x =>
-                x.PostId == comment.PostId && x.StatusId == (int) PostStatus.Public);
+                x.PostId == comment.PostId && x.StatusId == (int)PostStatus.Public);
 
             var commentsPaging = await commentQuery.Where(x => x.ParentCommentId == request.CommentId)
                 .OrderBy(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
@@ -604,9 +670,9 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             var countSubComment = await (from c in commentQuery.Where(x =>
                         x.ParentCommentId.HasValue && commentIds.Contains(x.ParentCommentId.Value))
-                    group c by c.ParentCommentId
+                                         group c by c.ParentCommentId
                     into grp
-                    select new {CommentId = grp.Key.Value, NumberOfSubComment = grp.Count()})
+                                         select new { CommentId = grp.Key.Value, NumberOfSubComment = grp.Count() })
                 .ToDictionaryAsync(x => x.CommentId, y => y.NumberOfSubComment, cancellationToken: cancellationToken);
 
             var actionIconList = await (
@@ -765,14 +831,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 response.CreatorFullName = user.FullName;
                 response.CreatorShortName = user.ShortName;
             }
-            else if(comment.AnonymousUserId != null)
+            else if (comment.AnonymousUserId != null)
             {
-                    var anonymousUser = await _unitOfWork.AnonymousUserRepository.GetByIdAsync(comment.AnonymousUserId.Value);
-                    response.CreatorFullName = anonymousUser.FullName;
-                    response.CreatorShortName =
-                        string.Join("",
-                            anonymousUser.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries)
-                                .Select(x => x.First()));
+                var anonymousUser = await _unitOfWork.AnonymousUserRepository.GetByIdAsync(comment.AnonymousUserId.Value);
+                response.CreatorFullName = anonymousUser.FullName;
+                response.CreatorShortName =
+                    string.Join("",
+                        anonymousUser.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => x.First()));
             }
 
             if (!string.IsNullOrEmpty(comment.ImageUrls))
@@ -991,6 +1057,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 _unitOfWork.PostActionIconRepository.Update(actionIconEntry);
             }
 
+            //Push notification
+            var comment = await _unitOfWork.CommentRepository.GetByIdAsync(request.Id);
+            if (comment != null && _loginUserName != comment.CreateBy)
+            {
+                var actionIcons = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionIcon);
+
+                await PushNotification(comment.CreateBy, null, actionIconEntry.Id,
+                    actionIcons.Find(x => x.ValueId == request.IconId).ValueText);
+            }
+
             return await _unitOfWork.CommitAsync() > 0;
         }
 
@@ -1012,6 +1088,16 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 actionIconEntry.IconId = request.IconId;
                 _unitOfWork.PostActionIconRepository.Update(actionIconEntry);
+            }
+
+            //Push notification
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(request.Id);
+            if (post != null && _loginUserName != post.CreateBy)
+            {
+                var actionIcons = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionIcon);
+
+                await PushNotification(post.CreateBy, actionIconEntry.Id, null,
+                    actionIcons.Find(x => x.ValueId == request.IconId).ValueText);
             }
 
             return await _unitOfWork.CommitAsync() > 0;
@@ -1168,6 +1254,49 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             commentVm.NumberOfSubComment = countSubComment.TryGetValue(commentVm.Id, out var numberOfSubComment) ? numberOfSubComment : 0;
+        }
+
+        private async Task PushNotification(string receiver, Guid? postId, Guid? commentId, string action, Guid? anonymousUserId = null,
+            string description = "")
+        {
+            await PushNotification(new List<string> { receiver }, postId, commentId, action, anonymousUserId, description);
+        }
+        private async Task PushNotification(IEnumerable<string> receivers, Guid? postId, Guid? commentId, string action
+            , Guid? anonymousUserId = null, string description = "")
+        {
+            //if (!_isOpenningSignalRConnect)
+            //{
+            //    await _signalRClient.StartConnectAsync(_loginUserName);
+            //    _isOpenningSignalRConnect = true;
+            //}
+
+            foreach (var receiver in receivers)
+            {
+                var notification = new SocialNotification
+                {
+                    Id = Guid.NewGuid(),
+                    PostId = postId,
+                    Action = action,
+                    Receiver = receiver,
+                    CommentId = commentId,
+                    Description = description,
+                    CreateBy = _loginUserName,
+                    AnonymousUserId = anonymousUserId
+                };
+
+                _unitOfWork.SocialNotificationRepository.Add(notification);
+
+                //try
+                //{
+                //    await _signalRClient.SendMessageToUser(receiver, JsonConvert.SerializeObject(notification));
+                //}
+                //catch (Exception e)
+                //{
+                //    Console.WriteLine(e);
+                //    //throw new Exception($"Need write log when push notification error{Environment.NewLine}{e}");
+                //}
+
+            }
         }
 
         #endregion

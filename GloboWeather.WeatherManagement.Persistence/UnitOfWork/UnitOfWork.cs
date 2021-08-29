@@ -203,6 +203,9 @@ namespace GloboWeather.WeatherManagement.Persistence.UnitOfWork
 
         private IHistoryTrackingRepository _historyTrackingRepository;
         IHistoryTrackingRepository IUnitOfWork.HistoryTrackingRepository => _historyTrackingRepository ?? new HistoryTrackingRepository(_context, this);
+
+        private ISocialNotificationRepository _SocialNotificationRepository;
+        ISocialNotificationRepository IUnitOfWork.SocialNotificationRepository => _SocialNotificationRepository ?? new SocialNotificationRepository(_context, this);
         #endregion
 
     }

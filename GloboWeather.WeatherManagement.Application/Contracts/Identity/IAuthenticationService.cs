@@ -34,5 +34,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Identity
         Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request);
         Task DeleteUserByEmailAsync(string email);
         Task<AuthenticationResponse> GetUserInfoByUserNameAsync(string userName);
+        Task<List<ApplicationUserDto>> GetUsersInRoleAsync(string roleName);
     }
 }

@@ -386,7 +386,7 @@ namespace GloboWeather.WeatherManagement.Identity.Services
 
             //Get from database
             var users = await _userManager.Users.Where(x => x.IsDeleted == null || x.IsDeleted == false || isGetDeleted).ToListAsync();
-
+            
             var response = GetApplicationUserDtos(users);
 
             //Save cache
@@ -546,6 +546,13 @@ namespace GloboWeather.WeatherManagement.Identity.Services
                 Roles = userRoles.ToList()
             };
             return response;
+        }
+
+        public async Task<List<ApplicationUserDto>> GetUsersInRoleAsync(string roleName)
+        {
+            var result= (await _userManager.GetUsersInRoleAsync(roleName)).ToList();
+
+            return GetApplicationUserDtos(result);
         }
 
         private async Task RefreshUserCacheAsync()

@@ -47,5 +47,6 @@ namespace GloboWeather.WeatherManagement.Application.Contracts.Persistence
         ISharePostRepository SharePostRepository { get; }
         IDeleteFileRepository DeleteFileRepository { get; }
         IHistoryTrackingRepository HistoryTrackingRepository { get; }
+        ISocialNotificationRepository SocialNotificationRepository { get; }
     }
 }

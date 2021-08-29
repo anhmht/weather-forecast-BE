@@ -1,4 +1,6 @@
-﻿namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList
+﻿using System.Collections.Generic;
+
+namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventsList
 {
     public class ApplicationUserDto
     {

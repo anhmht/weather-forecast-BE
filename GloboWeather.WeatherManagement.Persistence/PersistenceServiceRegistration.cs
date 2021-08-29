@@ -62,6 +62,7 @@ namespace GloboWeather.WeatherManagement.Persistence
             services.AddScoped<IDeleteFileRepository, DeleteFileRepository>();
             services.AddScoped<IHistoryTrackingRepository, HistoryTrackingRepository>();
             services.AddScoped<IHistoryTrackingService, HistoryTrackingService>();
+            services.AddScoped<ISocialNotificationRepository, SocialNotificationRepository>();
 
             return services;
         }
