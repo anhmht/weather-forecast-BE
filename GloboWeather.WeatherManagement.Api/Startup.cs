@@ -151,7 +151,7 @@ namespace GloboWeather.WeatherManagement.Api
 
             app.UseAzureSignalR(routes =>
             {              
-                routes.MapHub<NotificationHub>("/notifications");
+                routes.MapHub<NotificationHub>("/notificationsdev");
             });
         }
     }
