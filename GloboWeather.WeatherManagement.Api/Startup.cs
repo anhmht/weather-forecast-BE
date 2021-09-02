@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using GloboWeather.WeatherManagement.Api.Context;
 using GloboWeather.WeatherManagement.Api.Middleware;
 using GloboWeather.WeatherManagement.Api.Services;
-using GloboWeather.WeatherManagement.Api.SignalR;
 using GloboWeather.WeatherManagement.Application;
+using GloboWeather.WeatherManagement.Application.SignalR;
 using GloboWeather.WeatherManagement.Identity;
 using GloboWeather.WeatherManagement.Infrastructure;
 using GloboWeather.WeatherManagement.Monitoring;
@@ -19,7 +19,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using SignalRClient;
 using WeatherBackgroundService;
 
 namespace GloboWeather.WeatherManagement.Api
@@ -44,7 +43,6 @@ namespace GloboWeather.WeatherManagement.Api
             services.AddWeatherService(Configuration);
             services.AddMonitoringService(Configuration);
             services.AddWeatherBackgroundService(Configuration);
-            services.AddSignalRServices(Configuration);
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddControllers();
             services.AddScoped<WeatherContext>();

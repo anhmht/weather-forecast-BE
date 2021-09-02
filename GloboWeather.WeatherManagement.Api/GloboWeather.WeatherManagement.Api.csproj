@@ -49,7 +49,6 @@
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Persistence\GloboWeather.WeatherManagement.Persistence.csproj" />
       <ProjectReference Include="..\GloboWeather.WeatherManagement.Weather\GloboWeather.WeatherManagement.Weather.csproj" />
 	    <ProjectReference Include="..\GloboWeather.WeatherManagement.Monitoring\GloboWeather.WeatherManagement.Monitoring.csproj" />
-	    <ProjectReference Include="..\SignalRClient\SignalRClient.csproj" />
       <ProjectReference Include="..\WeatherBackgroundService\WeatherBackgroundService.csproj" />
     </ItemGroup>
 

@@ -15,7 +15,7 @@ namespace SignalRClient
             var serviceUrl = signalRSetting.Value.ServiceUrl;
 
 #if DEBUG
-            serviceUrl = @"https://localhost:44327/notifications";
+            //serviceUrl = @"https://localhost:5001/notifications";
 #endif
             _connection = new HubConnectionBuilder()
                 .WithUrl(serviceUrl)
@@ -34,10 +34,10 @@ namespace SignalRClient
             await _connection.InvokeAsync("SendMessage",
                 userName, message);
         }
-        public async Task SendMessageToUser2(string userName, string message)
-        {
-            await _connection.InvokeAsync("SendMessage",
-                userName, message);
-        }
+        //public async Task SendMessageToUser2(string userName, string message)
+        //{
+        //    await _connection.InvokeAsync("SendMessage",
+        //        userName, message);
+        //}
     }
 }
