@@ -328,7 +328,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     x => postIds.Contains(x.PostId) && x.StatusId == publicStatus);
 
             var comments = await commentQuery.Where(x => !x.ParentCommentId.HasValue).Take(request.CommentLimit)
-                .OrderBy(x => x.PublicDate)
+                .OrderBy(x => x.CreateDate)
                 .ToListAsync(cancellationToken: cancellationToken);
 
             var countCommentOfPost = await (from c in commentQuery
@@ -405,7 +405,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             var commentQuery = _unitOfWork.CommentRepository.GetWhereQuery(
                     x => x.PostId == post.Id && x.StatusId == publicStatus)
-                .OrderBy(x => x.PublicDate);
+                .OrderBy(x => x.CreateDate);
 
             var comments = await commentQuery.Where(x => !x.ParentCommentId.HasValue)
                 .ToListAsync(cancellationToken: cancellationToken);
@@ -520,7 +520,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var commentQuery = _unitOfWork.CommentRepository
                 .GetWhereQuery(x => x.PostId == request.PostId && x.StatusId == publicStatus);
             var pagingModel = await commentQuery.Where(x => !x.ParentCommentId.HasValue)
-                .OrderBy(x => x.PublicDate)
+                .OrderBy(x => x.CreateDate)
                 .PaginateAsync(request.Page, request.Limit, cancellationToken);
 
             var comments = _mapper.Map<List<CommentVm>>(pagingModel.Items);
@@ -585,7 +585,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                                                                                     || c.StatusId ==
                                                                                     (int)PostStatus
                                                                                         .WaitingForApproval));
-            var comments = await commentQuery.OrderBy(x => x.PublicDate)
+            var comments = await commentQuery.OrderBy(x => x.CreateDate)
                 .ToListAsync(cancellationToken: cancellationToken);
 
             var countCommentOfPost = await (from c in commentQuery
@@ -663,7 +663,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 x.PostId == comment.PostId && x.StatusId == (int)PostStatus.Public);
 
             var commentsPaging = await commentQuery.Where(x => x.ParentCommentId == request.CommentId)
-                .OrderBy(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+                .OrderBy(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
 
             var comments = _mapper.Map<List<CommentVm>>(commentsPaging.Items);
             var commentIds = comments.Select(x => x.Id).ToList();

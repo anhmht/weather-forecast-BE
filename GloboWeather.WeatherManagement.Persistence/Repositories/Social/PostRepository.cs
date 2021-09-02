@@ -58,7 +58,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
             }
 
             return await _unitOfWork.PostRepository.GetWhereQuery(x => x.StatusId == (int)PostStatus.Public)
-                .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+                .OrderByDescending(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
 
         public async Task<PagedModel<Post>> GetPostByUserCommentedAsync(BasePagingRequest request, string userName,
@@ -74,7 +74,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Repositories.Social
                 select p;
 
             return await query.Distinct()
-                .OrderByDescending(x => x.PublicDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
+                .OrderByDescending(x => x.CreateDate).PaginateAsync(request.Page, request.Limit, cancellationToken);
         }
 
         public async Task<PagedModel<Post>> GetPostsForApprovalAsync(GetPostsForApprovalQuery request, 
