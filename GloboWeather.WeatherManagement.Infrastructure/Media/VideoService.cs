@@ -452,7 +452,8 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
                         Path = streamingFormatPath
                     };
                     
-                    if (path.StreamingProtocol == StreamingPolicyStreamingProtocol.Dash)
+                    if (path.StreamingProtocol == StreamingPolicyStreamingProtocol.Dash ||
+                        path.StreamingProtocol == StreamingPolicyStreamingProtocol.Hls)
                         streamingUrls.Add(uriBuilder.ToString());
                 }
             }
