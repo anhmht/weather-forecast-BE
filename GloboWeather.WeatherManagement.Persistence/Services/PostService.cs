@@ -28,11 +28,12 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Helpers.Paging;
 using GloboWeather.WeatherManagement.Application.Models.Social;
 using GloboWeather.WeatherManagement.Application.Models.Storage;
-using GloboWeather.WeatherManagement.Application.SignalRClient;
+using GloboWeather.WeatherManagement.Application.SignalR;
 using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -50,15 +51,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly string _loginUserName;
         private readonly IHistoryTrackingService _historyTrackingService;
         private readonly string _clientIpAddress;
-        private readonly ISignalRClient _signalRClient;
-        private bool _isOpenningSignalRConnect;
+        private readonly IHubContext<NotificationHub> _hubClient;
 
         public PostService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService
             , IMapper mapper, IAuthenticationService authenticationService
             , ILoggedInUserService loggedInUserService
             , IOptions<AzureStorageConfig> azureStorageConfig
             , IHistoryTrackingService historyTrackingService
-            , ISignalRClient signalRClient)
+            , IHubContext<NotificationHub> hubClient)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
@@ -69,7 +69,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _loginUserName = loggedInUserService.UserId;
             _historyTrackingService = historyTrackingService;
             _clientIpAddress = loggedInUserService.IpAddress;
-            _signalRClient = signalRClient;
+            _hubClient = hubClient;
         }
 
         public async Task<Guid> CreateAsync(CreatePostCommand request, CancellationToken cancellationToken)
@@ -1264,14 +1264,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task PushNotification(IEnumerable<string> receivers, Guid? postId, Guid? commentId, string action
             , Guid? anonymousUserId = null, string description = "")
         {
-            //if (!_isOpenningSignalRConnect)
-            //{
-            //    await _signalRClient.StartConnectAsync(_loginUserName);
-            //    _isOpenningSignalRConnect = true;
-            //}
-
             foreach (var receiver in receivers)
             {
+                if(receiver == _loginUserName)
+                    continue;
+
                 var notification = new SocialNotification
                 {
                     Id = Guid.NewGuid(),
@@ -1281,20 +1278,21 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     CommentId = commentId,
                     Description = description,
                     CreateBy = _loginUserName,
-                    AnonymousUserId = anonymousUserId
+                    AnonymousUserId = anonymousUserId,
+                    CreateDate = DateTime.Now
                 };
 
                 _unitOfWork.SocialNotificationRepository.Add(notification);
 
-                //try
-                //{
-                //    await _signalRClient.SendMessageToUser(receiver, JsonConvert.SerializeObject(notification));
-                //}
-                //catch (Exception e)
-                //{
-                //    Console.WriteLine(e);
-                //    //throw new Exception($"Need write log when push notification error{Environment.NewLine}{e}");
-                //}
+                try
+                {
+                    await _hubClient.Clients.Group(receiver).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(notification));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    //throw new Exception($"Need write log when push notification error{Environment.NewLine}{e}");
+                }
 
             }
         }

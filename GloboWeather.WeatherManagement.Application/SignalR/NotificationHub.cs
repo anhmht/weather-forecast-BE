@@ -1,25 +1,14 @@
-﻿using GloboWeather.WeatherManagement.Api.Context;
-using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
-namespace GloboWeather.WeatherManagement.Api.SignalR
+namespace GloboWeather.WeatherManagement.Application.SignalR
 {
-    public class NotificationHub : Hub<INotificationClient>
+    public class NotificationHub : Hub
     {
-        private readonly WeatherContext _weatherContext;
-       
-        private readonly IServiceProvider _serviceProvider;    
-        public NotificationHub(WeatherContext weatherContext, IServiceProvider serviceProvider)
-        {
-            _weatherContext = weatherContext;
-            _serviceProvider = serviceProvider;
-           
-        }
-
         public async Task SendMessage(string groupName, object message)
         {         
-            await Clients.Group(groupName).ReceiveMessage(message);            
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
         }
 
         public async Task JoinGroup(string groupName)
@@ -31,13 +20,12 @@ namespace GloboWeather.WeatherManagement.Api.SignalR
         public override async Task OnConnectedAsync()
         {
             try
-            {                           
+            {
                 await base.OnConnectedAsync();
-               
             }
             catch (Exception ex)
             {
-                               
+                Console.WriteLine($"Client connect error {ex}");
             }
         }
 
@@ -49,8 +37,7 @@ namespace GloboWeather.WeatherManagement.Api.SignalR
             }
             catch (Exception ex)
             {
-
-                
+                Console.WriteLine($"Client disconnect error {ex}");
             }
 
         }

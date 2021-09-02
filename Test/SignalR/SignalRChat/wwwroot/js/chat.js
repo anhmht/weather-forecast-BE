@@ -7,11 +7,7 @@
 // See Es5-chat.js for a Babel transpiled version of the following code:
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://weathermanagement.azurewebsites.net/notifications",  options => {
-        options.Headers["Foo"] = "Bar";
-        options.SkipNegotiation = true;
-        options.Transports = HttpTransportType.WebSockets;   
-    })
+    .withUrl("https://weathermanagement.azurewebsites.net/notifications")
     .build();
 
 connection.on("ReceiveMessage", ( message) => {
@@ -25,7 +21,7 @@ connection.on("ReceiveMessage", ( message) => {
 document.getElementById("sendButton").addEventListener("click", event => {
     const user = document.getElementById("userInput").value;
     const message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+    connection.invoke("SendMessage", user, message).catch(err => console.error(err.message));
     event.preventDefault();
 });
 
@@ -33,11 +29,17 @@ document.getElementById("sendButton").addEventListener("click", event => {
 document.getElementById("connectRoomButton").addEventListener("click", event => {
     const user = document.getElementById("userInput").value;
     const message = document.getElementById("messageInput").value;
-    connection.invoke("JoinGroup", user).catch(err => console.error(err.toString()));
+    connection.invoke("JoinGroup", user).catch(err => console.error(err.message));
     event.preventDefault();
 });
 
 
 
 
-connection.start().catch(err => console.error(err.toString()));
+connection.start().then(function () {
+    const li = document.createElement("li");
+    li.textContent = "ConnetionId: " + connection.connectionId;
+    console.log(connection.connectionId);
+    document.getElementById("messagesList").appendChild(li);
+
+}).catch(err => console.error(err.message));

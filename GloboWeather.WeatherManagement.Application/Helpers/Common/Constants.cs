@@ -43,6 +43,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         public const string CreateComment = nameof(CreateComment);
         public const string EditComment = nameof(EditComment);
         public const string ChangeCommentStatus = nameof(ChangeCommentStatus);
+        public const string SharePost = nameof(SharePost);
     }
 
     public class ApplicationUserRole
