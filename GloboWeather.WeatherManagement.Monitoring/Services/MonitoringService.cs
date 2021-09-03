@@ -4,8 +4,8 @@ using GloboWeather.WeatherManagement.Application.Models.Monitoring;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
 using System;
 using System.Collections.Generic;
-
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Services
 {
@@ -13,12 +13,15 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
     {
         private readonly IMapper _mapper;
         private readonly ITramKttvRepository _tramKttvRepository;
+        private readonly ILogger<MonitoringService> _logger;
         public MonitoringService(IMapper mapper,
             ITramKttvRepository tramKttvRepository
+            , ILogger<MonitoringService> logger
             )
         {
             _mapper = mapper;
             _tramKttvRepository = tramKttvRepository;
+            _logger = logger;
         }
 
         public async Task<List<TramKttvResponse>> GetTramKttvList()
@@ -33,8 +36,8 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
                 return _mapper.Map<List<TramKttvResponse>>(tmp);
             }
             catch (Exception ex)
-            { 
-                Console.WriteLine(ex);
+            {
+                _logger.LogError(ex, $"MonitoringService.GetTramKttvList error");
                 throw;
             }
         }

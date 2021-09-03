@@ -12,6 +12,7 @@ using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Media
@@ -21,10 +22,13 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         private const string AdaptiveStreamingTransformName = "Custom_H264_Layer";
         private const string CustomTransform = "Custom_H264_3Layer";
         public MediaVideoSettings VideoSettings;
+        private readonly ILogger<VideoService> _logger;
 
-        public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings)
+        public VideoService(IOptions<MediaVideoSettings> mediaVideoSettings
+            , ILogger<VideoService> logger)
         {
             VideoSettings = mediaVideoSettings.Value;
+            _logger = logger;
         }
 
         public async Task<IList<string>> UploadVideoAsync(IFormFile file)
@@ -36,7 +40,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e, "UploadVideoAsync error");
                 throw;
             }
 
@@ -91,7 +95,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e, "UploadVideoSocialAsync error");
                 throw;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Application.SignalR
 {
@@ -25,7 +26,7 @@ namespace GloboWeather.WeatherManagement.Application.SignalR
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Client connect error {ex}");
+                Log.Error(ex, "NotificationHub.OnConnectedAsync error");
             }
         }
 
@@ -37,7 +38,7 @@ namespace GloboWeather.WeatherManagement.Application.SignalR
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Client disconnect error {ex}");
+                Log.Error(ex, "NotificationHub.OnDisconnectedAsync error");
             }
 
         }

@@ -111,7 +111,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Mail
             }
             catch (Exception ex)
             {
-                _logger.LogError(
+                _logger.LogError(ex,
                     $"SendMail.Fail|Message={ex.Message},ToEmails={JsonConvert.SerializeObject(toEmails)}");
                 return false;
             }

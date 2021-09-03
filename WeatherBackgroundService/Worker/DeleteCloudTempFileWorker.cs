@@ -7,6 +7,7 @@ using GloboWeather.WeatherManagement.Application.Contracts.Persistence.Service;
 using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace WeatherBackgroundService.Worker
 {
@@ -15,11 +16,14 @@ namespace WeatherBackgroundService.Worker
         private readonly IConfiguration _configuration;
         private readonly IImageService _imageService;
         private readonly IServiceProvider _serviceProvider;
-        public DeleteCloudTempFileWorker(IServiceProvider serviceProvider, IConfiguration configuration, IImageService imageService)
+        private readonly ILogger<DeleteCloudTempFileWorker> _logger;
+        public DeleteCloudTempFileWorker(IServiceProvider serviceProvider, IConfiguration configuration, IImageService imageService
+        , ILogger<DeleteCloudTempFileWorker> logger)
         {
             _configuration = configuration;
             _imageService = imageService;
             _serviceProvider = serviceProvider;
+            _logger = logger;
         }
 
 
@@ -46,7 +50,7 @@ namespace WeatherBackgroundService.Worker
                 }
                 catch (Exception e)
                 {
-                    //Log
+                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete in temp folder error");
                 }
 
                 //Delete temp file of the Post on social
@@ -58,7 +62,7 @@ namespace WeatherBackgroundService.Worker
                 }
                 catch (Exception e)
                 {
-                    //Log
+                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
                 }
 
             }, null, TimeSpan.Zero, TimeSpan.FromHours(interval));

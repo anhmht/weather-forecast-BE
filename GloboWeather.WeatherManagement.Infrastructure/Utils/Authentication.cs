@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Models.Media;
 using Microsoft.Azure.Management.Media;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Microsoft.Rest;
 
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Utils
 {
@@ -75,10 +77,10 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Utils
                 try
                 {
                     result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
-
                 }
                 catch (MsalException msalException)
                 {
+                    Log.Error(msalException, $"ERROR: MSAL interactive authentication exception with code '{msalException.ErrorCode}' and message '{msalException.Message}'.");
                     Console.Error.WriteLine(
                         $"ERROR: MSAL interactive authentication exception with code '{msalException.ErrorCode}' and message '{msalException.Message}'.");
                 }
@@ -86,6 +88,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Utils
             }
             catch ( MsalException msalException)
             {
+                Log.Error(msalException, $"ERROR: MSAL silent authentication exception with code '{msalException.ErrorCode}' and message '{msalException.Message}'.");
                 Console.Error.WriteLine($"ERROR: MSAL silent authentication exception with code '{msalException.ErrorCode}' and message '{msalException.Message}'.");
             }
             return new TokenCredentials(result.AccessToken, TokenType);

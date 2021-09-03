@@ -35,6 +35,7 @@ using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -52,13 +53,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly IHistoryTrackingService _historyTrackingService;
         private readonly string _clientIpAddress;
         private readonly IHubContext<NotificationHub> _hubClient;
+        private readonly ILogger<PostService> _logger;
 
         public PostService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService
             , IMapper mapper, IAuthenticationService authenticationService
             , ILoggedInUserService loggedInUserService
             , IOptions<AzureStorageConfig> azureStorageConfig
             , IHistoryTrackingService historyTrackingService
-            , IHubContext<NotificationHub> hubClient)
+            , IHubContext<NotificationHub> hubClient
+            , ILogger<PostService> logger)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
@@ -70,6 +73,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _historyTrackingService = historyTrackingService;
             _clientIpAddress = loggedInUserService.IpAddress;
             _hubClient = hubClient;
+            _logger = logger;
         }
 
         public async Task<Guid> CreateAsync(CreatePostCommand request, CancellationToken cancellationToken)
@@ -1370,15 +1374,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 };
 
                 _unitOfWork.SocialNotificationRepository.Add(notification);
-
+                var message = JsonConvert.SerializeObject(notification);
                 try
                 {
-                    await _hubClient.Clients.Group(receiver).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(notification));
+                    await _hubClient.Clients.Group(receiver).SendAsync("ReceiveMessage", message);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
-                    //throw new Exception($"Need write log when push notification error{Environment.NewLine}{e}");
+                    _logger.LogError(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
                 }
 
             }

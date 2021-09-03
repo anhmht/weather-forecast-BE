@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Events;
 
 namespace GloboWeather.WeatherManagement.Api
 {
@@ -20,10 +21,18 @@ namespace GloboWeather.WeatherManagement.Api
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
+
+            var cloudConnectionString = config.GetSection("AzureStorageConfig:ConnectionString").Get<string>();
+
+            var logFileName = "{yyyy}/{MM}/{dd}_log.txt";
+#if DEBUG
+            logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
+#endif
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(config)
-                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Information,
+                    "logs", logFileName)
                 .CreateLogger();
+
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
@@ -42,7 +51,7 @@ namespace GloboWeather.WeatherManagement.Api
                 }
                 catch (Exception e)
                 {
-                    Log.Warning(e, "An error occured while starting the appliation");
+                    Log.Warning(e, "An error occured while starting the application");
                 }
             }
 
@@ -51,6 +60,7 @@ namespace GloboWeather.WeatherManagement.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

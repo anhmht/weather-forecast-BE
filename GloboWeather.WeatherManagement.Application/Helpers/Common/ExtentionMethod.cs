@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Application.Helpers.Common
 {
@@ -26,6 +27,7 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
             }
             catch (Exception ex)
             {
+                Log.Error(ex, $"ExtentionMethod.GetValue error. Key:{key}. Data: {JsonConvert.SerializeObject(dictionary)}");
                 return default(TValue);
             }
         }

@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Models.Monitoring.Hydrological;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
 using GloboWeather.WeatherManagement.Monitoring.MonitoringEntities;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Repository
 {
@@ -46,7 +47,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e, "HydrologicalRepository.GetByPagedAsync error");
                 throw;
             }
         }

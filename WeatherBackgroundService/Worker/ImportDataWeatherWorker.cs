@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace WeatherBackgroundService.Worker
 {
@@ -18,14 +19,17 @@ namespace WeatherBackgroundService.Worker
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        public ImportDataWeatherWorker(IServiceProvider serviceProvider, IConfiguration configuration)
+        private readonly ILogger<ImportDataWeatherWorker> _logger;
+        public ImportDataWeatherWorker(IServiceProvider serviceProvider, IConfiguration configuration
+        , ILogger<ImportDataWeatherWorker> logger)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
+            _logger = logger;
         }
 
 
-        public  async Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
 #if DEBUG
             //Skip this service when debug
@@ -106,8 +110,7 @@ namespace WeatherBackgroundService.Worker
                         }
                         catch (Exception ex)
                         {
-                            //Log
-                            //throw;
+                            _logger.LogError(ex, "ImportDataWeatherWorker error");
                         }
                     }
                 }

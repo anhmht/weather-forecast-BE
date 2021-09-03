@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using WeatherBackgroundService;
 
 namespace GloboWeather.WeatherManagement.Api
@@ -151,6 +152,8 @@ namespace GloboWeather.WeatherManagement.Api
             {              
                 routes.MapHub<NotificationHub>("/notificationsdev");
             });
+
+            app.UseSerilogRequestLogging();
         }
     }
 }
