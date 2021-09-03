@@ -196,5 +196,11 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Media
         {
             return await StorageHelper.DeleteBlobInContainerByNameAsync(_storageConfig, files, id, containerName);
         }
+
+        public async Task<bool> DeleteFileLogsContainerAsync(int numberOfStorageDay)
+        {
+            return await StorageHelper.DeleteBlobsInLogsContainerAsync(_storageConfig, numberOfStorageDay);
+        }
+
     }
 }

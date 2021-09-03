@@ -13,6 +13,7 @@ namespace GloboWeather.WeatherManagement.Application.Models.Storage
         public string UserContainer { get; set; }
         public string ScenarioContainer { get; set; }
         public string SocialPostContainer { get; set; }
+        public string LogsContainer { get; set; }
         public string ConnectionString { get; set; }
         public string Url { get; set; }
     }

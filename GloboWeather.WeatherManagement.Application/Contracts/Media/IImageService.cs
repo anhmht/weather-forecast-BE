@@ -18,5 +18,6 @@ namespace GloboWeather.WeatherManegement.Application.Contracts.Media
         Task<DocumentResponse> UploadFileAsync(IFormFile file);
         Task<List<string>> CopyFileToStorageContainerAsync(List<string> files, string id, string folderName, string containerName);
         Task<bool> DeleteFileInStorageContainerByNameAsync(string id, List<string> files, string containerName);
+        Task<bool> DeleteFileLogsContainerAsync(int numberOfStorageDay);
     }
 }

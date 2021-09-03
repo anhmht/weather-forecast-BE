@@ -34,6 +34,7 @@ namespace WeatherBackgroundService.Worker
             //return;
 #endif
             var interval = _configuration.GetSection("BackgroundWorkerConfigs:DeleteCloudTempFileEveryHours").Get<int>();
+            var numberOfLogStorageDay = _configuration.GetSection("BackgroundWorkerConfigs:NumberOfLogStorageDay").Get<int>();
             new Timer(async state =>
             {
                 //Work at 00h00 AM after application start
@@ -59,6 +60,16 @@ namespace WeatherBackgroundService.Worker
                     using var scope = _serviceProvider.CreateScope();
                     var postService = scope.ServiceProvider.GetRequiredService<IPostService>();
                     await postService.DeleteTempFile();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
+                }
+
+                //Delete log files
+                try
+                {
+                    await _imageService.DeleteFileLogsContainerAsync(numberOfLogStorageDay);
                 }
                 catch (Exception e)
                 {

@@ -318,5 +318,34 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Helpers
                 )
             );
         }
+
+        public static async Task<bool> DeleteBlobsInLogsContainerAsync(AzureStorageConfig _storageConfig, int numberOfStorageDay)
+        {
+            // Create a URI to the storage account
+            Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
+
+            // Create BlobServiceClient from the account URI
+
+            StorageSharedKeyCredential storageCredentials =
+                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+            BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri, storageCredentials);
+
+            // Get reference to the container
+            BlobContainerClient container = blobServiceClient.GetBlobContainerClient(_storageConfig.LogsContainer);
+
+            //  blobClient.Delete()
+            if (container.Exists())
+            {
+                var prefix = DateTime.Now.AddDays(-numberOfStorageDay).ToString("yyyy/MM");
+                var blobs = container.GetBlobs(prefix: prefix);
+                foreach (var blobItem in blobs)
+                {
+                    await container.DeleteBlobIfExistsAsync(blobItem.Name);
+                }
+            }
+
+            return await Task.FromResult(true);
+        }
+
     }
 }
