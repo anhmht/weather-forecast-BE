@@ -25,8 +25,11 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public string ImageUrls { get; set; }
         [JsonIgnore]
         public string VideoUrls { get; set; }
+        [JsonIgnore]
+        public string VideoUrlsIos { get; set; }
         public List<string> ListImageUrl { get; set; }
         public List<string> ListVideoUrl { get; set; }
+        public List<string> ListVideoUrlIos { get; set; }
         public int StatusId { get; set; }
         public DateTime? PublicDate { get; set; }
         public string ApprovedByUserName { get; set; }
@@ -40,6 +43,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         {
             ListImageUrl = new List<string>();
             ListVideoUrl = new List<string>();
+            ListVideoUrlIos = new List<string>();
             Comments = new List<CommentVm>();
             ActionIcons = new List<ActionIconVm>();
             Shares = new SharePostVm();
@@ -60,8 +64,11 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public string ImageUrls { get; set; }
         [JsonIgnore]
         public string VideoUrls { get; set; }
+        [JsonIgnore]
+        public string VideoUrlsIos { get; set; }
         public List<string> ListImageUrl { get; set; }
         public List<string> ListVideoUrl { get; set; }
+        public List<string> ListVideoUrlIos { get; set; }
         public int StatusId { get; set; }
         public DateTime? PublicDate { get; set; }
         [JsonIgnore]
@@ -76,6 +83,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         {
             ListImageUrl = new List<string>();
             ListVideoUrl = new List<string>();
+            ListVideoUrlIos = new List<string>();
             ActionIcons = new List<ActionIconVm>();
         }
     }

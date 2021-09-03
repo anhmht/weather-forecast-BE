@@ -16,6 +16,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Queries.GetP
         public DateTime CreateDate { get; set; }
         public List<string> ListImageUrl { get; set; }
         public List<string> ListVideoUrl { get; set; }
+        public List<string> ListVideoUrlIos { get; set; }
     }
 
 }

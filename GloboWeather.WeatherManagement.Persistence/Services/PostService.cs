@@ -83,7 +83,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 StatusId = (int)PostStatus.WaitingForApproval
             };
 
-            await PopulatePostAsync(request.ImageUrls, request.VideoUrls, post);
+            await PopulatePostAsync(request.ImageUrls, request.VideoUrls, request.VideoUrlsIos, post);
 
             _unitOfWork.PostRepository.Add(post);
 
@@ -123,7 +123,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             post.Content = request.Content;
             post.StatusId = (int)PostStatus.WaitingForApproval;
 
-            await PopulatePostAsync(request.ImageUrls, request.VideoUrls, post);
+            await PopulatePostAsync(request.ImageUrls, request.VideoUrls, request.VideoUrlsIos, post);
 
             _unitOfWork.PostRepository.Update(post);
 
@@ -168,7 +168,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 comment.AnonymousUserId = await _unitOfWork.AnonymousUserRepository.Save(request.AnonymousUser);
             }
 
-            await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, comment);
+            await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, request.VideoUrlsIos, comment);
 
             _unitOfWork.CommentRepository.Add(comment);
 
@@ -209,7 +209,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             comment.Content = request.Content;
             comment.StatusId = (int)PostStatus.WaitingForApproval;
 
-            await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, comment);
+            await PopulateCommentAsync(request.ImageUrls, request.VideoUrls, request.VideoUrlsIos, comment);
 
             _unitOfWork.CommentRepository.Update(comment);
 
@@ -814,6 +814,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 response.ListVideoUrl = post.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
             }
+            if (!string.IsNullOrEmpty(post.VideoUrlsIos))
+            {
+                response.ListVideoUrlIos = post.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+            }
 
             return response;
         }
@@ -849,6 +853,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 response.ListVideoUrl = comment.VideoUrls.Split(Constants.SemiColonStringSeparator).ToList();
             }
+            if (!string.IsNullOrEmpty(comment.VideoUrlsIos))
+            {
+                response.ListVideoUrlIos = comment.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+            }
 
             return response;
         }
@@ -868,11 +876,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             return currentUser.Roles.Contains("SuperAdmin"); //Need improve after assigning post moderation to user groups. Current default is SuperAdmin
         }
 
-        private async Task PopulatePostAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Post post)
+        private async Task PopulatePostAsync(List<string> requestImageUrls, List<string> requestVideoUrls, List<string> requestVideoUrlsIos, Post post)
         {
             var deleteFiles = new List<DeleteFile>();
             var oriPostImageUrls = post.ImageUrls.GetString();
             var oriPostVideoUrls = post.VideoUrls.GetString();
+            var oriPostVideoUrlsIos = post.VideoUrlsIos.GetString();
 
             if (requestImageUrls?.Any() == true)
             {
@@ -931,6 +940,26 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 post.VideoUrls = string.Empty;
             }
 
+            if (requestVideoUrlsIos?.Any() == true)
+            {
+                var tempVideoUrlsIos = string.Join(Constants.SemiColonStringSeparator, requestVideoUrlsIos.OrderBy(x => x));
+                if (tempVideoUrlsIos != post.VideoUrlsIos)
+                {
+                    //Copy new video
+                    var videoUrlsIos = await _imageService.CopyFileToStorageContainerAsync(requestVideoUrlsIos,
+                        post.Id.ToString(),
+                        Forder.SocialPost
+                        , _storageConfig.SocialPostContainer);
+                    post.Content = ReplaceContent.ReplaceImageUrls(post.Content, requestVideoUrlsIos, videoUrlsIos);
+
+                    post.VideoUrlsIos = string.Join(Constants.SemiColonStringSeparator, videoUrlsIos.OrderBy(x => x));
+                }
+            }
+            else
+            {
+                post.VideoUrlsIos = string.Empty;
+            }
+
             //Add to temp table to wait for deleting
             if (oriPostVideoUrls != post.VideoUrls)
             {
@@ -948,17 +977,36 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                                      });
             }
 
+            //Add to temp table to wait for deleting
+            if (oriPostVideoUrlsIos != post.VideoUrlsIos)
+            {
+                var tempOriPostVideoUrlsIos = oriPostVideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostVideoUrlsIos = post.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrlsIos
+                                     where newPostVideoUrlsIos.All(x => x != videoUrl)
+                    select new DeleteFile
+                    {
+                        Id = Guid.NewGuid(),
+                        ContainerName = _storageConfig.SocialPostContainer,
+                        DeleteId = post.Id,
+                        FileUrl = videoUrl,
+                        TableName = nameof(Post)
+                    });
+            }
+
             if (deleteFiles.Any())
             {
                 _unitOfWork.DeleteFileRepository.AddRange(deleteFiles);
             }
         }
 
-        private async Task PopulateCommentAsync(List<string> requestImageUrls, List<string> requestVideoUrls, Comment comment)
+        private async Task PopulateCommentAsync(List<string> requestImageUrls, List<string> requestVideoUrls
+            , List<string> requestVideoUrlsIos, Comment comment)
         {
             var deleteFiles = new List<DeleteFile>();
             var oriPostImageUrls = comment.ImageUrls.GetString();
             var oriPostVideoUrls = comment.VideoUrls.GetString();
+            var oriPostVideoUrlsIos = comment.VideoUrlsIos.GetString();
 
             if (requestImageUrls?.Any() == true)
             {
@@ -1014,6 +1062,25 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 comment.VideoUrls = string.Empty;
             }
 
+            if (requestVideoUrlsIos?.Any() == true)
+            {
+
+                var tempVideoUrlsIos = string.Join(Constants.SemiColonStringSeparator, requestVideoUrlsIos.OrderBy(x => x));
+                if (tempVideoUrlsIos != comment.VideoUrlsIos)
+                {
+                    var videoUrlsIos = await _imageService.CopyFileToStorageContainerAsync(requestVideoUrlsIos,
+                        comment.PostId.ToString(), Forder.SocialComment
+                        , _storageConfig.SocialPostContainer);
+                    comment.Content = ReplaceContent.ReplaceImageUrls(comment.Content, requestVideoUrlsIos, videoUrlsIos);
+
+                    comment.VideoUrlsIos = string.Join(Constants.SemiColonStringSeparator, videoUrlsIos.OrderBy(x => x));
+                }
+            }
+            else
+            {
+                comment.VideoUrlsIos = string.Empty;
+            }
+
             //Add to temp table to wait for deleting
             if (oriPostVideoUrls != comment.VideoUrls)
             {
@@ -1029,6 +1096,22 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                                          FileUrl = videoUrl,
                                          TableName = nameof(Comment)
                                      });
+            }
+
+            if (oriPostVideoUrlsIos != comment.VideoUrlsIos)
+            {
+                var tempOriPostVideoUrlsIos = oriPostVideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+                var newPostVideoUrlsIos = comment.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
+                deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrlsIos
+                    where newPostVideoUrlsIos.All(x => x != videoUrl)
+                    select new DeleteFile
+                    {
+                        Id = Guid.NewGuid(),
+                        ContainerName = _storageConfig.SocialPostContainer,
+                        DeleteId = comment.Id,
+                        FileUrl = videoUrl,
+                        TableName = nameof(Comment)
+                    });
             }
 
             if (deleteFiles.Any())
@@ -1197,9 +1280,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             postItem.ApprovedByFullName = users.Find(x => x.UserName == postItem.ApprovedByUserName)?.FullName;
             postItem.CreatorFullName = creator?.FullName;
             postItem.CreatorShortName = creator?.ShortName;
-            postItem.ListImageUrl = postItem.ImageUrls.Split(Constants.SemiColonStringSeparator)
+            postItem.ListImageUrl = postItem.ImageUrls?.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
-            postItem.ListVideoUrl = postItem.VideoUrls.Split(Constants.SemiColonStringSeparator)
+            postItem.ListVideoUrl = postItem.VideoUrls?.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            postItem.ListVideoUrlIos = postItem.VideoUrlsIos?.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             postItem.CreatorAvatarUrl = creator?.AvatarUrl;
 
@@ -1249,9 +1334,11 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 }
             }
 
-            commentVm.ListImageUrl = commentVm.ImageUrls.Split(Constants.SemiColonStringSeparator)
+            commentVm.ListImageUrl = commentVm.ImageUrls?.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             commentVm.ListVideoUrl = commentVm.VideoUrls.Split(Constants.SemiColonStringSeparator)
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            commentVm.ListVideoUrlIos = commentVm.VideoUrlsIos?.Split(Constants.SemiColonStringSeparator)
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             commentVm.NumberOfSubComment = countSubComment.TryGetValue(commentVm.Id, out var numberOfSubComment) ? numberOfSubComment : 0;
         }

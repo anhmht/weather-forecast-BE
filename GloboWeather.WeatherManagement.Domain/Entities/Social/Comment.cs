@@ -21,6 +21,7 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         public string ApprovedByUserName { get; set; } //User approve the comment
         public Guid? AnonymousUserId { get; set; } //If social user -> this field will be empty
         public Guid? ParentCommentId { get; set; }
+        public string VideoUrlsIos { get; set; }
 
         //CreateBy: user makes action
     }

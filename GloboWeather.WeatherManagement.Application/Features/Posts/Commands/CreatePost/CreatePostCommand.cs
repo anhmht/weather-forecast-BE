@@ -9,5 +9,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Commands.Cre
         public string Content { get; set; }
         public List<string> ImageUrls { get; set; }
         public List<string> VideoUrls { get; set; }
+        public List<string> VideoUrlsIos { get; set; }
     }
 }

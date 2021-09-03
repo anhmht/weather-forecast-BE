@@ -10,5 +10,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Commands.Upd
         public string Content { get; set; }
         public List<string> ImageUrls { get; set; }
         public List<string> VideoUrls { get; set; }
+        public List<string> VideoUrlsIos { get; set; }
     }
 }

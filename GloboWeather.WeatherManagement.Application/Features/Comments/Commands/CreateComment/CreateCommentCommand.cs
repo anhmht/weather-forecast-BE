@@ -11,6 +11,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Comments.Commands.
         public Guid? ParentCommentId { get; set; }
         public List<string> ImageUrls { get; set; }
         public List<string> VideoUrls { get; set; }
+        public List<string> VideoUrlsIos { get; set; }
         public AnonymousUserRequest AnonymousUser { get; set; } //If user logged in -> this field will be empty
     }
 
