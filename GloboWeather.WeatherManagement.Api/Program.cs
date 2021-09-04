@@ -28,10 +28,10 @@ namespace GloboWeather.WeatherManagement.Api
 #if DEBUG
             logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
 #endif
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Information,
-                    "logs", logFileName)
-                .CreateLogger();
+            //Log.Logger = new LoggerConfiguration()
+            //    .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Information,
+            //        "logs", logFileName)
+            //    .CreateLogger();
 
             var host = CreateHostBuilder(args).Build();
 
