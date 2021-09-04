@@ -3,20 +3,18 @@ using System.Net;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Api.Middleware
 {
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
+        public ExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -62,7 +60,7 @@ namespace GloboWeather.WeatherManagement.Api.Middleware
                 result = JsonConvert.SerializeObject(new {error = exception.Message});
             }
 
-            _logger.LogError(exception, result);
+            Log.Error(exception, result);
 
             return context.Response.WriteAsync(result);
         }

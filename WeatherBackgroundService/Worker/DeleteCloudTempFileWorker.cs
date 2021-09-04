@@ -8,6 +8,7 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace WeatherBackgroundService.Worker
 {
@@ -16,14 +17,11 @@ namespace WeatherBackgroundService.Worker
         private readonly IConfiguration _configuration;
         private readonly IImageService _imageService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<DeleteCloudTempFileWorker> _logger;
-        public DeleteCloudTempFileWorker(IServiceProvider serviceProvider, IConfiguration configuration, IImageService imageService
-        , ILogger<DeleteCloudTempFileWorker> logger)
+        public DeleteCloudTempFileWorker(IServiceProvider serviceProvider, IConfiguration configuration, IImageService imageService)
         {
             _configuration = configuration;
             _imageService = imageService;
             _serviceProvider = serviceProvider;
-            _logger = logger;
         }
 
 
@@ -51,7 +49,7 @@ namespace WeatherBackgroundService.Worker
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete in temp folder error");
+                    Log.Error(e, "DeleteCloudTempFileWorker: Delete in temp folder error");
                 }
 
                 //Delete temp file of the Post on social
@@ -63,7 +61,7 @@ namespace WeatherBackgroundService.Worker
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
+                    Log.Error(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
                 }
 
                 //Delete log files
@@ -73,7 +71,7 @@ namespace WeatherBackgroundService.Worker
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
+                    Log.Error(e, "DeleteCloudTempFileWorker: Delete temp file of the Post on social error");
                 }
 
             }, null, TimeSpan.Zero, TimeSpan.FromHours(interval));

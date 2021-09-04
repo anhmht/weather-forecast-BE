@@ -9,6 +9,7 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManegement.Application.Contracts.Weather;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace WeatherBackgroundService.Worker
 {
@@ -16,13 +17,10 @@ namespace WeatherBackgroundService.Worker
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<AutoGenerateCacheWorker> _logger;
-        public AutoGenerateCacheWorker(IConfiguration configuration, IServiceProvider serviceProvider
-        , ILogger<AutoGenerateCacheWorker> logger)
+        public AutoGenerateCacheWorker(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
-            _logger = logger;
         }
 
 
@@ -58,7 +56,7 @@ namespace WeatherBackgroundService.Worker
                         }
                         catch (Exception e)
                         {
-                            _logger.LogError(e, $"AutoGenerateCacheWorker GetWeatherInformation error. Request data: {weatherInformationRequest}");
+                            Log.Error(e, $"AutoGenerateCacheWorker GetWeatherInformation error. Request data: {weatherInformationRequest}");
                         }
                     }
 
@@ -75,7 +73,7 @@ namespace WeatherBackgroundService.Worker
                         }
                         catch (Exception e)
                         {
-                            _logger.LogError(e, $"AutoGenerateCacheWorker GetWeatherInformationHorizontal error. Request data: {weatherInformationRequest}");
+                            Log.Error(e, $"AutoGenerateCacheWorker GetWeatherInformationHorizontal error. Request data: {weatherInformationRequest}");
                         }
                     }
                 }

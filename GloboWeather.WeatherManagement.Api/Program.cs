@@ -27,7 +27,7 @@ namespace GloboWeather.WeatherManagement.Api
             logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
 #endif
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Warning,
+                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Error,
                     "logs", logFileName)
                 .CreateLogger();
 
@@ -45,11 +45,11 @@ namespace GloboWeather.WeatherManagement.Api
                     await Identity.Seed.RolesCreator.SeedAsync(roleManager);
                     await Identity.Seed.UserCreator.SeedAsync(useManager);
 
-                    Log.Warning("Application Starting");
+                    Log.Information("Application Starting");
                 }
                 catch (Exception e)
                 {
-                    Log.Warning(e, "An error occured while starting the application");
+                    Log.Error(e, "An error occured while starting the application");
                 }
             }
 

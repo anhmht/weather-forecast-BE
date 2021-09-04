@@ -21,35 +21,26 @@ namespace GloboWeather.WeatherManagement.Monitoring.Repository
 
         public async Task<GetHydrologicalListResponse> GetByPagedAsync(GetHydrologicalListQuery query)
         {
-            try
-            {
-                var entryDatas = await _dbContext.Set<Hydrological>()
-                    .AsNoTracking()
-                    .Where(r => r.StationId.Equals(query.StationId) && r.Date >= query.DateFrom.Date &&
-                                r.Date <= query.DateTo.Date)
-                    .OrderByDescending(x => x.Date)
-                    .PaginateAsync(query.Page, query.Limit, new CancellationToken());
+            var entryDatas = await _dbContext.Set<Hydrological>()
+                .AsNoTracking()
+                .Where(r => r.StationId.Equals(query.StationId) && r.Date >= query.DateFrom.Date &&
+                            r.Date <= query.DateTo.Date)
+                .OrderByDescending(x => x.Date)
+                .PaginateAsync(query.Page, query.Limit, new CancellationToken());
                 
-                return new GetHydrologicalListResponse()
-                {
-                    CurrentPage = entryDatas.CurrentPage,
-                    TotalItems = entryDatas.TotalItems,
-                    TotalPages = entryDatas.TotalPages,
-                    Hydrologicals = entryDatas.Items.Select(h => new HydrologicalListVm()
-                    {
-                        Date = h.Date,
-                        Rain = h.Rain,
-                        WaterLevel = h.WaterLevel,
-                        ZLuyKe = h.ZLuyKe,
-                    }).ToList()
-                };
-              
-            }
-            catch (Exception e)
+            return new GetHydrologicalListResponse()
             {
-                Log.Error(e, "HydrologicalRepository.GetByPagedAsync error");
-                throw;
-            }
+                CurrentPage = entryDatas.CurrentPage,
+                TotalItems = entryDatas.TotalItems,
+                TotalPages = entryDatas.TotalPages,
+                Hydrologicals = entryDatas.Items.Select(h => new HydrologicalListVm()
+                {
+                    Date = h.Date,
+                    Rain = h.Rain,
+                    WaterLevel = h.WaterLevel,
+                    ZLuyKe = h.ZLuyKe,
+                }).ToList()
+            };
         }
 
         public async Task<List<Hydrological>> GetByDateAsync(DateTime fromDate, DateTime toDate)

@@ -20,6 +20,8 @@ using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Persistence.Services
 {
@@ -178,7 +180,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         Action = actionType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionActionTypeId)?.ValueText,
                         Method = actionMethod.FirstOrDefault(t => t.ValueId == detail.ScenarioActionMethodId)?.ValueText,
                         AreaTypeName = actionAreaType.FirstOrDefault(t => t.ValueId == detail.ScenarioActionAreaTypeId)?.ValueText,
-                        ScenarioActionDetails = scenarioActionDetails?.FindAll(d => d.ActionId == detail.ScenarioActionId)
+                        ScenarioActionDetails = scenarioActionDetails.FindAll(d => d.ActionId == detail.ScenarioActionId)
                     });
                 }
             }
@@ -251,7 +253,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var scenarioAction = _mapper.Map<ScenarioAction>(request);
             scenarioAction.Id = Guid.NewGuid();
 
-            if (scenarioAction.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl)
+            if (scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl)
             {
                 scenarioAction.Data = await PopulateScenarioActionImportVideo(scenarioAction.Data, scenarioAction);
             }
@@ -331,7 +333,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 {
                     scenarioAction.Data = request.Data;
                 }
-                
+
                 isUpdate = true;
             }
             if (!Equals(request.Top, scenarioAction.Top))
@@ -445,12 +447,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 //Delete import videos
                 var importVideoActions = scenarioActions.FindAll(x =>
-                    x.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl && !string.IsNullOrEmpty(x.Data));
+                    x.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl && !string.IsNullOrEmpty(x.Data));
                 if (importVideoActions.Any())
                 {
                     foreach (var importVideoAction in importVideoActions)
                     {
-                        var videos = new List<string>() {importVideoAction.Data};
+                        var videos = new List<string>() { importVideoAction.Data };
                         await _imageService.DeleteFileInStorageContainerByNameAsync(
                             importVideoAction.Id.ToString(), videos, _storageConfig.ScenarioContainer);
                     }
@@ -547,9 +549,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                         await _imageService.DeleteFileInStorageContainerByNameAsync(
                             scenarioActionDetail.Id.ToString(), images, _storageConfig.ScenarioContainer);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // ignored
+                        Log.Error(ex,
+                            $"ScenarioService.DeleteScenarioActionDetail error. Data: {JsonConvert.SerializeObject(scenarioActionDetails)}");
                     }
                 }
 
@@ -561,8 +564,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private async Task<string> PopulateScenarioActionImportVideo(string videoUrl,
             ScenarioAction scenarioAction)
         {
-            
-            var listFile = new List<string>() {videoUrl};
+
+            var listFile = new List<string>() { videoUrl };
             var iconsResult =
                 await _imageService.CopyFileToStorageContainerAsync(
                     listFile, scenarioAction.Id.ToString(), Forder.ImportVideo,
@@ -572,7 +575,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
             //Delete old video
             if (!string.IsNullOrEmpty(urlResult) &&
-                scenarioAction.ActionTypeId == (int) ScenarioActionType.CustomImportVideoControl &&
+                scenarioAction.ActionTypeId == (int)ScenarioActionType.CustomImportVideoControl &&
                 !string.IsNullOrEmpty(scenarioAction.Data) &&
                 urlResult != scenarioAction.Data)
             {
@@ -585,9 +588,10 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     await _imageService.DeleteFileInStorageContainerByNameAsync(
                         scenarioAction.Id.ToString(), images, _storageConfig.ScenarioContainer);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    //Ignore
+                    Log.Error(ex,
+                        $"ScenarioService.PopulateScenarioActionImportVideo delete old video error. Video Url: {videoUrl}. Data: {JsonConvert.SerializeObject(scenarioAction)}");
                 }
             }
 

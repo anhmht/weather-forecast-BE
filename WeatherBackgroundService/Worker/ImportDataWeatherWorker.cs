@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Application.Contracts.Persistence;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace WeatherBackgroundService.Worker
 {
@@ -19,13 +20,10 @@ namespace WeatherBackgroundService.Worker
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        private readonly ILogger<ImportDataWeatherWorker> _logger;
-        public ImportDataWeatherWorker(IServiceProvider serviceProvider, IConfiguration configuration
-        , ILogger<ImportDataWeatherWorker> logger)
+        public ImportDataWeatherWorker(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
-            _logger = logger;
         }
 
 
@@ -110,7 +108,7 @@ namespace WeatherBackgroundService.Worker
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, "ImportDataWeatherWorker error");
+                            Log.Error(ex, "ImportDataWeatherWorker error");
                         }
                     }
                 }

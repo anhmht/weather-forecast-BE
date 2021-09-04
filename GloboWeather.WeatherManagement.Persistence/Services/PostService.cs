@@ -35,9 +35,9 @@ using GloboWeather.WeatherManegement.Application.Contracts.Identity;
 using GloboWeather.WeatherManegement.Application.Contracts.Media;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Persistence.Services
 {
@@ -53,15 +53,13 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
         private readonly IHistoryTrackingService _historyTrackingService;
         private readonly string _clientIpAddress;
         private readonly IHubContext<NotificationHub> _hubClient;
-        private readonly ILogger<PostService> _logger;
 
         public PostService(IUnitOfWork unitOfWork, ICommonService commonService, IImageService imageService
             , IMapper mapper, IAuthenticationService authenticationService
             , ILoggedInUserService loggedInUserService
             , IOptions<AzureStorageConfig> azureStorageConfig
             , IHistoryTrackingService historyTrackingService
-            , IHubContext<NotificationHub> hubClient
-            , ILogger<PostService> logger)
+            , IHubContext<NotificationHub> hubClient)
         {
             _unitOfWork = unitOfWork;
             _commonService = commonService;
@@ -73,7 +71,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             _historyTrackingService = historyTrackingService;
             _clientIpAddress = loggedInUserService.IpAddress;
             _hubClient = hubClient;
-            _logger = logger;
         }
 
         public async Task<Guid> CreateAsync(CreatePostCommand request, CancellationToken cancellationToken)
@@ -1381,7 +1378,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
+                    Log.Error(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
                 }
 
             }
