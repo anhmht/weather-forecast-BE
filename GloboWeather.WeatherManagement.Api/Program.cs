@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Identity.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -28,10 +26,10 @@ namespace GloboWeather.WeatherManagement.Api
 #if DEBUG
             logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
 #endif
-            //Log.Logger = new LoggerConfiguration()
-            //    .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Information,
-            //        "logs", logFileName)
-            //    .CreateLogger();
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Warning,
+                    "logs", logFileName)
+                .CreateLogger();
 
             var host = CreateHostBuilder(args).Build();
 
@@ -47,7 +45,7 @@ namespace GloboWeather.WeatherManagement.Api
                     await Identity.Seed.RolesCreator.SeedAsync(roleManager);
                     await Identity.Seed.UserCreator.SeedAsync(useManager);
 
-                    Log.Information("Application Starting");
+                    Log.Warning("Application Starting");
                 }
                 catch (Exception e)
                 {
