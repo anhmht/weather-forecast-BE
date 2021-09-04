@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
 using GloboWeather.WeatherManagement.Application.Contracts.Monitoring;
@@ -9,8 +8,8 @@ using GloboWeather.WeatherManagement.Application.Helpers.Common;
 using GloboWeather.WeatherManagement.Application.Requests;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManagement.Monitoring.IRepository;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Monitoring.Services
 {
@@ -21,7 +20,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
         private readonly IHydrologicalRepository _hydrologicalRepository;
         private readonly IRainRepository _rainRepository;
         private readonly IMeteorologicalRepository _meteorologicalRepository;
-        private readonly ILogger<DownloadDataService> _logger;
 
         private readonly Application.Contracts.Persistence.IHydrologicalForeCastRepository
             _pHydrologicalForecastRepository;
@@ -40,8 +38,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             IRainRepository rainRepository,
             Application.Contracts.Persistence.IRainQuantityRepository pRainQuantityRepository,
             IMeteorologicalRepository meteorologicalRepository,
-            Application.Contracts.Persistence.IMeteorologicalRepository pMeteorologicalRepository,
-            ILogger<DownloadDataService> logger
+            Application.Contracts.Persistence.IMeteorologicalRepository pMeteorologicalRepository
         )
         {
             _mapper = mapper;
@@ -53,7 +50,6 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             _pRainQuantityRepository = pRainQuantityRepository;
             _meteorologicalRepository = meteorologicalRepository;
             _pMeteorologicalRepository = pMeteorologicalRepository;
-            _logger = logger;
         }
 
         public async Task DownloadDataAsync(DownloadDataRequest request)
@@ -139,7 +135,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"DownloadHydrologicalForeCastAsync error. Request data: {JsonConvert.SerializeObject(request)}");
+                Log.Error(e, $"DownloadHydrologicalForeCastAsync error. Request data: {JsonConvert.SerializeObject(request)}");
             }
         }
 
@@ -184,7 +180,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"DownloadHydrologicalAsync error. Request data: {JsonConvert.SerializeObject(request)}");
+                Log.Error(e, $"DownloadHydrologicalAsync error. Request data: {JsonConvert.SerializeObject(request)}");
             }
         }
 
@@ -206,7 +202,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"DownloadRainQuantityAsync error. Request data: {JsonConvert.SerializeObject(request)}");
+                Log.Error(e, $"DownloadRainQuantityAsync error. Request data: {JsonConvert.SerializeObject(request)}");
             }
         }
 
@@ -228,7 +224,7 @@ namespace GloboWeather.WeatherManagement.Monitoring.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"DownloadMeteorologicalAsync error. Request data: {JsonConvert.SerializeObject(request)}");
+                Log.Error(e, $"DownloadMeteorologicalAsync error. Request data: {JsonConvert.SerializeObject(request)}");
             }
         }
 

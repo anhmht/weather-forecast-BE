@@ -7,6 +7,8 @@ using GloboWeather.WeatherManagement.Application.Exceptions;
 using GloboWeather.WeatherManagement.Domain.Entities;
 using GloboWeather.WeatherManegement.Application.Contracts.Persistence;
 using MediatR;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.GetEventDetail
 {
@@ -62,9 +64,9 @@ namespace GloboWeather.WeatherManagement.Application.Features.Events.Queries.Get
             {
                 await _unitOfWork.EventViewCountRepository.AddEventViewCountAsync(eventDetailDto.EventId);
             }
-            catch
+            catch (Exception ex)
             {
-                //Ignore
+                Log.Error(ex, $"Error when counting event. Request: {JsonConvert.SerializeObject(request)}");
             }
             #endregion
 

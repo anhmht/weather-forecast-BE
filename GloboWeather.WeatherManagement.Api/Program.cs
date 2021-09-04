@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GloboWeather.WeatherManagement.Identity.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +27,7 @@ namespace GloboWeather.WeatherManagement.Api
             logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
 #endif
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Information,
+                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Error,
                     "logs", logFileName)
                 .CreateLogger();
 
@@ -46,12 +44,10 @@ namespace GloboWeather.WeatherManagement.Api
 
                     await Identity.Seed.RolesCreator.SeedAsync(roleManager);
                     await Identity.Seed.UserCreator.SeedAsync(useManager);
-
-                    Log.Information("Application Starting");
                 }
                 catch (Exception e)
                 {
-                    Log.Warning(e, "An error occured while starting the application");
+                    Log.Error(e, "An error occured while starting the application");
                 }
             }
 

@@ -10,8 +10,8 @@ using GloboWeather.WeatherManagement.Domain.Entities.Social;
 using GloboWeather.WeatherManegement.Application.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Application.Features.Posts.Commands.SharePost
 {
@@ -20,16 +20,13 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Commands.Sha
         private readonly IUnitOfWork _unitOfWork;
         private readonly string _loginUserName;
         private readonly IHubContext<NotificationHub> _hubClient;
-        private readonly ILogger<SharePostCommandHandler> _logger;
         public SharePostCommandHandler(IUnitOfWork unitOfWork
             , ILoggedInUserService loggedInUserService
-            , IHubContext<NotificationHub> hubClient
-            , ILogger<SharePostCommandHandler> logger)
+            , IHubContext<NotificationHub> hubClient)
         {
             _unitOfWork = unitOfWork;
             _loginUserName = loggedInUserService.UserId;
             _hubClient = hubClient;
-            _logger = logger;
         }
 
         public async Task<Guid> Handle(SharePostCommand request, CancellationToken cancellationToken)
@@ -94,7 +91,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.Posts.Commands.Sha
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
+                Log.Error(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
             }
         }
     }

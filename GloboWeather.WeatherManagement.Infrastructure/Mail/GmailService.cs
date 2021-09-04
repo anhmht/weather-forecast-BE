@@ -10,20 +10,18 @@ using System.Threading;
 using GloboWeather.WeatherManagement.Application.Models.Mail;
 using GloboWeather.WeatherManegement.Application.Contracts.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace GloboWeather.WeatherManagement.Infrastructure.Mail
 {
     public class GmailService : IEmailService
     {
         private readonly GmailSettings _gmailSettings;
-        private readonly ILogger<EmailService> _logger;
 
-        public GmailService(IOptions<GmailSettings> mailSettings, ILogger<EmailService> logger)
+        public GmailService(IOptions<GmailSettings> mailSettings)
         {
             _gmailSettings = mailSettings.Value;
-            _logger = logger;
         }
 
         public async Task<bool> SendAsync(string toEmail, string subject, string content
@@ -111,7 +109,7 @@ namespace GloboWeather.WeatherManagement.Infrastructure.Mail
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
+                Log.Error(ex,
                     $"SendMail.Fail|Message={ex.Message},ToEmails={JsonConvert.SerializeObject(toEmails)}");
                 return false;
             }
