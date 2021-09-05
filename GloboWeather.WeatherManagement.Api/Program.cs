@@ -20,15 +20,7 @@ namespace GloboWeather.WeatherManagement.Api
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var cloudConnectionString = config.GetSection("AzureStorageConfig:ConnectionString").Get<string>();
-
-            var logFileName = "{yyyy}/{MM}/{dd}_log.txt";
-#if DEBUG
-            logFileName = "{yyyy}/{MM}/{dd}_dev_log.txt";
-#endif
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.AzureBlobStorage(cloudConnectionString, LogEventLevel.Error,
-                    "logs", logFileName)
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(config)
                 .CreateLogger();
 
             var host = CreateHostBuilder(args).Build();
