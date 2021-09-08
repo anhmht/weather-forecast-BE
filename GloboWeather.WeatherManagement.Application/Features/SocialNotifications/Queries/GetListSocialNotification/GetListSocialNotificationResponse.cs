@@ -13,6 +13,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.SocialNotification
         public Guid Id { get; set; }
         public Guid? PostId { get; set; }
         public Guid? CommentId { get; set; }
+        public Guid? ParentCommentId { get; set; }
         public string Receiver { get; set; } //UserName
         public bool IsRead { get; set; }
         public string Action { get; set; }
@@ -23,5 +24,7 @@ namespace GloboWeather.WeatherManagement.Application.Features.SocialNotification
         public string FromUserAvatar { get; set; }
         [JsonIgnore]
         public Guid? AnonymousUserId { get; set; }
+        public DateTime CreateDate { get; set; }
+        public int Type { get; set; }
     }
 }

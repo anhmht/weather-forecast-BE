@@ -73,8 +73,9 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         ActionAreaType = 5,
         ScenarioActionType = 6,
         Position = 7,
-        PostStatus,
-        ActionIcon
+        PostStatus = 8,
+        ActionIcon = 9,
+        NotificationType = 10
     }
 
     public enum ScenarioActionType
@@ -94,5 +95,11 @@ namespace GloboWeather.WeatherManagement.Application.Helpers.Common
         Private,
         Blocked,
         Deleted
+    }
+
+    public enum NotificationType
+    {
+        AdminApproval = 1,
+        NotifyUser
     }
 }

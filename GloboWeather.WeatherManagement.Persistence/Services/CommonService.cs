@@ -73,6 +73,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     (int)LookupType.ScenarioActionType => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ScenarioActionType),
                     (int)LookupType.PostStatus => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.PostStatus),
                     (int)LookupType.ActionIcon => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionIcon),
+                    (int)LookupType.NotificationType => await GetCommonLookupByNameSpaceAsync(LookupNameSpace.NotificationType),
                     _ => null
                 };
 

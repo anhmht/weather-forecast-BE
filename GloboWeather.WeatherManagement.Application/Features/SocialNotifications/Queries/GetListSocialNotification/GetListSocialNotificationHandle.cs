@@ -35,8 +35,11 @@ namespace GloboWeather.WeatherManagement.Application.Features.SocialNotification
                 throw new Exception("Must login to take this action");
             }
 
+            var isFilterByType = request.Types != null && request.Types.Any();
+
             var listPaging = await _unitOfWork.SocialNotificationRepository
-                .GetWhereQuery(x => x.Receiver == _loginUserName && (request.IsRead == null || request.IsRead == x.IsRead))
+                .GetWhereQuery(x => x.Receiver == _loginUserName && (request.IsRead == null || request.IsRead == x.IsRead)
+                                    && (!isFilterByType || request.Types.Contains(x.Type)))
                 .OrderByDescending(x => x.CreateDate)
                 .PaginateAsync(request.Page, request.Limit, cancellationToken);
 

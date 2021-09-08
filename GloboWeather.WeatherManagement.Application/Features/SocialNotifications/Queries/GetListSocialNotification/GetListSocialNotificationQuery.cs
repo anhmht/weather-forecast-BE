@@ -1,4 +1,6 @@
-﻿using GloboWeather.WeatherManagement.Application.Requests;
+﻿#nullable enable
+using System.Collections.Generic;
+using GloboWeather.WeatherManagement.Application.Requests;
 using MediatR;
 
 namespace GloboWeather.WeatherManagement.Application.Features.SocialNotifications.Queries.GetListSocialNotification
@@ -9,5 +11,6 @@ namespace GloboWeather.WeatherManagement.Application.Features.SocialNotification
         /// True: get read notification, False: get un-read notification; NULL: get all
         /// </summary>
         public bool? IsRead { get; set; }
+        public List<int>? Types { get; set; }
     }
 }

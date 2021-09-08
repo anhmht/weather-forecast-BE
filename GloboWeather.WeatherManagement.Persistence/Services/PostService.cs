@@ -92,7 +92,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var receivers =
                 (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
                     x.UserName);
-            await PushNotification(receivers, post.Id, null, NotificationAction.CreatePost);
+            await PushNotification(receivers, post.Id, null, NotificationAction.CreatePost, NotificationType.AdminApproval);
 
             await _unitOfWork.CommitAsync();
 
@@ -132,7 +132,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var receivers =
                 (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
                     x.UserName);
-            await PushNotification(receivers, post.Id, null, NotificationAction.EditPost);
+            await PushNotification(receivers, post.Id, null, NotificationAction.EditPost, NotificationType.AdminApproval);
 
             await _unitOfWork.CommitAsync();
 
@@ -177,7 +177,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var receivers =
                 (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
                     x.UserName);
-            await PushNotification(receivers, null, comment.Id, NotificationAction.CreateComment, comment.AnonymousUserId);
+            await PushNotification(receivers, comment.PostId, comment.Id, NotificationAction.CreateComment, NotificationType.AdminApproval
+                , comment.ParentCommentId, comment.AnonymousUserId);
 
             await _unitOfWork.CommitAsync();
 
@@ -218,7 +219,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             var receivers =
                 (await _authenticationService.GetUsersInRoleAsync(ApplicationUserRole.SuperAdmin)).Select(x =>
                     x.UserName);
-            await PushNotification(receivers, null, comment.Id, NotificationAction.EditComment);
+            await PushNotification(receivers, comment.PostId, comment.Id, NotificationAction.EditComment
+                , NotificationType.AdminApproval, comment.ParentCommentId);
 
             var result = await _unitOfWork.CommitAsync() > 0;
 
@@ -242,6 +244,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 isApproval = await HasApprovePermission();
             }
 
+            var type = isApproval ? NotificationType.AdminApproval : NotificationType.NotifyUser;
+
             if (request.IsChangePostStatus)
             {
                 //Save history tracking
@@ -256,7 +260,7 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 {
                     //Push notification
                     await PushNotification(post.CreateBy, post.Id, null,
-                        NotificationAction.ChangePostStatus);
+                        NotificationAction.ChangePostStatus, type);
                 }
 
                 return await _unitOfWork.PostRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
@@ -289,8 +293,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 }
 
                 //Push notification
-                await PushNotification(receivers, comment.Id, null,
-                    NotificationAction.ChangeCommentStatus);
+                await PushNotification(receivers, comment.PostId, comment.Id,
+                    NotificationAction.ChangeCommentStatus, type, comment.ParentCommentId);
             }
 
             return await _unitOfWork.CommentRepository.ChangeStatusAsync(request.Id, request.PostStatusId,
@@ -653,7 +657,6 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
 
         public async Task<GetSubCommentsResponse> GetSubCommentsAsync(GetSubCommentsQuery request, CancellationToken cancellationToken)
         {
-            CheckLoginSession();
             var comment = await _unitOfWork.CommentRepository.GetByIdAsync(request.CommentId);
             if (comment == null)
             {
@@ -985,14 +988,14 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 var newPostVideoUrlsIos = post.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
                 deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrlsIos
                                      where newPostVideoUrlsIos.All(x => x != videoUrl)
-                    select new DeleteFile
-                    {
-                        Id = Guid.NewGuid(),
-                        ContainerName = _storageConfig.SocialPostContainer,
-                        DeleteId = post.Id,
-                        FileUrl = videoUrl,
-                        TableName = nameof(Post)
-                    });
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = post.Id,
+                                         FileUrl = videoUrl,
+                                         TableName = nameof(Post)
+                                     });
             }
 
             if (deleteFiles.Any())
@@ -1104,15 +1107,15 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 var tempOriPostVideoUrlsIos = oriPostVideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
                 var newPostVideoUrlsIos = comment.VideoUrlsIos.Split(Constants.SemiColonStringSeparator).ToList();
                 deleteFiles.AddRange(from videoUrl in tempOriPostVideoUrlsIos
-                    where newPostVideoUrlsIos.All(x => x != videoUrl)
-                    select new DeleteFile
-                    {
-                        Id = Guid.NewGuid(),
-                        ContainerName = _storageConfig.SocialPostContainer,
-                        DeleteId = comment.Id,
-                        FileUrl = videoUrl,
-                        TableName = nameof(Comment)
-                    });
+                                     where newPostVideoUrlsIos.All(x => x != videoUrl)
+                                     select new DeleteFile
+                                     {
+                                         Id = Guid.NewGuid(),
+                                         ContainerName = _storageConfig.SocialPostContainer,
+                                         DeleteId = comment.Id,
+                                         FileUrl = videoUrl,
+                                         TableName = nameof(Comment)
+                                     });
             }
 
             if (deleteFiles.Any())
@@ -1147,8 +1150,9 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 var actionIcons = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionIcon);
 
-                await PushNotification(comment.CreateBy, null, actionIconEntry.Id,
-                    actionIcons.Find(x => x.ValueId == request.IconId).ValueText);
+                await PushNotification(comment.CreateBy, actionIconEntry.PostId, actionIconEntry.CommentId,
+                    actionIcons.Find(x => x.ValueId == request.IconId).ValueText
+                    , NotificationType.NotifyUser, parentCommentId: comment.ParentCommentId);
             }
 
             return await _unitOfWork.CommitAsync() > 0;
@@ -1180,8 +1184,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             {
                 var actionIcons = await _commonService.GetCommonLookupByNameSpaceAsync(LookupNameSpace.ActionIcon);
 
-                await PushNotification(post.CreateBy, actionIconEntry.Id, null,
-                    actionIcons.Find(x => x.ValueId == request.IconId).ValueText);
+                await PushNotification(post.CreateBy, actionIconEntry.PostId, actionIconEntry.CommentId
+                    ,actionIcons.Find(x => x.ValueId == request.IconId).ValueText, NotificationType.NotifyUser);
             }
 
             return await _unitOfWork.CommitAsync() > 0;
@@ -1344,17 +1348,21 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
             commentVm.NumberOfSubComment = countSubComment.TryGetValue(commentVm.Id, out var numberOfSubComment) ? numberOfSubComment : 0;
         }
 
-        private async Task PushNotification(string receiver, Guid? postId, Guid? commentId, string action, Guid? anonymousUserId = null,
+        private async Task PushNotification(string receiver, Guid? postId, Guid? commentId, string action
+            , NotificationType type, Guid? parentCommentId = null, Guid? anonymousUserId = null,
             string description = "")
         {
-            await PushNotification(new List<string> { receiver }, postId, commentId, action, anonymousUserId, description);
+            await PushNotification(new List<string> {receiver}, postId, commentId, action, type, parentCommentId, anonymousUserId
+                , description);
         }
+
         private async Task PushNotification(IEnumerable<string> receivers, Guid? postId, Guid? commentId, string action
-            , Guid? anonymousUserId = null, string description = "")
+            , NotificationType type, Guid? parentCommentId = null, Guid? anonymousUserId = null,
+            string description = "")
         {
             foreach (var receiver in receivers)
             {
-                if(receiver == _loginUserName)
+                if (receiver == _loginUserName)
                     continue;
 
                 var notification = new SocialNotification
@@ -1364,10 +1372,12 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                     Action = action,
                     Receiver = receiver,
                     CommentId = commentId,
+                    ParentCommentId = parentCommentId,
                     Description = description,
                     CreateBy = _loginUserName,
                     AnonymousUserId = anonymousUserId,
-                    CreateDate = DateTime.Now
+                    CreateDate = DateTime.Now,
+                    Type = (int) type
                 };
 
                 _unitOfWork.SocialNotificationRepository.Add(notification);
@@ -1378,7 +1388,8 @@ namespace GloboWeather.WeatherManagement.Persistence.Services
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
+                    Log.Error(e,
+                        $"Error when push message to signalR hub. Receiver: {receiver}. Data: {Environment.NewLine}{message}");
                 }
 
             }

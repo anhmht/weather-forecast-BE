@@ -14,10 +14,12 @@ namespace GloboWeather.WeatherManagement.Domain.Entities.Social
         public Guid Id { get; set; }
         public Guid? PostId { get; set; }
         public Guid? CommentId { get; set; }
+        public Guid? ParentCommentId { get; set; }
         public string Receiver { get; set; } //UserName
         public bool IsRead { get; set; }
         public string Action { get; set; } //Insert, update, delete, like, share...
         public string Description { get; set; }
         public Guid? AnonymousUserId { get; set; }
+        public int Type { get; set; }
     }
 }
